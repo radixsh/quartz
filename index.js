@@ -4,35 +4,31 @@ const guilds = new Discord.Guild(bot,)
 const config = require("./config.json");   
 const emojiCharacters = require("./emojiCharacters.js");
 const ytdl = require('ytdl-core');
-/*const { Permissions } = require('discord.js');
-const flags = [
-	'MANAGE_CHANNELS',
-	'EMBED_LINKS',
-	'ATTACH_FILES',
-	'READ_MESSAGE_HISTORY',
-	'MANAGE_ROLES',
-];
-const permissions = new Permissions(3172352);
-https://discord.com/oauth2/authorize?client_id=722289214363926592&scope=bot&permissions=3172352*/
+
+// https://discord.com/oauth2/authorize?client_id=722289214363926592&scope=bot&permissions=3172352
 
 bot.on('ready', () => {
     // const { prefix, token } = require('./config.json');
     console.log(`Logged in as ${bot.user.tag}!`); 
     console.log("Now in " + bot.guilds.cache.size + " guilds :D");
+    // console.log(bot.guild.has(0));
 });
 
 bot.on('disconnect', () => {
     console.log('Disconnect!');
 });
 
+bot.on(Error, () => {
+    console.log("There was an error :(");
+});
+
 bot.on("guildCreate", guild => {
-    const canal = guild.channels.cache.find(channel => channel.type === 'text' && channel.permissionsFor(guild.me).has('SEND_MESSAGES'));
-    canal.send("hello!! I'm Bitz and it's good to meet y'all! my command prefix is `!`, and you can see my documentation at `!help` :))");
+    message.send("hello!! i'm bitz, and it's good to meet y'all! my command prefix is `!`, and you can see my documentation at `!help` :))");
     console.log(`Joined ${bot.guilds.cache.name}!`);
 });
 
 bot.on('message', async message => { 
-    var len = 0; // if the message is all "!", then exit early
+    var len = 0; // if the message is all "!"s, then exit early
     for(let i = 0; i < message.content.length; i++) 
         if(message.content[i] === "!") len++;
     if(len === message.content.length || message.author.bot) return;
@@ -41,27 +37,16 @@ bot.on('message', async message => {
         var args = message.content.slice(config.prefix.length).trim().split(" ");// / +/g);
         var command = args.shift().toLowerCase();
     } 
-        /*var args = message.content.split("\n");
-        for(let i = 0; i < args.length; i++){
-            if(args[i].startsWith(">")){
-                console.log("QUOTATION ALERT!");
-                args.shift();
-                console.log(args);
-                i--;
-            }
-        }*/
     var rickWords = ["as;ld",
         "ajdfk",
         "sjdfk",
         "as;dl",
         "sdajf",
-        "asdkf;fkl",
         "aksdl",
         "asdkl",
-        "skjdfklsjf",
-        "sjdskfjkd",
+        "sdjfkl",
         "asjdkfjs",
-        "sdkjflksdjf",
+        "sdfjkj",
         "dfklsjf",
         "skdjf",
         "skskj"
@@ -75,7 +60,8 @@ bot.on('message', async message => {
     }
     if (message.content.substring(0,1) !== "!" && !theMessageContainsARickWord && !message.content.toLowerCase().includes("uwu") && !message.content.toLowerCase().includes("owo")) return; 
         // if the message doesn't start with `!` or contain a rickWord or contain uwu or contain owo, then end early.
-    console.log("\n" + message.author.username);
+    if(!message.channel.name) console.log("\n" + message.author.username + " (dm)");
+    else console.log("\n" + message.author.username + " (#" + message.channel.name + " in " + message.guild.name + ")");
     if(command) console.log("Command: " + command + "\tArgs (" + args.length + "): " + args);
     
     if (command === 'ping'){
@@ -84,23 +70,23 @@ bot.on('message', async message => {
     } else if(command === "help" || command === "h"){
         const helpEmbed = new Discord.MessageEmbed()
         .setColor('#8db255')
-        .setTitle('Help')
+        .setTitle('help')
         // .setURL('https://discord.js.org/')
         // .setAuthor('radix', 'https://i.imgur.com/wSTFkRM.png')//, 'https://discord.js.org')
-        .setDescription("Hey, I'm Bitz ^-^ Here's some stuff I do. I don't know why I do these things, but here they are anyway \¯\\\_\(\ツ\)\_\/\¯\n\n(Also, I'm just a baby — sorry if stuff goes wrong >.< I don't know a lot yet, but I'm learning!!!)")
+        .setDescription("greetings! bitz here ^-^ here's some stuff i do. i don't know why i do these things, but here they are anyway \¯\\\_\(\ツ\)\_\/\¯\n\n(also, i'm just a baby — sorry if stuff goes wrong >.< i don't know a lot yet, but i'm learning!)\n\n")
         // .setThumbnail('https://i.imgur.com/wSTFkRM.png')
         .addFields(
-            { name: '!purge <n>', value: 'Deletes `n` messages in the current channel (2 < `n` < 100). \n`!purge 20`'},
+            { name: '!purge <n>', value: 'deletes `n` messages in the current channel (2 < `n` < 100), and also deletes the command message. \n`!purge 20`'},
             //{ name: '\u200B', value: '\u200B' },
-            { name: '!echo [foo]', value: 'Echoes back what you tell it to, deleting the command message. \n`!echo foo`'},
-            { name: '!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...', value: 'Creates a poll in an embed, deleting the command message. \n`!poll "What\'s your favorite color?" "red" "blue" "green"`'},
-            { name: '!ping', value: 'Performs a ping. No arguments. \n`!ping`'},
-            { name: '!h[elp]', value: "You're right here, so you must know there are no arguments necessary here either (: \n`!h`"}
+            { name: '!echo [foo]', value: 'echoes back what you tell it to, deleting the command message. \n`!echo uwu`'},
+            { name: '!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...', value: 'creates a poll in an embed, deleting the command message. at least three arguments are necessary, set off by double quotation marks: a question and at least two options. \n`!poll "what\'s your favorite color?" "red" "blue" "green"`'},
+            { name: '!ping', value: 'performs a ping; no arguments. \n`!ping`'},
+            { name: '!h[elp]', value: "you're right here, so you must know there are no arguments necessary here either (: \n`!h`"}
         )
         // .addField('Inline field title', 'Some value here', true)
         // .setImage('https://i.imgur.com/wSTFkRM.png')
         // .setTimestamp()
-        .setFooter('Developed by radix#4520');//, 'https://i.imgur.com/wSTFkRM.png')
+        .setFooter('developed by radix#4520');//, 'https://i.imgur.com/wSTFkRM.png')
         return message.channel.send(helpEmbed);
     } else if (command === 'echo'){
         const sayMessage = args.join(" ");
@@ -111,8 +97,8 @@ bot.on('message', async message => {
         if(!deleteCount || deleteCount < 2 || deleteCount > 100)
             return message.channel.send("you're supposed to provide a number between 2 and 100 (inclusive) for the number of messages to delete :/");
         // const fetched = await message.channel.fetchMessages({limit: deleteCount});
-        message.channel.bulkDelete(deleteCount)
-        .catch(error => message.reply(`Couldn't delete messages because of: ${error}`));
+        message.channel.bulkDelete(deleteCount+1)
+        .catch(error => message.reply("Couldn't delete messages because of: ${error}"));
     } else if(command === "poll"){
         var pollThing = "";
         for(let i = 0; i < args.length; i++)
@@ -159,7 +145,7 @@ bot.on('message', async message => {
         }
         let embed = new Discord.MessageEmbed()
             .setColor("#8db255")
-            .setDescription('\n▬▬▬▬▬▬▬▬▬**«    Poll    »**▬▬▬▬▬▬▬▬▬▬\n\n**Poll question »** ' + pollQuestion + '\n\n**Poll options »**' + opciones)
+            .setDescription('\n▬▬▬▬▬▬▬▬▬** «    poll    » **▬▬▬▬▬▬▬▬▬▬\n\n**poll question »** ' + pollQuestion + '\n\n**poll options »**' + opciones)
             embed.setTimestamp();
             
 
@@ -178,8 +164,9 @@ bot.on('message', async message => {
         if (message.content.toLowerCase().includes(rickWords[i])) {
             // ELEPHANT
             console.log(message.content);
-            if(message.member.voice.channel && bot.roles.has('CONNECT') && permissions.has('SPEAK')){
-                message.member.voice.channel.join().then(connection => {
+            if(message.member.voice.channel){
+                message.member.voice.channel.join().catch(error => console.log("There was an error :/"))
+                .then(connection => {
                     const stream = ytdl('https://www.youtube.com/watch?v=dQw4w9WgXcQ', { filter: 'audioonly' });
                     const dispatcher = connection.play(stream);
                     dispatcher.on('end', () => message.member.voice.channel.leave());
@@ -226,9 +213,8 @@ bot.on('message', async message => {
     }
     console.log("Non-quoted text after removing words that aren't owo/uwu: " + notQuotations);
     theMessage = "";
-    for(let i = 0; i < notQuotations.length; i++){
+    for(let i = 0; i < notQuotations.length; i++)
         theMessage += notQuotations[i];
-    }
     console.log("Message: " + theMessage);
     if(theMessage.includes("uwu") || theMessage.includes("owo")){
         // const wordsThatMightNotBeUwu = theMessage.split(/\s+/); // / +/g);
@@ -269,3 +255,5 @@ bot.on('message', async message => {
 });
 
 bot.login(config.token);
+// to do: uwowo returns uwowo not owo
+// to do: start owo chains randomly on my own
