@@ -7,7 +7,7 @@ bitz is a simple discord bot written with node.js using [discord.js](https://dis
 3. [setup](#setup)
 4. [functionalities](#functionalities)
 5. [examples](#examples)
-6. [project status](#project status)
+6. [project status](#project-status)
 7. [inspiration](#inspiration)
 8. [license](#license)
 
