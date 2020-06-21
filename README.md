@@ -1,10 +1,15 @@
 # bitz — discord bot
-bitz is a simple discord bot written using node.js using [discord.js](https://discord.js.org/). bitz can delete messages, echo messages, create polls, and perform pings; bitz also responds rather interestingly to certain "owo", "uwu", and keysmash messages :)
+bitz is a simple discord bot written with node.js using [discord.js](https://discord.js.org/). bitz can delete messages, echo messages, create polls, and perform pings; bitz also responds rather interestingly to certain "owo", "uwu", and keysmash messages :)
 
 ## table of contents
 1. [general info](#general-info)
 2. [technologies](#technologies)
 3. [setup](#setup)
+4. [functionalities](#functionalities)
+5. [examples](#examples)
+6. [project status](#project status)
+7. [inspiration](#inspiration)
+8. [license](#license)
 
 ## general info
 i created bitz for three reasons: 
@@ -25,14 +30,16 @@ to run this project, [...]
 (a discord api key is necessary in the config.json file.)
 
 ## functionalities
+[...]
 
 ## examples
+[...]
 
 ## project status
 bitz is still in development, testing regularly in discord. eventually the sandbox guild will go public, the link will be here, and support will be available. 
 
 ## inspiration
-this project was inspired by 
+this project was inspired by [...]
 
 ## license
 released under the [gnu gpl v2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) license.
