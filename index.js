@@ -1,40 +1,43 @@
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 const guilds = new Discord.Guild(bot,)
-const config = require("./config.json");   
+const { token, prefix, ownerID} = require("./config.json");   
 const emojiCharacters = require("./emojiCharacters.js");
 const ytdl = require('ytdl-core');
 
 // https://discord.com/oauth2/authorize?client_id=722289214363926592&scope=bot&permissions=3172352
 
+bot.login("*******************************************");
+
 bot.on('ready', () => {
-    // const { prefix, token } = require('./config.json');
     console.log(`Logged in as ${bot.user.tag}!`); 
     console.log("Now in " + bot.guilds.cache.size + " guilds :D");
-    // console.log(bot.guild.has(0));
 });
 
 bot.on('disconnect', () => {
     console.log('Disconnect!');
 });
 
-bot.on(Error, () => {
-    console.log("There was an error :(");
+process.on('unhandledRejection', error => {
+    console.error('UNHANDLED PROMISE REJECTION:\n', error);
+    //message.channel.send("...meanie butt >:((");
 });
 
 bot.on("guildCreate", guild => {
-    message.send("hello!! i'm bitz, and it's good to meet y'all! my command prefix is `!`, and you can see my documentation at `!help` :))");
+    //message.send("hello!! i'm bitz, and it's good to meet y'all! my command prefix is `!`, and you can see my documentation at `!help` :))");
     console.log(`Joined ${bot.guilds.cache.name}!`);
 });
 
-bot.on('message', async message => { 
-    var len = 0; // if the message is all "!"s, then exit early
+bot.on('message', async message => {
+    // if the message is all "!"s, then exit early
+    var len = 0; 
     for(let i = 0; i < message.content.length; i++) 
         if(message.content[i] === "!") len++;
     if(len === message.content.length || message.author.bot) return;
 
-    if(message.content.substring(0,1) === "!"){
-        var args = message.content.slice(config.prefix.length).trim().split(" ");// / +/g);
+    // if it starts with "!", then separate the message into the command (first term) and the arguments
+    if(message.content.substring(0,prefix.length) === "!"){
+        var args = message.content.slice(prefix.length).trim().split(" ");// / +/g);
         var command = args.shift().toLowerCase();
     } 
     var rickWords = ["as;ld",
@@ -58,12 +61,15 @@ bot.on('message', async message => {
             break; 
         }
     }
+    // if the message doesn't start with `!` or contain a rickWord or contain uwu or contain owo, then end early.
     if (message.content.substring(0,1) !== "!" && !theMessageContainsARickWord && !message.content.toLowerCase().includes("uwu") && !message.content.toLowerCase().includes("owo")) return; 
-        // if the message doesn't start with `!` or contain a rickWord or contain uwu or contain owo, then end early.
     if(!message.channel.name) console.log("\n" + message.author.username + " (dm)");
     else console.log("\n" + message.author.username + " (#" + message.channel.name + " in " + message.guild.name + ")");
     if(command) console.log("Command: " + command + "\tArgs (" + args.length + "): " + args);
     
+    // close the bot to everyone except me
+    // if(message.author != ownerID) return message.channel.send("sorry, i'm down for testing ;-;");
+
     if (command === 'ping'){
         const m = await message.channel.send("ping?");
         return m.edit(`pong! latency is ${m.createdTimestamp - message.createdTimestamp} ms :)`);
@@ -78,7 +84,7 @@ bot.on('message', async message => {
         .addFields(
             { name: '!purge <n>', value: 'deletes `n` messages in the current channel (2 < `n` < 100), and also deletes the command message. \n`!purge 20`'},
             //{ name: '\u200B', value: '\u200B' },
-            { name: '!echo [foo]', value: 'echoes back what you tell it to, deleting the command message. \n`!echo uwu`'},
+            { name: '!echo [foo]', value: 'echoes back what you tell it to, deleting the command message. (it only works for images, i think, and it only echoes the first image attachment) \n`!echo uwu`'},
             { name: '!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...', value: 'creates a poll in an embed, deleting the command message. at least three arguments are necessary, set off by double quotation marks: a question and at least two options. \n`!poll "what\'s your favorite color?" "red" "blue" "green"`'},
             { name: '!ping', value: 'performs a ping; no arguments. \n`!ping`'},
             { name: '!h[elp]', value: "you're right here, so you must know there are no arguments necessary here either (: \n`!h`"}
@@ -89,9 +95,22 @@ bot.on('message', async message => {
         .setFooter('developed by radix#4520');//, 'https://i.imgur.com/wSTFkRM.png')
         return message.channel.send(helpEmbed);
     } else if (command === 'echo'){
-        const sayMessage = args.join(" ");
+        var textToEcho = args.join(" ");
+        if(!args) return message.channel.send("bruh");
+        if(message.attachments.size === 0){
+            message.channel.send(textToEcho);
+        } else {
+            const imageUrl = message.attachments.array()[0].url;
+            console.log(imageUrl);
+            const echoImg = new Discord.MessageEmbed()
+                .setColor('#8db255')
+                .setImage(imageUrl)
+                .setTimestamp()
+            message.channel.send(textToEcho);
+            await message.channel.send(echoImg);
+        }
         message.delete().catch(O_o=>{}); 
-        return message.channel.send(sayMessage);
+        return;
     } else if(command === "purge") {
         const deleteCount = parseInt(args[0], 10);
         if(!deleteCount || deleteCount < 2 || deleteCount > 100)
@@ -235,18 +254,20 @@ bot.on('message', async message => {
                     }
                 }
                 // console.log("Last letters after punct: " + lastLetters);
-                if(!lastLetters){
-                    return message.channel.send(notQuotations[i]);
-                } else if(lastLetters.includes(".")){
-                    return message.channel.send(notQuotations[i]);
-                } else if(lastLetters.includes("?") || lastLetters.includes("!")){
-                    return message.channel.send(notQuotations[i] + lastLetters);
-                } else{ // else, the uwu/owo does not end in !, ?, or .
-                    if(notQuotations[i].includes("owo")){
-                        // debug: console.log(wordsThatMightNotBeUwu[i].indexOf("owo"),wordsThatMightNotBeUwu[i].indexOf("owo")+3);    
-                        return message.channel.send(notQuotations[i].substring(notQuotations[i].indexOf("owo"),notQuotations[i].indexOf("owo")+3));
-                    } else if(notQuotations[i].includes("uwu")){
-                        return message.channel.send(notQuotations[i].substring(notQuotations[i].indexOf("uwu"),notQuotations[i].indexOf("uwu")+3));
+                if(notQuotations[i].length > 1000){
+                    return message.channel.send("...meanie butt ;-;");
+                }else{
+                    if(lastLetters.includes(".")){
+                        return message.channel.send(notQuotations[i]);
+                    } else if(lastLetters.includes("?") || lastLetters.includes("!")){
+                        return message.channel.send(notQuotations[i] + lastLetters);
+                    } else{ // else, the uwu/owo does not end in !, ?, or .
+                        if(notQuotations[i].includes("owo")){
+                            // debug: console.log(wordsThatMightNotBeUwu[i].indexOf("owo"),wordsThatMightNotBeUwu[i].indexOf("owo")+3);    
+                            return message.channel.send(notQuotations[i].substring(notQuotations[i].indexOf("owo"),notQuotations[i].indexOf("owo")+3));
+                        } else if(notQuotations[i].includes("uwu")){
+                            return message.channel.send(notQuotations[i].substring(notQuotations[i].indexOf("uwu"),notQuotations[i].indexOf("uwu")+3));
+                        }
                     }
                 }
             }
@@ -254,6 +275,7 @@ bot.on('message', async message => {
     }
 });
 
-bot.login(config.token);
-// to do: uwowo returns uwowo not owo
+bot.login(token);
+// done: string-owo returns string-owo not owo
+// to do: owo!s returns owo!s!s not owo!!
 // to do: start owo chains randomly on my own
