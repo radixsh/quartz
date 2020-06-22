@@ -1,5 +1,5 @@
 # bitz — discord bot
-bitz is a simple discord bot written with [node.js](https://nodejs.org/en/). bitz can delete messages, echo messages, create polls, and perform pings; bitz also responds rather interestingly to certain "owo", "uwu", and keysmash messages. :)
+bitz is a [node.js](https://nodejs.org/en/) discord bot that can delete messages, echo messages, create polls, and perform pings. bitz also responds rather interestingly to certain "owo", "uwu", and keysmash messages. :)
 
 ## table of contents
 1. [general info](#general-info)
@@ -20,16 +20,81 @@ i created bitz for three reasons:
 in retrospect i could've chosen to learn python and use that to write bitz, but to be honest it was hard enough figuring out the discord api already, as well as fun enough learning where exactly my java knowledge ends and the discord.js documentation (and stack overflow wisdom!) begins.
 
 ## technologies
-this project is created with: 
-* [node.js](https://nodejs.org/en/)
-* [discord.js v12.2.0](https://discord.js.org/#/) ([documentation](https://discordjs-fork.readthedocs.io/en/latest/index.html))
+this project was created with: 
+* [node.js](https://nodejs.org/en/) v12.18.0
+* [discord.js](https://discord.js.org/#/) v12.2.0 ([documentation](https://discordjs-fork.readthedocs.io/en/latest/index.html))
+  + `npm install discord.js`
 * [discord api](https://discord.com/developers/docs/intro) 
 * [nodemon](https://www.npmjs.com/package/nodemon) v2.0.4 — a tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected.
 
 ## setup
-to replicate bitz, [...]
+to clone and run this application, you'll need git and node.js (which comes with npm). (nodemon is most helpful during development; you won't need it just to replicate bitz.) 
 
-(a discord api key is necessary in the config.json file)
+on mac (i did this): 
+```
+# You'll need to have Homebrew and git first
+# Here's the installation command for Homebrew from https://brew.sh: 
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+
+# Install git
+$ brew install git
+
+# Install node.js using Homebrew
+$ brew install node
+
+# Install discord.js, as well as the other files necessary to support sound output
+$ npm install discord.js ffmpeg-binaries opusscript ytdl-core --save
+```
+
+on debian/ubuntu ([source](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-18-04)): 
+```
+# Refresh your local package index
+$ sudo apt update
+
+# Install node.js (and hit y when prompted)
+$ sudo apt install nodejs
+
+# To confirm the install went okay
+$ nodejs -v
+
+# Install git (and hit y when prompted)
+$ sudo apt-get install git
+```
+
+then on your command line, whether mac or linux, run the following to download bitz's files: 
+```
+# Clone this repository
+$ git clone https://github.com/radradix/bitz
+
+# Go into the repository
+$ cd bitz
+```
+
+before starting bitz, you'll need to make your own config.json file and put your api token into it. my config.json file is here — encrypted — as a kind of placeholder (and because it makes it easier for me during development). so create your own config file: 
+```
+$ rm config.json
+$ touch config.json
+```
+
+the config file will hold, at minimum, your token and your chosen command prefix (in the command `!help`, for instance, the prefix is `!`). 
+
+to generate your own api token, go to your [discord developer portal](https://discord.com/developers/applications) and create an application and a bot. click the subheading "bot" in the menubar on the left, and a token will have been generated under the bot's username. (this token must be kept secret.) here's the format that i used: 
+```
+{
+  "token": "my-token-here-between-quotes",
+  "prefix": "!",
+  "ownerID": "519672846075822101"
+}
+```
+the ownerID line allows me access to any quirks i want to keep to myself :) you can add whatever constants you want. 
+
+once your config file has been created, you're good to go! 
+```
+# start bitz :)
+$ node index.js
+```
+
+(if you have nodemon installed, then you can instead navigate into the directory and run `nodemon`.)
 
 ## functionalities
 [...]
@@ -40,7 +105,7 @@ to replicate bitz, [...]
 ## project status
 bitz is still in development, testing regularly in discord. eventually the sandbox guild will go public, the link will be here, and support will be available. 
 
-currently, my next steps are: 
+currently, these are my next steps: 
 * address the bug that the message `uwowo` returns `uwowo` rather than `owo` 
 * plan out and implement a randomized `owo`/`uwu` system (i.e., at random times, start `owo`/`uwu` chains independently)
 
