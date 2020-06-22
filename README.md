@@ -14,7 +14,7 @@ bitz is a [node.js](https://nodejs.org/en/) discord bot that can delete messages
 ## general info
 i created bitz for three reasons: 
 * to learn a bit of javascript to complement my basic understanding of html and css, 
-* to apply what i learned in class studying java this past year, and 
+* to apply what i learned in class studying java (and learning some git) this past year, and 
 * to have fun creating a bot for friends in the summer. 
 
 in retrospect i could've chosen to learn python and use that to write bitz, but to be honest it was hard enough figuring out the discord api already, as well as fun enough learning where exactly my java knowledge ends and the discord.js documentation (and stack overflow wisdom!) begins.
@@ -23,7 +23,6 @@ in retrospect i could've chosen to learn python and use that to write bitz, but 
 this project was created with: 
 * [node.js](https://nodejs.org/en/) v12.18.0
 * [discord.js](https://discord.js.org/#/) v12.2.0 ([documentation](https://discordjs-fork.readthedocs.io/en/latest/index.html))
-  + `npm install discord.js`
 * [discord api](https://discord.com/developers/docs/intro) 
 * [nodemon](https://www.npmjs.com/package/nodemon) v2.0.4 — a tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected.
 
@@ -36,37 +35,38 @@ on mac (i did this):
 # Here's the installation command for Homebrew from https://brew.sh: 
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
-# Install git
+# install git
 $ brew install git
 
-# Install node.js using Homebrew
+# install node.js using Homebrew
 $ brew install node
-
-# Install discord.js, as well as the other files necessary to support sound output
-$ npm install discord.js ffmpeg-binaries opusscript ytdl-core --save
 ```
 
 on debian/ubuntu ([source](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-18-04)): 
 ```
-# Refresh your local package index
+# refresh your local package index
 $ sudo apt update
 
-# Install node.js (and hit y when prompted)
+# install node (and hit y when prompted)
+# (the package is called nodejs rather than node because of a naming conflict; it's fine)
 $ sudo apt install nodejs
 
-# To confirm the install went okay
+# to confirm the install worked
 $ nodejs -v
 
-# Install git (and hit y when prompted)
+# install git (and hit y when prompted)
 $ sudo apt-get install git
 ```
 
-then on your command line, whether mac or linux, run the following to download bitz's files: 
+then on your command line, whether mac or linux, run the following:
 ```
-# Clone this repository
+# install discord.js, as well as other dependencies necessary to support playing music
+$ npm install discord.js ffmpeg-binaries opusscript ytdl-core --save
+
+# clone this repository
 $ git clone https://github.com/radradix/bitz
 
-# Go into the repository
+# go into the newly created repository
 $ cd bitz
 ```
 
@@ -78,7 +78,7 @@ $ touch config.json
 
 the config file will hold, at minimum, your token and your chosen command prefix (in the command `!help`, for instance, the prefix is `!`). 
 
-to generate your own api token, go to your [discord developer portal](https://discord.com/developers/applications) and create an application and a bot. click the subheading "bot" in the menubar on the left, and a token will have been generated under the bot's username. (this token must be kept secret.) here's the format that i used: 
+to generate your own api token, go to your [discord developer portal](https://discord.com/developers/applications) and create an application. click the subheading "bot" in the menubar on the left and add a bot, and a token will have been generated under the bot's username. (this token must be kept secret.) here's the format that i used: 
 ```
 {
   "token": "my-token-here-between-quotes",
@@ -86,15 +86,19 @@ to generate your own api token, go to your [discord developer portal](https://di
   "ownerID": "519672846075822101"
 }
 ```
-the ownerID line allows me access to any quirks i want to keep to myself :) you can add whatever constants you want. 
+the ownerID line allows me access to any quirks i want to keep to myself :) you can add whatever constants you want, or keep it to just the two lines. just make sure the last line doesn't end with a trailing comma. 
 
-once your config file has been created, you're good to go! 
-```
-# start bitz :)
-$ node index.js
-```
+once your bot's been made, you'll need to add it to a discord guild (colloquially, "server") in which you have admin privileges. to do that, go to `https://discord.com/oauth2/authorize?client_id=`YOUR_BOT'S_TOKEN_HERE`&scope=bot&permissions=3209216`. obviously, put your own bot's id there. 
 
-(if you have nodemon installed, then you can instead navigate into the directory and run `nodemon`.)
+once your config file has been created, you're good to go! on mac, run `node index.js` (or `nodemon` if you have that installed). then you're finished!
+
+on ubuntu, you might need to upgrade node if the output of `nodejs -v` is something ridiculously primitive like v4.2.6 (ahem, @ my crouton-ed chromebook). to upgrade node, run this: 
+```
+# you can use a module called n to upgrade your node package
+$ sudo npm install -g n
+$ sudo n stable
+```
+then you can run bitz using `nodejs index.js`. (if you have nodemon installed, then you can instead navigate into the directory and simply run `nodemon`.) i'm really not sure if this will work. so far it's not working on my chromebook, but then, that's a chromebook. 
 
 ## functionalities
 [...]
@@ -106,8 +110,14 @@ $ node index.js
 bitz is still in development, testing regularly in discord. eventually the sandbox guild will go public, the link will be here, and support will be available. 
 
 currently, these are my next steps: 
-* address the bug that the message `uwowo` returns `uwowo` rather than `owo` 
-* plan out and implement a randomized `owo`/`uwu` system (i.e., at random times, start `owo`/`uwu` chains independently)
+* address the bug that any message containing some string at the beginning of an `owo` or `uwu` term (for instance, `i love ubuntu-owo`) returns the same term without the preceding extrinsic words cut off (`ubuntu-owo` is returned, rather than simply `owo`)
+* properly address errors so that error messages come back nice and neat instead of vomiting themselves into the console
+* rewrite the whole thing using switch() case
+  * alternately, find a faster way of doing things, and implement that. just, i want to learn a new way to write things than the if/else loops we learned for ap :)
+* actually, optimize (and make easily readable) the whole project. right now it has functionality and that's it. 
+    * rename variables like `notQuotations` and `theMessageContainsARickWord`
+    * make an array of `uwu`-like strings and call that in the `uwu`/`owo` checks
+* plan out and implement a randomized `owo`/`uwu` system (i.e., at random times, perhaps once every couple of days or every 500 to 1000 messages in the guild, send an `owo` or `uwu` independently)
 
 ## sources
 to create this project, i found the following sources incredibly useful: 
