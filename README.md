@@ -21,24 +21,24 @@ in retrospect i could've chosen to learn python and use that to write bitz, but 
 
 ## technologies
 this project was created with: 
-* [node.js](https://nodejs.org/en/) v12.18.0
-* [discord.js](https://discord.js.org/#/) v12.2.0 ([documentation](https://discordjs-fork.readthedocs.io/en/latest/index.html))
+* [node.js](https://nodejs.org/en/) v12.18.0 — an open-source, cross-platform javascript runtime environment that executes javascript code outside a web browser
+* [discord.js](https://discord.js.org/#/) v12.2.0 ([documentation](https://discordjs-fork.readthedocs.io/en/latest/index.html)) — a powerful object-oriented node.js module that allows easy interaction with the discord api
 * [discord api](https://discord.com/developers/docs/intro) 
-* [nodemon](https://www.npmjs.com/package/nodemon) v2.0.4 — a tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected.
+* [nodemon](https://www.npmjs.com/package/nodemon) v2.0.4 — a tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected
 
 ## setup
 to clone and run this application, you'll need git and node.js (which comes with npm). (nodemon is most helpful during development; you won't need it just to replicate bitz.) 
 
 on mac (i did this): 
 ```
-# You'll need to have Homebrew and git first
-# Here's the installation command for Homebrew from https://brew.sh: 
+# you'll need to have homebrew and git first
+# here's the installation command for homebrew from https://brew.sh: 
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 
 # install git
 $ brew install git
 
-# install node.js using Homebrew
+# install node.js using homebrew
 $ brew install node
 ```
 
@@ -48,7 +48,7 @@ on debian/ubuntu ([source](https://www.digitalocean.com/community/tutorials/how-
 $ sudo apt update
 
 # install node (and hit y when prompted)
-# (the package is called nodejs rather than node because of a naming conflict; it's fine)
+# (the package is called nodejs rather than node because of a naming conflict; don't worry about that)
 $ sudo apt install nodejs
 
 # to confirm the install worked
@@ -70,7 +70,7 @@ $ git clone https://github.com/radradix/bitz
 $ cd bitz
 ```
 
-before starting bitz, you'll need to make your own config.json file and put your api token into it. my config.json file is here — encrypted — as a kind of placeholder (and because it makes it easier for me during development). so create your own config file: 
+before starting bitz, you'll need to make your own config.json file and put your api token into it. my config.json file is in thie repository — encrypted — as a kind of placeholder (and because it makes it easier for me during development). so create your own config file: 
 ```
 $ rm config.json
 $ touch config.json
@@ -86,9 +86,9 @@ to generate your own api token, go to your [discord developer portal](https://di
   "ownerID": "519672846075822101"
 }
 ```
-the ownerID line allows me access to any quirks i want to keep to myself :) you can add whatever constants you want, or keep it to just the two lines. just make sure the last line doesn't end with a trailing comma. 
+(the ownerID line allows me access to any quirks i want to keep to myself :) you can add whatever constants you want, or keep it to just the two lines. just make sure the last line doesn't end with a trailing comma.)
 
-once your bot's been made, you'll need to add it to a discord guild (colloquially, "server") in which you have admin privileges. to do that, go to `https://discord.com/oauth2/authorize?client_id=`YOUR_BOT'S_TOKEN_HERE`&scope=bot&permissions=3209216`. obviously, put your own bot's id there. 
+once your bot's been made, you'll need to add it to a discord guild (colloquially, "server") in which you have admin privileges. to do that, go to `https://discord.com/oauth2/authorize?client_id=YOUR_BOT_TOKEN_HERE&scope=bot&permissions=3209216`. obviously, put your own bot's id there. 
 
 once your config file has been created, you're good to go! on mac, run `node index.js` (or `nodemon` if you have that installed). then you're finished!
 
@@ -98,7 +98,7 @@ on ubuntu, you might need to upgrade node if the output of `nodejs -v` is someth
 $ sudo npm install -g n
 $ sudo n stable
 ```
-then you can run bitz using `nodejs index.js`. (if you have nodemon installed, then you can instead navigate into the directory and simply run `nodemon`.) i'm really not sure if this will work. so far it's not working on my chromebook, but then, that's a chromebook. 
+then you can run bitz using `nodejs index.js` (or nodemon, if you have that; run `nodemon`.) to be hoenst, i'm really not sure if this will work. so far it's not working on my chromebook, but then, that's a chromebook. :)
 
 ## functionalities
 [...]
@@ -117,7 +117,7 @@ currently, these are my next steps:
 * actually, optimize (and make easily readable) the whole project. right now it has functionality and that's it. 
     * rename variables like `notQuotations` and `theMessageContainsARickWord`
     * make an array of `uwu`-like strings and call that in the `uwu`/`owo` checks
-* plan out and implement a randomized `owo`/`uwu` system (i.e., at random times, perhaps once every couple of days or every 500 to 1000 messages in the guild, send an `owo` or `uwu` independently)
+* plan out and implement a randomized `uwu`/`owo` system (i.e., at random times, perhaps once every couple of days or every 500 to 1000 messages in the guild, send an `uwu` or `owo` independently)
 
 ## sources
 to create this project, i found the following sources incredibly useful: 
