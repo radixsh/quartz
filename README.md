@@ -98,7 +98,7 @@ on ubuntu, you might need to upgrade node if the output of `nodejs -v` is someth
 $ sudo npm install -g n
 $ sudo n stable
 ```
-then you can run bitz using `nodejs index.js` (or nodemon, if you have that; run `nodemon`.) to be hoenst, i'm really not sure if this will work. so far it's not working on my chromebook, but then, that's a chromebook. :)
+then you can run bitz using `nodejs index.js` (or, if you have it, use `nodemon`.) to be honest, i'm really not sure if this will work. so far it's not working on my chromebook, but then, that's a chromebook. :)
 
 ## functionalities
 [...]
@@ -110,13 +110,10 @@ then you can run bitz using `nodejs index.js` (or nodemon, if you have that; run
 bitz is still in development, testing regularly in discord. eventually the sandbox guild will go public, the link will be here, and support will be available. 
 
 currently, these are my next steps: 
-* address the bug that any message containing some string at the beginning of an `owo` or `uwu` term (for instance, `i love ubuntu-owo`) returns the same term without the preceding extrinsic words cut off (`ubuntu-owo` is returned, rather than simply `owo`)
 * properly address errors so that error messages come back nice and neat instead of vomiting themselves into the console
 * rewrite the whole thing using switch() case
   * alternately, find a faster way of doing things, and implement that. just, i want to learn a new way to write things than the if/else loops we learned for ap :)
 * actually, optimize (and make easily readable) the whole project. right now it has functionality and that's it. 
-    * rename variables like `notQuotations` and `theMessageContainsARickWord`
-    * make an array of `uwu`-like strings and call that in the `uwu`/`owo` checks
 * plan out and implement a randomized `uwu`/`owo` system (i.e., at random times, perhaps once every couple of days or every 500 to 1000 messages in the guild, send an `uwu` or `owo` independently)
 
 ## sources

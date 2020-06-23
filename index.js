@@ -79,7 +79,7 @@ bot.on('message', async message => {
         .setDescription("greetings! bitz here ^-^ here's some stuff i do. i don't know why i do these things, but here they are anyway \¯\\\_\(\ツ\)\_\/\¯\n\n(also, i'm just a baby — sorry if stuff goes wrong >.< i don't know a lot yet, but i'm learning!)\n\n")
         // .setThumbnail('https://i.imgur.com/wSTFkRM.png')
         .addFields(
-            { name: '!purge <n>', value: 'deletes `n` messages in the current channel (2 < `n` < 100), and also deletes the command message. \n`!purge 20`'},
+            { name: '!purge <n>', value: 'deletes the `n` most recent messages in the current channel (2 < `n` < 100), and also deletes the command message. \n`!purge 20`'},
             //{ name: '\u200B', value: '\u200B' },
             { name: '!echo [foo]', value: 'echoes back what you tell it to, deleting the command message. (it only works for images, i think, and it only echoes the first image attachment) \n`!echo uwu`'},
             { name: '!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...', value: 'creates a poll in an embed, deleting the command message. at least three arguments are necessary, set off by double quotation marks: a question and at least two options. \n`!poll "what\'s your favorite color?" "red" "blue" "green"`'},
@@ -93,10 +93,9 @@ bot.on('message', async message => {
         return message.channel.send(helpEmbed);
     } else if (command === 'echo'){
         var textToEcho = args.join(" ");
-        if(!args) return message.channel.send("bruh");
-        if(message.attachments.size === 0){
-            message.channel.send(textToEcho);
-        } else {
+        if(args.length === 0) return message.channel.send("**bruh**");
+        if(message.attachments.size === 0) message.channel.send(textToEcho);
+        else {
             const imageUrl = message.attachments.array()[0].url;
             console.log(imageUrl);
             const echoImg = new Discord.MessageEmbed()
@@ -106,8 +105,7 @@ bot.on('message', async message => {
             message.channel.send(textToEcho);
             await message.channel.send(echoImg);
         }
-        message.delete().catch(O_o=>{}); 
-        return;
+        return message.delete().catch(O_o=>{}); 
     } else if(command === "purge") {
         const deleteCount = parseInt(args[0], 10);
         if(!deleteCount || deleteCount < 2 || deleteCount > 100)
@@ -115,37 +113,35 @@ bot.on('message', async message => {
         // const fetched = await message.channel.fetchMessages({limit: deleteCount});
         return message.channel.bulkDelete(deleteCount+1).catch(error => message.reply("Couldn't delete messages because of: ${error}"));
     } else if(command === "poll"){
-        var pollThing = "";
-        for(let i = 0; i < args.length; i++)
-            pollThing += args[i] + " ";
-        //console.log("Poll thing: " + pollThing);
-        var pollQuestion = pollThing.substring(1,pollThing.indexOf("\"",1));
-        console.log("Poll question: " + pollQuestion);
+        var poll = args.join(" ");
+        console.log("Poll: " + poll);
+        var pollQuestion = poll.substring(1,poll.indexOf("\"",1));
+        console.log("Question: " + pollQuestion);
 
         var howManyOptions = 0;
-        for(let i = 0; i < pollThing.length; i++){
-            if(pollThing[i] === "\"")
+        for(let i = 0; i < poll.length; i++){
+            if(poll[i] === "\"")
                 howManyOptions++;
         }
-        howManyOptions /= 2;
-        howManyOptions -= 1;
-        console.log("Number of options: " + howManyOptions);
+        howManyOptions = Number(howManyOptions/2-1);
         if(howManyOptions - Math.floor(howManyOptions) != 0)
             return message.channel.send("errr,,,, think you made a mistake with the quotation marks :/");
-        if(howManyOptions+1 < 3 || howManyOptions+1 > 11) // only one answer option given, or ~9 options given
+        if(howManyOptions < 2 || howManyOptions > 10) // only one answer option given, or ~9 options given
             return message.channel.send("you're supposed to provide between 2 and 10 (inclusive) options :/");
         
         var pollOptions = []; 
-        var nextQuoteIndex = pollThing.indexOf("\"",pollThing.indexOf("\"",1));
-        nextQuoteIndex = pollThing.indexOf("\"",nextQuoteIndex+1);
+        var nextQuoteIndex = poll.indexOf("\"",poll.indexOf("\"",1));
+        nextQuoteIndex = poll.indexOf("\"",nextQuoteIndex+1);
         //console.log("nextQuoteIndex: " + nextQuoteIndex);
         for(let i = 0; i < howManyOptions; i++){
-            pollOptions[i] = pollThing.substring(nextQuoteIndex+1,pollThing.indexOf("\"",nextQuoteIndex+1));
-            nextQuoteIndex = pollThing.indexOf("\"",nextQuoteIndex+1);
-            nextQuoteIndex = pollThing.indexOf("\"",nextQuoteIndex+1);
-            console.log("pollOptions[" + i + "]: " + pollOptions[i] + "\t\tnextQuoteIndex: " + nextQuoteIndex);
+            if(nextQuoteIndex !== -1){
+                pollOptions[i] = poll.substring(nextQuoteIndex+1,poll.indexOf("\"",nextQuoteIndex+1));
+                nextQuoteIndex = poll.indexOf("\"",nextQuoteIndex+1);
+                nextQuoteIndex = poll.indexOf("\"",nextQuoteIndex+1);
+                //console.log("pollOptions[" + i + "]: " + pollOptions[i] + "\t\tnextQuoteIndex: " + nextQuoteIndex);
+            }
         }
-        console.log("Poll options: " + pollOptions);
+        console.log("Poll options (" + howManyOptions + "): " + pollOptions);
         /*REMOVING EMPTY ELEMENTS: 
         for(let i = 0; i < pollOptions.length; i++){ 
             if(pollOptions[i] === " ") // https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
@@ -223,29 +219,37 @@ bot.on('message', async message => {
     theMessage = notQuotations.join(' ');
     console.log("Message: " + theMessage);
 
-    if(theMessage.includes("uwu")) var uwuWord = "uwu";
-    else if(theMessage.includes("owo")) var uwuWord = "owo";
-    else return;
+    if(theMessage.includes("uwu") && theMessage.includes("owo")){
+        if(theMessage.indexOf("uwu") < theMessage.indexOf("owo")) 
+            var uwuWord = "uwu";
+        else 
+            var uwuWord = "owo";
+    } else{
+        if(theMessage.includes("uwu")) 
+            var uwuWord = "uwu";
+        else if(theMessage.includes("owo")) 
+            var uwuWord = "owo";
+        else return;
+    }
     console.log("uwuWord: " + uwuWord);
 
     const punctuationArray = ["?","!","."];
     if(theMessage.includes(uwuWord)){
         for(let i = 0; i < notQuotations.length; i++){
             if(notQuotations[i].includes(uwuWord)){
-                var lastLetters = notQuotations[i].substring(notQuotations[i].indexOf(uwuWord)+3); // uwus!! --> s!!
-                var lastLettersArray = lastLetters.split('');
-                console.log("Last letters: " + lastLettersArray);
-                for(let i = 0; i < lastLettersArray.length; i++){ // owo!s --> !s 
-                    //console.log(lastLettersArray);
-                    if(!punctuationArray.includes(lastLettersArray[i])){
-                        //console.log(lastLettersArray[i]);
-                        lastLettersArray.splice(i,1);
+                var lastLetters = notQuotations[i].substring(notQuotations[i].indexOf(uwuWord)+3).split(""); // uwus!! --> s!!
+                console.log("Last letters: " + lastLetters);
+                for(let i = 0; i < lastLetters.length; i++){ // owo!s --> !s 
+                    //console.log(lastLetters);
+                    if(!punctuationArray.includes(lastLetters[i])){
+                        //console.log(lastLetters[i]);
+                        lastLetters.splice(i,1);
                         i--;
                     } 
                 }
-                lastLetters = lastLettersArray.join("");
-                console.log("Last letters, but only punct: " + lastLettersArray);
-                if(lastLettersArray.includes(".")) 
+                lastLetters = lastLetters.join("");
+                console.log("Last letters, but only punct: " + lastLetters);
+                if(lastLetters.includes(".")) 
                     return message.channel.send(uwuWord + lastLetters); 
                 else if(lastLetters.includes("?") || lastLetters.includes("!")){
                     if(notQuotations[i].length > 1000) 
@@ -260,5 +264,6 @@ bot.on('message', async message => {
 
 bot.login(token);
 // done: string-owo returns string-owo not owo
-// to do: owo!s returns owo!s!s not owo!!
+// done: owo!s returns owo!s!s not owo!!
+// to do: if there are both uwu and owo in a message, return whichever is first
 // to do: start owo chains randomly on my own
