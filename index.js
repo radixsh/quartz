@@ -7,8 +7,6 @@ const ytdl = require('ytdl-core');
 
 // https://discord.com/oauth2/authorize?client_id=722289214363926592&scope=bot&permissions=3172352
 
-bot.login("*******************************************");
-
 bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.tag}!`); 
     console.log("Now in " + bot.guilds.cache.size + " guilds :D");
@@ -37,12 +35,11 @@ bot.on('message', async message => {
 
     // if it starts with "!", then separate the message into the command (first term) and the arguments
     if(message.content.substring(0,prefix.length) === "!"){
-        var args = message.content.slice(prefix.length).trim().split(" ");// / +/g);
+        var args = message.content.slice(prefix.length).trim().split(/\s+/g); // <-- NOTE TO SELF DO NOT CHANGE
         var command = args.shift().toLowerCase();
     } 
     var rickWords = ["as;ld",
-        "ajdfk",
-        "sjdfk",
+        "jdfk",
         "as;dl",
         "sdajf",
         "aksdl",
@@ -116,8 +113,7 @@ bot.on('message', async message => {
         if(!deleteCount || deleteCount < 2 || deleteCount > 100)
             return message.channel.send("you're supposed to provide a number between 2 and 100 (inclusive) for the number of messages to delete :/");
         // const fetched = await message.channel.fetchMessages({limit: deleteCount});
-        message.channel.bulkDelete(deleteCount+1)
-        .catch(error => message.reply("Couldn't delete messages because of: ${error}"));
+        return message.channel.bulkDelete(deleteCount+1).catch(error => message.reply("Couldn't delete messages because of: ${error}"));
     } else if(command === "poll"){
         var pollThing = "";
         for(let i = 0; i < args.length; i++)
@@ -198,78 +194,65 @@ bot.on('message', async message => {
                 .catch(console.error);*/
                 //var image = new Discord.MessageAttachment("satisfied.png", "satisfied.png");
                 const rickroll = new Discord.MessageEmbed()
-                .setColor('#e52d27')//#B2558D')
-                .setAuthor('YouTube')//,'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-                .setTitle('Satisfied')
-                .setURL('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-                .setDescription("Renée Elise Goldsberry - Topic")//",'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-                //.addField([Guide]('https://discordjs.guide/' 'optional hovertext'))
-                .setImage('https://i.imgur.com/rOBJRja.png')//,'https://www.youtube.com/watch?v=dQw4w9WgXcQ');// attachment://satisfied.png')//http://inthepastlane.com/wp-content/uploads/2016/04/hamilton-logo.jpg')
-                //.setThumbnail('https://www.youtube.com/watch?v=InupuylYdcY')
-                //.setURL('https://www.youtube.com/watch?v=dQw4w9WgXcQ'));
+                    .setColor('#e52d27')//#B2558D')
+                    .setAuthor('YouTube')//,'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+                    .setTitle('Satisfied')
+                    .setURL('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+                    .setDescription("Renée Elise Goldsberry - Topic")//",'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+                    //.addField([Guide]('https://discordjs.guide/' 'optional hovertext'))
+                    .setImage('https://i.imgur.com/rOBJRja.png')//,'https://www.youtube.com/watch?v=dQw4w9WgXcQ');// attachment://satisfied.png')//http://inthepastlane.com/wp-content/uploads/2016/04/hamilton-logo.jpg')
+                    //.setThumbnail('https://www.youtube.com/watch?v=InupuylYdcY')
+                    //.setURL('https://www.youtube.com/watch?v=dQw4w9WgXcQ'));
                 message.channel.send(rickroll);
             }
             return;
         } 
     }
     // if it's not rick-roll-worthy
-    if(message.content.includes("\n")){ // if the message has newline char(s) and could potentially have quoted material
-        var notQuotations = message.content.toLowerCase().toString().split("\n"); // notQuotations is a String array, not a String; therefore, split() cannot be called on it. 
+    if(message.content.includes("\n")){ // if the message has newline char(s) and could therefore potentially contain quoted material
+        var notQuotations = message.content.split("\n"); // notQuotations is a String array, not a String; therefore, split() cannot be called on it. 
         for(let i = 0; i < notQuotations.length; i++){
             if(notQuotations[i].startsWith(">")){
-                console.log("[quotation :)]");
+                console.log("[quotation]");
                 notQuotations.shift();
                 i--;
             }
         }
-    } else var notQuotations = message.content.toLowerCase().split(" ");
+    } else var notQuotations = message.content.toLowerCase().split(/\s+/g);
     console.log("Non-quoted text: " + notQuotations);
-    for(let i = 0; i < notQuotations.length; i++){
-        if(!notQuotations[i].includes("owo") && !notQuotations[i].includes("uwu")){
-            notQuotations.splice(i,1);
-            i--;
-        }
-    }
-    console.log("Non-quoted text after removing words that aren't owo/uwu: " + notQuotations);
-    theMessage = "";
-    for(let i = 0; i < notQuotations.length; i++)
-        theMessage += notQuotations[i];
+    theMessage = notQuotations.join(' ');
     console.log("Message: " + theMessage);
-    if(theMessage.includes("uwu") || theMessage.includes("owo")){
-        // const wordsThatMightNotBeUwu = theMessage.split(/\s+/); // / +/g);
+
+    if(theMessage.includes("uwu")) var uwuWord = "uwu";
+    else if(theMessage.includes("owo")) var uwuWord = "owo";
+    else return;
+    console.log("uwuWord: " + uwuWord);
+
+    const punctuationArray = ["?","!","."];
+    if(theMessage.includes(uwuWord)){
         for(let i = 0; i < notQuotations.length; i++){
-            if(notQuotations[i].includes("uwu") || notQuotations[i].includes("owo")){
-                // lastLetters = wordsThatMightNotBeUwu[i].slice(-1); // uwu!! --> !!
-                if(notQuotations[i].includes("uwu")){
-                    var lastLetters = notQuotations[i].substring(notQuotations[i].indexOf("uwu")+3);
-                } else { //it's an "owo" phrase
-                    var lastLetters = notQuotations[i].substring(notQuotations[i].indexOf("owo")+3);
-                }
-                //console.log("Last letters: " + lastLetters);
-                const punctuationArray = ["?","!","."];
-                for(let i = 0; i < lastLetters.length-1; i++){
-                    if(!punctuationArray.includes(lastLetters.substring(i,i+1))){
-                        lastLetters = lastLetters.substring(0,lastLetters.length-1);
+            if(notQuotations[i].includes(uwuWord)){
+                var lastLetters = notQuotations[i].substring(notQuotations[i].indexOf(uwuWord)+3); // uwus!! --> s!!
+                var lastLettersArray = lastLetters.split('');
+                console.log("Last letters: " + lastLettersArray);
+                for(let i = 0; i < lastLettersArray.length; i++){ // owo!s --> !s 
+                    //console.log(lastLettersArray);
+                    if(!punctuationArray.includes(lastLettersArray[i])){
+                        //console.log(lastLettersArray[i]);
+                        lastLettersArray.splice(i,1);
                         i--;
-                    }
+                    } 
                 }
-                // console.log("Last letters after punct: " + lastLetters);
-                if(notQuotations[i].length > 1000){
-                    return message.channel.send("...meanie butt ;-;");
-                }else{
-                    if(lastLetters.includes(".")){
-                        return message.channel.send(notQuotations[i]);
-                    } else if(lastLetters.includes("?") || lastLetters.includes("!")){
-                        return message.channel.send(notQuotations[i] + lastLetters);
-                    } else{ // else, the uwu/owo does not end in !, ?, or .
-                        if(notQuotations[i].includes("owo")){
-                            // debug: console.log(wordsThatMightNotBeUwu[i].indexOf("owo"),wordsThatMightNotBeUwu[i].indexOf("owo")+3);    
-                            return message.channel.send(notQuotations[i].substring(notQuotations[i].indexOf("owo"),notQuotations[i].indexOf("owo")+3));
-                        } else if(notQuotations[i].includes("uwu")){
-                            return message.channel.send(notQuotations[i].substring(notQuotations[i].indexOf("uwu"),notQuotations[i].indexOf("uwu")+3));
-                        }
-                    }
-                }
+                lastLetters = lastLettersArray.join("");
+                console.log("Last letters, but only punct: " + lastLettersArray);
+                if(lastLettersArray.includes(".")) 
+                    return message.channel.send(uwuWord + lastLetters); 
+                else if(lastLetters.includes("?") || lastLetters.includes("!")){
+                    if(notQuotations[i].length > 1000) 
+                        return message.channel.send("...okay you win ;-;");
+                    else 
+                        return message.channel.send(uwuWord + lastLetters + lastLetters); 
+                } else return message.channel.send(uwuWord);
             }
         }
     }
