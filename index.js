@@ -44,10 +44,10 @@ bot.on('message', async message => {
         "sdajf",
         "aksdl",
         "asdkl",
-        "sdjfkl",
-        "asjdkfjs",
-        "sdfjkj",
-        "dfklsjf",
+        "sdj",
+        "fjs",
+        "sdf",
+        "dfk",
         "skdjf",
         "skskj"
     ]
@@ -111,7 +111,7 @@ bot.on('message', async message => {
         if(!deleteCount || deleteCount < 2 || deleteCount > 100)
             return message.channel.send("you're supposed to provide a number between 2 and 100 (inclusive) for the number of messages to delete :/");
         // const fetched = await message.channel.fetchMessages({limit: deleteCount});
-        return message.channel.bulkDelete(deleteCount+1).catch(error => message.reply("Couldn't delete messages because of: ${error}"));
+        return message.channel.bulkDelete(deleteCount+1).catch(error => message.reply("couldn't delete messages because of: ${error}"));
     } else if(command === "poll"){
         var poll = args.join(" ");
         console.log("Poll: " + poll);
@@ -169,44 +169,39 @@ bot.on('message', async message => {
     } else if(message.content.substring(0,1) === "!"){ // !command not recognized
         return message.channel.send("my documentation's at `!help` ^-^");
     }
-    // else { // IF IT'S NOT IN THE FORMAT `!COMMAND ARGUMENTS`
+    // IF IT'S NOT IN THE FORMAT `!COMMAND ARGUMENTS`
+    // if rickroll
     var theMessage = message.content.toLowerCase();
     for (let i = 0; i < rickWords.length; i++) {
         if (message.content.toLowerCase().includes(rickWords[i])) {
-            // ELEPHANT
             console.log(message.content);
             if(message.member.voice.channel){
-                message.member.voice.channel.join().catch(error => console.log("There was an error :/"))
+                // join the vc and play the audio
+                message.member.voice.channel.join()
                 .then(connection => {
                     const stream = ytdl('https://www.youtube.com/watch?v=dQw4w9WgXcQ', { filter: 'audioonly' });
                     const dispatcher = connection.play(stream);
                     dispatcher.on('end', () => message.member.voice.channel.leave());
-                });
+                })
+                .catch(error => console.log(":/ there was an error: ${error}"));
             } else {
                 // send the video in the channel
                 message.channel.send("are you okay? here, this might make you feel better >.<");
-                // var file = Discord.file("~/onehentwoducks/satisfied.png", filename="image.png"); 
-                /*message.channel.send(new Discord.MessageAttachment('satisfied.png', 'satisfied.png') )
-                .catch(console.error);*/
-                //var image = new Discord.MessageAttachment("satisfied.png", "satisfied.png");
                 const rickroll = new Discord.MessageEmbed()
-                    .setColor('#e52d27')//#B2558D')
+                    .setColor('#e52d27')
                     .setAuthor('YouTube')//,'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
                     .setTitle('Satisfied')
                     .setURL('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-                    .setDescription("Renée Elise Goldsberry - Topic")//",'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-                    //.addField([Guide]('https://discordjs.guide/' 'optional hovertext'))
-                    .setImage('https://i.imgur.com/rOBJRja.png')//,'https://www.youtube.com/watch?v=dQw4w9WgXcQ');// attachment://satisfied.png')//http://inthepastlane.com/wp-content/uploads/2016/04/hamilton-logo.jpg')
-                    //.setThumbnail('https://www.youtube.com/watch?v=InupuylYdcY')
-                    //.setURL('https://www.youtube.com/watch?v=dQw4w9WgXcQ'));
+                    .setDescription("Renée Elise Goldsberry - Topic")
+                    .setImage('https://i.imgur.com/rOBJRja.png')
                 message.channel.send(rickroll);
             }
             return;
         } 
     }
-    // if it's not rick-roll-worthy
+    // if it's not rickroll-worthy
     if(message.content.includes("\n")){ // if the message has newline char(s) and could therefore potentially contain quoted material
-        var notQuotations = message.content.split("\n"); // notQuotations is a String array, not a String; therefore, split() cannot be called on it. 
+        var notQuotations = message.content.split("\n"); 
         for(let i = 0; i < notQuotations.length; i++){
             if(notQuotations[i].startsWith(">")){
                 console.log("[quotation]");
@@ -214,10 +209,10 @@ bot.on('message', async message => {
                 i--;
             }
         }
-    } else var notQuotations = message.content.toLowerCase().split(/\s+/g);
-    console.log("Non-quoted text: " + notQuotations);
+    } else var notQuotations = message.content.toLowerCase().split(/\s+/g); 
+    console.log("Non-quoted text (Array): " + notQuotations);
     theMessage = notQuotations.join(' ');
-    console.log("Message: " + theMessage);
+    console.log("Message (String): " + theMessage);
 
     if(theMessage.includes("uwu") && theMessage.includes("owo")){
         if(theMessage.indexOf("uwu") < theMessage.indexOf("owo")) 
@@ -234,30 +229,29 @@ bot.on('message', async message => {
     console.log("uwuWord: " + uwuWord);
 
     const punctuationArray = ["?","!","."];
-    if(theMessage.includes(uwuWord)){
-        for(let i = 0; i < notQuotations.length; i++){
-            if(notQuotations[i].includes(uwuWord)){
-                var lastLetters = notQuotations[i].substring(notQuotations[i].indexOf(uwuWord)+3).split(""); // uwus!! --> s!!
-                console.log("Last letters: " + lastLetters);
-                for(let i = 0; i < lastLetters.length; i++){ // owo!s --> !s 
-                    //console.log(lastLetters);
-                    if(!punctuationArray.includes(lastLetters[i])){
-                        //console.log(lastLetters[i]);
-                        lastLetters.splice(i,1);
-                        i--;
-                    } 
-                }
-                lastLetters = lastLetters.join("");
-                console.log("Last letters, but only punct: " + lastLetters);
-                if(lastLetters.includes(".")) 
-                    return message.channel.send(uwuWord + lastLetters); 
-                else if(lastLetters.includes("?") || lastLetters.includes("!")){
-                    if(notQuotations[i].length > 1000) 
-                        return message.channel.send("...okay you win ;-;");
-                    else 
-                        return message.channel.send(uwuWord + lastLetters + lastLetters); 
-                } else return message.channel.send(uwuWord);
+    //if(!theMessage.includes(uwuWord)) return; // REDUNDANT
+    for(let i = 0; i < notQuotations.length; i++){
+        if(notQuotations[i].includes(uwuWord)){
+            var lastLetters = notQuotations[i].substring(notQuotations[i].indexOf(uwuWord)+3).split(""); // uwus!! --> s!!; lastLetters is an Array
+            console.log("Last letters: " + lastLetters);
+            for(let i = 0; i < lastLetters.length; i++){ // owo!s --> !s 
+                //console.log(lastLetters);
+                if(!punctuationArray.includes(lastLetters[i])){
+                    //console.log(lastLetters[i]);
+                    lastLetters.splice(i,1);
+                    i--;
+                } 
             }
+            //lastLetters = lastLetters.join(""); // convert from Array to String
+            console.log("Last letters, but only punct: " + lastLetters);
+            if(lastLetters.includes(".")) 
+                return message.channel.send(uwuWord + lastLetters.join("")); 
+            else if(lastLetters.includes("?") || lastLetters.includes("!")){
+                if(notQuotations[i].length > 1000) 
+                    return message.channel.send("...okay you win ;-;");
+                else 
+                    return message.channel.send(uwuWord + lastLetters.join("") + lastLetters.join("")); 
+            } else return message.channel.send(uwuWord);
         }
     }
 });
@@ -265,5 +259,5 @@ bot.on('message', async message => {
 bot.login(token);
 // done: string-owo returns string-owo not owo
 // done: owo!s returns owo!s!s not owo!!
-// to do: if there are both uwu and owo in a message, return whichever is first
+// done: if there are both uwu and owo in a message, return whichever is first
 // to do: start owo chains randomly on my own
