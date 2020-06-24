@@ -1,15 +1,14 @@
 # bitz — discord bot
 bitz is a [node.js](https://nodejs.org/en/) discord bot that can delete messages, echo messages, create polls, and perform pings. bitz also responds rather interestingly to certain "owo", "uwu", and keysmash messages. :)
 
-## table of contents
+## table of contents  
 1. [general info](#general-info)
-2. [technologies](#technologies)
-3. [setup](#setup)
-4. [functionalities](#functionalities)
-5. [examples](#examples)
-6. [project status](#project-status)
-7. [sources](#sources)
-8. [license](#license)
+2. [features](#features)
+3. [technologies](#technologies)
+4. [setup](#setup)
+5. [project status](#project-status)
+6. [sources](#sources)
+7. [license](#license)
 
 ## general info
 i created bitz for three reasons: 
@@ -18,6 +17,25 @@ i created bitz for three reasons:
 * to have fun creating a bot for friends in the summer. 
 
 in retrospect i could've chosen to learn python and use that to write bitz, but to be honest it was hard enough figuring out the discord api already, as well as fun enough learning where exactly my java knowledge ends and the discord.js documentation (and stack overflow wisdom!) begins.
+
+## features
+* convenient message mass-deletion (honestly, that feature is missing from discord uwu)
+* intuitive poll creation (another feature missing from discord) (h/t to telegram!)
+* anyone can `!echo` anything, which is a good feature for pseudo-anonymity and general shenanigans owo
+* good logging in the console
+* consistent green aesthetic
+* bonus: will train you to use uwuspeak more often
+
+currently available commands (`!command <argument> [optional argument]`):
+
+* `!h[elp]` : shows this help page
+* `!purge <n>` : deletes the `n` most recent messages in the current channel (2 < `n` < 100), and also deletes the command message
+* `!echo <echo>` : echoes back what you tell it to, deleting the command message. (it works for one image at a time too)
+* `!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...` : creates a poll in an embed, deleting the command message. at least three arguments are necessary, set off by double quotation marks: a question and at least two options.
+* `!ping` : performs a ping
+
+here's some sample console output :)
+![alt text](https://i.imgur.com/aVTbNcQ.png)
 
 ## technologies
 this project was created with: 
@@ -99,12 +117,6 @@ $ sudo npm install -g n
 $ sudo n stable
 ```
 then you can run bitz using `nodejs index.js` (or, if you have it, use `nodemon`.) to be honest, i'm really not sure if this will work. so far it's not working on my chromebook, but then, that's a chromebook. :)
-
-## functionalities
-[...]
-
-## examples
-[...]
 
 ## project status
 bitz is still in development, testing regularly in discord. eventually the sandbox guild will go public, the link will be here, and support will be available. 
