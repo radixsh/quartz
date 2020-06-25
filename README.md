@@ -32,7 +32,9 @@ currently available commands (`!command <argument> [optional argument]`):
 * `!purge <n>` : deletes the `n` most recent messages in the current channel (2 < `n` < 100), and also deletes the command message
 * `!echo <echo>` : echoes back what you tell it to, deleting the command message. (it works for one image at a time too)
 * `!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...` : creates a poll in an embed, deleting the command message. at least three arguments are necessary, set off by double quotation marks: a question and at least two options.
-  + here's what a poll might look like: ![poll](https://i.imgur.com/GHtRUHem.png)
+  + here's what a poll might look like: 
+  
+  ![poll](https://i.imgur.com/GHtRUHem.png)
 * `!ping` : performs a ping
 
 
