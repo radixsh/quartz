@@ -79,12 +79,12 @@ bot.on('message', async message => {
         .setDescription("greetings! bitz here ^-^ here's some stuff i do. i don't know why i do these things, but here they are anyway \¯\\\_\(\ツ\)\_\/\¯\n\n(also, i'm just a baby — sorry if stuff goes wrong >.< i don't know a lot yet, but i'm learning!)\n\n")
         // .setThumbnail('https://i.imgur.com/wSTFkRM.png')
         .addFields(
+            { name: '!h[elp]', value: "shows this help page; no arguments. \n`!h`"},
             { name: '!purge <n>', value: 'deletes the `n` most recent messages in the current channel (2 < `n` < 100), and also deletes the command message. \n`!purge 20`'},
             //{ name: '\u200B', value: '\u200B' },
-            { name: '!echo [foo]', value: 'echoes back what you tell it to, deleting the command message. (it only works for images, i think, and it only echoes the first image attachment) \n`!echo uwu`'},
-            { name: '!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...', value: 'creates a poll in an embed, deleting the command message. at least three arguments are necessary, set off by double quotation marks: a question and at least two options. \n`!poll "what\'s your favorite color?" "red" "blue" "green"`'},
+            { name: '!echo [foo]', value: 'echoes back what you tell it to, deleting the command message. (it works for one image at a time too). \n`!echo uwu`'},
+            { name: '!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...', value: 'creates a poll in an embed, deleting the command message. at least three and no more than ten arguments are permitted, set off by double quotation marks: a question and at least two options. \n`!poll "what\'s your favorite color?" "red" "blue" "green"`'},
             { name: '!ping', value: 'performs a ping; no arguments. \n`!ping`'},
-            { name: '!h[elp]', value: "you're right here, so you must know there are no arguments necessary here either (: \n`!h`"}
         )
         // .addField('Inline field title', 'Some value here', true)
         // .setImage('https://i.imgur.com/wSTFkRM.png')
