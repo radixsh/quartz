@@ -27,25 +27,27 @@ bot.on("guildCreate", guild => {
 });
 
 bot.on('message', async message => {
-    // if the message is all "!"s, then exit early
-    var len = 0; 
-    for(let i = 0; i < message.content.length; i++) 
-        if(message.content[i] === "!") len++;
-    if(len === message.content.length || message.author.bot) return;
-
-    // if it starts with "!", then separate the message into the command (first term) and the arguments
-    if(message.content.substring(0,prefix.length) === "!"){
+    if(message.author.bot) return;
+    // if it starts with the prefix, then separate the message into the command (first term) and the arguments
+    if(message.content.substring(0,prefix.length) === prefix){
         var args = message.content.slice(prefix.length).trim().split(/\s+/g); // <-- NOTE TO SELF DO NOT CHANGE
         var command = args.shift().toLowerCase();
-    } 
+    }
+    
+    // if the first term is !!!!!!!!! (i.e., not an actual command), then skip past the command-checking loops
+    var len = 0;
+    for(let i = 0; i < command.length; i++) 
+        if(command[i] === prefix) len++;
+    if(len === command.length) isACommand = false;
+
     var rickWords = ["as;ld",
         "jdfk",
         "as;dl",
         "sdajf",
         "aksdl",
         "asdkl",
-        "sdj",
-        "fjs",
+        "sdjf",
+        "fjsd",
         "sdf",
         "dfk",
         "skdjf",
@@ -58,11 +60,11 @@ bot.on('message', async message => {
             break; 
         }
     }
-    // if the message doesn't start with `!` or contain a rickWord or contain uwu or contain owo, then end early.
-    if (message.content.substring(0,1) !== "!" && !theMessageContainsARickWord && !message.content.toLowerCase().includes("uwu") && !message.content.toLowerCase().includes("owo")) return; 
+    // if the message doesn't start with `!` or contain a rickWord, then exit early.
+    if (message.content.substring(0,prefix.length) !== prefix && !theMessageContainsARickWord) return; 
     if(!message.channel.name) console.log("\n" + message.author.username + " (dm)");
     else console.log("\n" + message.author.username + " (#" + message.channel.name + " in " + message.guild.name + ")");
-    if(command) console.log("Command: " + command + "\tArgs (" + args.length + "): " + args);
+    if(command) console.log("Command: " + command + "\t\tArgs (" + args.length + "): " + args);
     
     // close the bot to everyone except me
     // if(message.author != ownerID) return message.channel.send("sorry, i'm down for testing ;-;");
@@ -70,6 +72,7 @@ bot.on('message', async message => {
     if (command === 'ping'){
         const m = await message.channel.send("ping?");
         return m.edit(`pong! latency is ${m.createdTimestamp - message.createdTimestamp} ms :)`);
+
     } else if(command === "help" || command === "h"){
         const helpEmbed = new Discord.MessageEmbed()
         .setColor('#8db255')
@@ -91,6 +94,7 @@ bot.on('message', async message => {
         // .setTimestamp()
         .setFooter('developed by radix#4520');//, 'https://i.imgur.com/wSTFkRM.png')
         return message.channel.send(helpEmbed);
+
     } else if (command === 'echo'){
         var textToEcho = args.join(" ");
         if(args.length === 0) return message.channel.send("**bruh**");
@@ -106,13 +110,17 @@ bot.on('message', async message => {
             await message.channel.send(echoImg);
         }
         return message.delete().catch(O_o=>{}); 
+
     } else if(command === "purge") {
         const deleteCount = parseInt(args[0], 10);
         if(!deleteCount || deleteCount < 2 || deleteCount > 100)
             return message.channel.send("you're supposed to provide a number between 2 and 100 (inclusive) for the number of messages to delete :/");
         // const fetched = await message.channel.fetchMessages({limit: deleteCount});
         return message.channel.bulkDelete(deleteCount+1).catch(error => message.reply("couldn't delete messages because of: ${error}"));
+
     } else if(command === "poll"){
+        if(args[0].substring(0,1) !== "\"")
+            return message.channel.send("...you might wanna check the `!help` page again for the poll syntax :/");
         var poll = args.join(" ");
         console.log("Poll: " + poll);
         var pollQuestion = poll.substring(1,poll.indexOf("\"",1));
@@ -125,9 +133,9 @@ bot.on('message', async message => {
         }
         howManyOptions = Number(howManyOptions/2-1);
         if(howManyOptions - Math.floor(howManyOptions) != 0)
-            return message.channel.send("errr,,,, think you made a mistake with the quotation marks :/");
-        if(howManyOptions < 2 || howManyOptions > 10) // only one answer option given, or ~9 options given
-            return message.channel.send("you're supposed to provide between 2 and 10 (inclusive) options :/");
+            return message.channel.send("errr,,,, think you made a mistake :/");
+        if(howManyOptions < 2 || howManyOptions > 10) // [ only one answer option ] or [ over 10 options ] given
+            return message.channel.send("you're supposed to provide between 2 and 10 (inclusive) poll options :/");
         
         var pollOptions = []; 
         var nextQuoteIndex = poll.indexOf("\"",poll.indexOf("\"",1));
@@ -142,33 +150,23 @@ bot.on('message', async message => {
             }
         }
         console.log("Poll options (" + howManyOptions + "): " + pollOptions);
-        /*REMOVING EMPTY ELEMENTS: 
-        for(let i = 0; i < pollOptions.length; i++){ 
-            if(pollOptions[i] === " ") // https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
-                pollOptions.splice(i, 1);
-        }
-        console.log("Poll options after removing empty elements: " + pollOptions);*/
         message.delete().catch(O_o=>{}); 
-        var opciones = "";
-        for(let i = 0; i < pollOptions.length; i++){
-            opciones += "\n( " + emojiCharacters[i+1] + " )  " + pollOptions[i]; 
-            // embed.addField("( " + emojiCharacters[i+1] + " )", pollOptions[i],false);
-        }
+        var options = "";
+        for(let i = 0; i < pollOptions.length; i++)
+            options += "\n( " + emojiCharacters[i+1] + " ) " + pollOptions[i]; 
         let embed = new Discord.MessageEmbed()
             .setColor("#8db255")
-            .setDescription('\n▬▬▬▬▬▬▬▬▬** «    poll    » **▬▬▬▬▬▬▬▬▬▬\n\n**poll question »** ' + pollQuestion + '\n\n**poll options »**' + opciones)
-            embed.setTimestamp();
-            
-
+            .setDescription('▬▬▬▬▬▬▬▬▬** « poll » **▬▬▬▬▬▬▬▬▬▬\n\n**poll question »** ' + pollQuestion + '\n\n**poll options »**' + options)
+            .setTimestamp();
         message.channel.send(embed).then(sentEmbed => {
-            for(let i = 0; i < pollOptions.length; i++){
+            for(let i = 0; i < pollOptions.length; i++)
                 sentEmbed.react(emojiCharacters[i+1]);
-            }
-        })
+        });
         return;
-    } else if(message.content.substring(0,1) === "!"){ // !command not recognized
+
+    } else if(message.content.substring(0,prefix.length) === prefix && isACommand) // if the "command" is simply a string of prefixes (!!!!)
         return message.channel.send("my documentation's at `!help` ^-^");
-    }
+
     // IF IT'S NOT IN THE FORMAT `!COMMAND ARGUMENTS`
     // if rickroll
     var theMessage = message.content.toLowerCase();
