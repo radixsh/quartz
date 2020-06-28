@@ -29,16 +29,17 @@ bot.on("guildCreate", guild => {
 bot.on('message', async message => {
     if(message.author.bot) return;
     // if it starts with the prefix, then separate the message into the command (first term) and the arguments
+    const punctuationArray = ["?","!","."];
     if(message.content.substring(0,prefix.length) === prefix){
         var args = message.content.slice(prefix.length).trim().split(/\s+/g); // <-- NOTE TO SELF DO NOT CHANGE
         var command = args.shift().toLowerCase();
-    }
-    
-    // if the first term is !!!!!!!!! (i.e., not an actual command), then skip past the command-checking loops
-    var len = 0;
-    for(let i = 0; i < command.length; i++) 
-        if(command[i] === prefix) len++;
-    if(len === command.length) isACommand = false;
+        var len = 0;
+        for(let i = 0; i < command.length; i++) 
+            if(punctuationArray.includes(command[i])) len++;
+        if(len === command.length) var isPunctuation = true;
+    } else var isPunctuation = false;
+
+   
 
     var rickWords = ["as;ld",
         "jdfk",
@@ -60,8 +61,8 @@ bot.on('message', async message => {
             break; 
         }
     }
-    // if the message doesn't start with `!` or contain a rickWord, then exit early.
-    if (message.content.substring(0,prefix.length) !== prefix && !theMessageContainsARickWord) return; 
+    // if the message doesn't start with `!` or contain a rickWord or an uwuWord, then exit early. NOTE TO SELF DO NOT CHANGE
+    if (message.content.substring(0,prefix.length) !== prefix && !theMessageContainsARickWord && !message.content.toLowerCase().includes("uwu") && !message.content.toLowerCase().includes("owo")) return; 
     if(!message.channel.name) console.log("\n" + message.author.username + " (dm)");
     else console.log("\n" + message.author.username + " (#" + message.channel.name + " in " + message.guild.name + ")");
     if(command) console.log("Command: " + command + "\t\tArgs (" + args.length + "): " + args);
@@ -164,7 +165,7 @@ bot.on('message', async message => {
         });
         return;
 
-    } else if(message.content.substring(0,prefix.length) === prefix && isACommand) // if the "command" is simply a string of prefixes (!!!!)
+    } else if(!isPunctuation && message.content.substring(0,prefix.length) === prefix)// if the command is unrecognized and it's not just !!!!!
         return message.channel.send("my documentation's at `!help` ^-^");
 
     // IF IT'S NOT IN THE FORMAT `!COMMAND ARGUMENTS`
@@ -226,7 +227,6 @@ bot.on('message', async message => {
     }
     console.log("uwuWord: " + uwuWord);
 
-    const punctuationArray = ["?","!","."];
     //if(!theMessage.includes(uwuWord)) return; // REDUNDANT
     for(let i = 0; i < notQuotations.length; i++){
         if(notQuotations[i].includes(uwuWord)){
@@ -259,3 +259,5 @@ bot.login(token);
 // done: owo!s returns owo!s!s not owo!!
 // done: if there are both uwu and owo in a message, return whichever is first
 // to do: start owo chains randomly on my own
+// to do: respond to an uwuWord with ||owo|| if the message is a spoiler
+// to do: fix !? issue
