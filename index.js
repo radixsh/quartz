@@ -41,34 +41,28 @@ bot.on('message', async message => {
 
    
 
-    var rickWords = ["as;ld",
-        "jdfk",
-        "as;dl",
-        "sdajf",
-        "aksdl",
-        "asdkl",
-        "sdjf",
-        "fjsd",
-        "sdf",
-        "dfk",
-        "skdjf",
-        "skskj"
+    var rickWords = ["as;ldsadklfjslfjklsdj",
+        "ksdfjsakdlf;aksdl",
+        "asdkdksfjdsfkljl",
     ]
     var theMessageContainsARickWord = false;
     for (let i = 0; i < rickWords.length; i++){
         if(message.content.toLowerCase().includes(rickWords[i])){
             theMessageContainsARickWord = true;
+            console.log("Rickroll word: " + rickWords[i]);
             break; 
         }
     }
     // if the message doesn't start with `!` or contain a rickWord or an uwuWord, then exit early. NOTE TO SELF DO NOT CHANGE
     if (message.content.substring(0,prefix.length) !== prefix && !theMessageContainsARickWord && !message.content.toLowerCase().includes("uwu") && !message.content.toLowerCase().includes("owo")) return; 
-    if(!message.channel.name) console.log("\n" + message.author.username + " (dm)");
-    else console.log("\n" + message.author.username + " (#" + message.channel.name + " in " + message.guild.name + ")");
+    if(!message.channel.name) {
+        isDm = true;
+        console.log("\n" + message.createdAt + "\n" + message.author.username + " (dm)");
+    } else console.log("\n" + message.createdAt + "\n" + message.author.username + " (#" + message.channel.name + " in " + message.guild.name + ")");
     if(command) console.log("Command: " + command + "\t\tArgs (" + args.length + "): " + args);
     
     // close the bot to everyone except me
-    // if(message.author != ownerID) return message.channel.send("sorry, i'm down for testing ;-;");
+    //if(message.author != ownerID) return message.channel.send("sorry, i'm down for testing ;-;");
 
     if (command === 'ping'){
         const m = await message.channel.send("ping?");
@@ -78,25 +72,26 @@ bot.on('message', async message => {
         const helpEmbed = new Discord.MessageEmbed()
         .setColor('#8db255')
         .setTitle('help')
-        // .setURL('https://discord.js.org/')
-        // .setAuthor('radix', 'https://i.imgur.com/wSTFkRM.png')//, 'https://discord.js.org')
+        //.setURL('https://discord.js.org/')
+        //.setAuthor('radix',https://i.imgur.com/wSTFkRM.png')//, 'https://discord.js.org')
         .setDescription("greetings! bitz here ^-^ here's some stuff i do. i don't know why i do these things, but here they are anyway \¯\\\_\(\ツ\)\_\/\¯\n\n(also, i'm just a baby — sorry if stuff goes wrong >.< i don't know a lot yet, but i'm learning!)\n\n")
-        // .setThumbnail('https://i.imgur.com/wSTFkRM.png')
+        .setThumbnail('https://i.imgur.com/r3KSiQ2.png')// https://i.imgur.com/da6KF1H.png')
         .addFields(
             { name: '!h[elp]', value: "shows this help page; no arguments. \n`!h`"},
-            { name: '!purge <n>', value: 'deletes the `n` most recent messages in the current channel (2 < `n` < 100), and also deletes the command message. \n`!purge 20`'},
+            { name: '!purge <n>', value: "deletes the `n` most recent messages in the current channel (2 < `n` < 100), and also deletes the command message. (deletion isn't allowed in dms) \n`!purge 20`"},
             //{ name: '\u200B', value: '\u200B' },
-            { name: '!echo [foo]', value: 'echoes back what you tell it to, deleting the command message. (it works for one image at a time too). \n`!echo uwu`'},
+            { name: '!echo [foo]', value: "echoes back what you tell it to, deleting the command message (deletion isn't allowed in dms). (it works for one image at a time too). \n`!echo uwu`"},
             { name: '!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...', value: 'creates a poll in an embed, deleting the command message. at least three and no more than ten arguments are permitted, set off by double quotation marks: a question and at least two options. \n`!poll "what\'s your favorite color?" "red" "blue" "green"`'},
             { name: '!ping', value: 'performs a ping; no arguments. \n`!ping`'},
         )
+        //.setImage('https://i.imgur.com/VuKlykl.png')
         // .addField('Inline field title', 'Some value here', true)
-        // .setImage('https://i.imgur.com/wSTFkRM.png')
         // .setTimestamp()
         .setFooter('developed by radix#4520');//, 'https://i.imgur.com/wSTFkRM.png')
         return message.channel.send(helpEmbed);
 
     } else if (command === 'echo'){
+        if(isDm) message.channel.send("(i'm not allowed to delete things in dms :/)");
         var textToEcho = args.join(" ");
         if(args.length === 0) return message.channel.send("**bruh**");
         if(message.attachments.size === 0) message.channel.send(textToEcho);
@@ -113,11 +108,16 @@ bot.on('message', async message => {
         return message.delete().catch(O_o=>{}); 
 
     } else if(command === "purge") {
+        if(isDm) return message.channel.send("(i'm not allowed to delete things in dms :/)");
         const deleteCount = parseInt(args[0], 10);
         if(!deleteCount || deleteCount < 2 || deleteCount > 100)
             return message.channel.send("you're supposed to provide a number between 2 and 100 (inclusive) for the number of messages to delete :/");
         // const fetched = await message.channel.fetchMessages({limit: deleteCount});
-        return message.channel.bulkDelete(deleteCount+1).catch(error => message.reply("couldn't delete messages because of: ${error}"));
+        try {message.channel.bulkDelete(deleteCount+1);
+        } catch(error) {
+            message.reply("something went wrong :/");//error => message.reply("couldn't delete messages because of: ${error}"));
+        }
+        return;
 
     } else if(command === "poll"){
         if(args[0].substring(0,1) !== "\"")
@@ -252,6 +252,8 @@ bot.on('message', async message => {
             } else return message.channel.send(uwuWord);
         }
     }
+
+    if(message.content === "hbjyl") message.channel.send("hbjyl");
 });
 
 bot.login(token);
