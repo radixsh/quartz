@@ -18,7 +18,7 @@ bot.on('disconnect', () => {
 
 process.on('unhandledRejection', error => {
     console.error('UNHANDLED PROMISE REJECTION:\n', error);
-    //message.channel.send("...meanie butt >:((");
+    message.channel.send("sdkfj something went wrong");
 });
 
 bot.on("guildCreate", guild => {
@@ -55,6 +55,7 @@ bot.on('message', async message => {
     }
     // if the message doesn't start with `!` or contain a rickWord or an uwuWord, then exit early. NOTE TO SELF DO NOT CHANGE
     if (message.content.substring(0,prefix.length) !== prefix && !theMessageContainsARickWord && !message.content.toLowerCase().includes("uwu") && !message.content.toLowerCase().includes("owo")) return; 
+    const isDm = false;
     if(!message.channel.name) {
         isDm = true;
         console.log("\n" + message.createdAt + "\n" + message.author.username + " (dm)");
@@ -63,7 +64,6 @@ bot.on('message', async message => {
     
     // close the bot to everyone except me
     //if(message.author != ownerID) return message.channel.send("sorry, i'm down for testing ;-;");
-
     if (command === 'ping'){
         const m = await message.channel.send("ping?");
         return m.edit(`pong! latency is ${m.createdTimestamp - message.createdTimestamp} ms :)`);
@@ -242,24 +242,31 @@ bot.on('message', async message => {
             }
             //lastLetters = lastLetters.join(""); // convert from Array to String
             console.log("Last letters, but only punct: " + lastLetters);
-            if(lastLetters.includes(".")) 
-                return message.channel.send(uwuWord + lastLetters.join("")); 
-            else if(lastLetters.includes("?") || lastLetters.includes("!")){
+            if(lastLetters.includes("?") || lastLetters.includes("!")){
                 if(notQuotations[i].length > 1000) 
                     return message.channel.send("...okay you win ;-;");
-                else 
+                else{
+                    var num = 0;
+                    for(let i = 0; i < lastLetters.length; i++){ // sanitize and remove all "."
+                        if(lastLetters[i] == "."){
+                            lastLetters.splice(i,1);
+                            i--;
+                        }
+                    }
                     return message.channel.send(uwuWord + lastLetters.join("") + lastLetters.join("")); 
+                }
+            } else if(lastLetters.includes(".")) {
+                var num = 0;
+                for(let i = 0; i < lastLetters.length; i++)
+                    if(lastLetters[i] == ".") num++;
+                return message.channel.send(uwuWord + ".".repeat(num)); 
             } else return message.channel.send(uwuWord);
         }
     }
 
-    if(message.content === "hbjyl") message.channel.send("hbjyl");
+    if(message.content === "hbjyl") message.channel.send("hbjyl.");
 });
 
 bot.login(token);
-// done: string-owo returns string-owo not owo
-// done: owo!s returns owo!s!s not owo!!
-// done: if there are both uwu and owo in a message, return whichever is first
+// to do: owo..? returns owo?? (treat the input as owo?)
 // to do: start owo chains randomly on my own
-// to do: respond to an uwuWord with ||owo|| if the message is a spoiler
-// to do: fix !? issue
