@@ -35,9 +35,8 @@ bot.on('message', async message => {
         var len = 0;
         for(let i = 0; i < command.length; i++) 
             if(punctuationArray.includes(command[i])) len++;
-        if(len === command.length) var isPunctuation = true;
+        if(len > 0 || len === command.length) return;
     } else var isPunctuation = false;
-
 
     var rickWords = ["as;ldsadklfjslfjklsdj",
         "ksdfjsakdlf;aksdl",
@@ -92,7 +91,7 @@ bot.on('message', async message => {
         .setFooter('developed by radix#4520');//, 'https://i.imgur.com/wSTFkRM.png')
         return message.channel.send(helpEmbed);
         
-    } else if (command === 'echo'){
+    } else if (command === "echo"){
         if(isDm) message.channel.send("(i'm not allowed to delete things in dms :/)");
         var textToEcho = args.join(" ");
         if(args.length === 0) return message.channel.send("**bruh**");
@@ -166,8 +165,7 @@ bot.on('message', async message => {
                 sentEmbed.react(emojiCharacters[i+1]);
         });
         return;
-
-    } else if(!isPunctuation && message.content.substring(0,prefix.length) === prefix)// if the command is unrecognized and it's not just !!!!!
+    } else if(message.content.substring(0,prefix.length) === prefix)// if the command is unrecognized and it's not just !!!!!
         return message.channel.send("my documentation's at `!help` ^-^");
 
     // IF IT'S NOT IN THE FORMAT `!COMMAND ARGUMENTS`
