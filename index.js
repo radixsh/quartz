@@ -18,7 +18,6 @@ bot.on('disconnect', () => {
 
 process.on('unhandledRejection', error => {
     console.error('UNHANDLED PROMISE REJECTION:\n', error);
-    message.channel.send("sdkfj something went wrong");
 });
 
 bot.on("guildCreate", guild => {
@@ -39,7 +38,6 @@ bot.on('message', async message => {
         if(len === command.length) var isPunctuation = true;
     } else var isPunctuation = false;
 
-   
 
     var rickWords = ["as;ldsadklfjslfjklsdj",
         "ksdfjsakdlf;aksdl",
@@ -54,7 +52,14 @@ bot.on('message', async message => {
         }
     }
     // if the message doesn't start with `!` or contain a rickWord or an uwuWord, then exit early. NOTE TO SELF DO NOT CHANGE
-    if (message.content.substring(0,prefix.length) !== prefix && !theMessageContainsARickWord && !message.content.toLowerCase().includes("uwu") && !message.content.toLowerCase().includes("owo")) return; 
+    if (message.content.substring(0,prefix.length) !== prefix && 
+        !theMessageContainsARickWord && 
+        !message.content.toLowerCase().includes("uwu") && 
+        !message.content.toLowerCase().includes("owo") &&
+        !message.content.toLowerCase().includes("fpsk") &&
+        !message.content.toLowerCase().includes("hbjyl")) 
+    return; 
+
     const isDm = false;
     if(!message.channel.name) {
         isDm = true;
@@ -84,12 +89,9 @@ bot.on('message', async message => {
             { name: '!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...', value: 'creates a poll in an embed, deleting the command message. at least three and no more than ten arguments are permitted, set off by double quotation marks: a question and at least two options. \n`!poll "what\'s your favorite color?" "red" "blue" "green"`'},
             { name: '!ping', value: 'performs a ping; no arguments. \n`!ping`'},
         )
-        //.setImage('https://i.imgur.com/VuKlykl.png')
-        // .addField('Inline field title', 'Some value here', true)
-        // .setTimestamp()
         .setFooter('developed by radix#4520');//, 'https://i.imgur.com/wSTFkRM.png')
         return message.channel.send(helpEmbed);
-
+        
     } else if (command === 'echo'){
         if(isDm) message.channel.send("(i'm not allowed to delete things in dms :/)");
         var textToEcho = args.join(" ");
@@ -155,7 +157,7 @@ bot.on('message', async message => {
         var options = "";
         for(let i = 0; i < pollOptions.length; i++)
             options += "\n( " + emojiCharacters[i+1] + " ) " + pollOptions[i]; 
-        let embed = new Discord.MessageEmbed()
+        const embed = new Discord.MessageEmbed()
             .setColor("#8db255")
             .setDescription('▬▬▬▬▬▬▬▬▬** « poll » **▬▬▬▬▬▬▬▬▬▬\n\n**poll question »** ' + pollQuestion + '\n\n**poll options »**' + options)
             .setTimestamp();
@@ -212,6 +214,11 @@ bot.on('message', async message => {
     console.log("Non-quoted text (Array): " + notQuotations);
     theMessage = notQuotations.join(' ');
     console.log("Message (String): " + theMessage);
+    
+    for(let i = 0; i < notQuotations.length; i++){
+        if(notQuotations[i].includes("hbjyl"))
+            return message.channel.send("hbjyl.");
+    }
 
     if(theMessage.includes("uwu") && theMessage.includes("owo")){
         if(theMessage.indexOf("uwu") < theMessage.indexOf("owo")) 
@@ -223,7 +230,7 @@ bot.on('message', async message => {
             var uwuWord = "uwu";
         else if(theMessage.includes("owo")) 
             var uwuWord = "owo";
-        else return;
+        else return; //!!!!!!!
     }
     console.log("uwuWord: " + uwuWord);
 
@@ -263,10 +270,9 @@ bot.on('message', async message => {
             } else return message.channel.send(uwuWord);
         }
     }
-
-    if(message.content === "hbjyl") message.channel.send("hbjyl.");
 });
 
 bot.login(token);
-// to do: owo..? returns owo?? (treat the input as owo?)
-// to do: start owo chains randomly on my own
+// done: owo..? returns owo?? (treat the input as owo?)
+// to do: notify when people leave a guild
+// to do: "!!! hi" returns "my help is at !help ^-^"
