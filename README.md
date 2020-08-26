@@ -127,9 +127,8 @@ bitz is still in development, testing regularly in discord. eventually the sandb
 
 currently, these are my next steps: 
 * properly address errors so that error messages come back nice and neat instead of vomiting themselves into the console
-* optimize the whole project. right now it has functionality and that's it. 
 * set up dad jokes :)
-* plan out and implement a randomized `uwu`/`owo` system (i.e., at random times, perhaps once every couple of days or every 500 to 1000 messages in the guild, send an `uwu` or `owo` independently)
+* send a notification to the console when people leave a guild
 
 ## sources
 to create this project, i found the following sources incredibly useful: 
