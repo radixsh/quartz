@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 const guilds = new Discord.Guild(bot,)
-const { token, prefix, ownerID} = require("./config.json");   
+const { token, prefix, ownerID, permittedGuilds} = require("./config.json");   
 const emojiCharacters = require("./emojiCharacters.js");
 const ytdl = require('ytdl-core');
 
@@ -68,6 +68,7 @@ bot.on('message', async message => {
     
     // close the bot to everyone except me
     //if(message.author != ownerID) return message.channel.send("sorry, i'm down for testing ;-;");
+    //if(!permittedGuilds.includes(message.guild.id)) return message.channel.send("sorry, i'm down for testing ;-;")
     if (command === 'ping'){
         const m = await message.channel.send("ping?");
         return m.edit(`pong! latency is ${m.createdTimestamp - message.createdTimestamp} ms :)`);

@@ -127,9 +127,8 @@ bitz is still in development, testing regularly in discord. eventually the sandb
 
 currently, these are my next steps: 
 * properly address errors so that error messages come back nice and neat instead of vomiting themselves into the console
-* rewrite the whole thing using switch() case
-  * alternately, find a faster way of doing things, and implement that. just, i want to learn a new way to write things than the if/else loops we learned for ap :)
-* actually, optimize (and make easily readable) the whole project. right now it has functionality and that's it. 
+* optimize the whole project. right now it has functionality and that's it. 
+* set up dad jokes :)
 * plan out and implement a randomized `uwu`/`owo` system (i.e., at random times, perhaps once every couple of days or every 500 to 1000 messages in the guild, send an `uwu` or `owo` independently)
 
 ## sources
