@@ -4,6 +4,7 @@ const guilds = new Discord.Guild(bot,)
 const { token, prefix, ownerID, permittedGuilds} = require("./config.json");   
 const emojiCharacters = require("./emojiCharacters.js");
 const ytdl = require('ytdl-core');
+var ROLESMESSAGE = "";
 
 // https://discord.com/oauth2/authorize?client_id=722289214363926592&scope=bot&permissions=3172352
 
@@ -24,6 +25,36 @@ bot.on("guildCreate", guild => {
     //message.send("hello!! i'm bitz, and it's good to meet y'all! my command prefix is `!`, and you can see my documentation at `!help` :))");
     console.log(`Joined ${bot.guilds.cache.name}!`);
 });
+
+bot.on('messageReactionAdd', async (reaction, user) => {
+    if(user.bot) return;
+    const emoji = reaction._emoji.name;
+    console.log(reaction.users)
+    if (reaction.partial) {
+        try {
+            await reaction.fetch();
+        } catch (error) {
+            return console.error("Something went wrong when fetching the message: ", error);
+        }
+    }
+    // now the message has been cached and is fully available
+    
+    console.log(`\n${user.username} has responded to ROLESMESSAGE.\n`);
+    let role;
+    if (emoji === "🇸")
+        role = reaction.message.guild.roles.cache.find(role => role.name === 'she/her');
+    else if (emoji === "🇭")
+        role = reaction.message.guild.roles.cache.find(role => role.name === 'he/him');
+    else if (emoji === "🇮")
+        role = reaction.message.guild.roles.cache.find(role => role.name === "i don't care");
+    else if (emoji === "🇹")
+        role = reaction.message.guild.roles.cache.find(role => role.name === 'they/them');
+    else if (emoji === "❗"){
+        //const personInQuestion = reaction.users.find(u => u.name === user.username)
+        role = reaction.message.guild.roles.cache.find(role => role.name === 'ask for pronouns');  
+    } reaction.message.guild.member(user).roles.add(role.id).catch(console.error);
+});
+
 
 bot.on('message', async message => {
     if(message.author.bot) return;
@@ -85,9 +116,10 @@ bot.on('message', async message => {
             { name: '!h[elp]', value: "shows this help page; no arguments. \n`!h`"},
             { name: '!purge <n>', value: "deletes the `n` most recent messages in the current channel (2 < `n` < 100), and also deletes the command message. (deletion isn't allowed in dms) \n`!purge 20`"},
             //{ name: '\u200B', value: '\u200B' },
-            { name: '!echo [foo]', value: "echoes back what you tell it to, deleting the command message (deletion isn't allowed in dms). (it works for one image at a time too). \n`!echo uwu`"},
+            { name: '!echo <foo>', value: "echoes back what you tell it to, deleting the command message (deletion isn't allowed in dms). (it works for one image at a time too). \n`!echo uwu`"},
             { name: '!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...', value: 'creates a poll in an embed, deleting the command message. at least three and no more than ten arguments are permitted, set off by double quotation marks: a question and at least two options. \n`!poll "what\'s your favorite color?" "red" "blue" "green"`'},
             { name: '!ping', value: 'performs a ping; no arguments. \n`!ping`'},
+            { name: '!uwu[ify] <foo>', value: 'uwuifies your message. \n`!uwuify role of a lifetime`'},
         )
         .setFooter('developed by radix#4520');//, 'https://i.imgur.com/wSTFkRM.png')
         return message.channel.send(helpEmbed);
@@ -166,6 +198,35 @@ bot.on('message', async message => {
                 sentEmbed.react(emojiCharacters[i+1]);
         });
         return;
+    } else if(command === "roles"){
+        console.log("Roles")
+        var question = "pick some roles :)";
+        var options = "🇸he/her, 🇭e/him, 🇮 don't care, 🇹hey/them, ❗ ask for pronouns"
+        const embed = new Discord.MessageEmbed()
+            .setColor("#8db255")
+            .setDescription('▬▬▬▬▬▬▬▬▬** « react for roles » **▬▬▬▬▬▬▬▬▬▬\n\n**prompt » **' + question + '\n\n** options » **' + options)
+        message.channel.send(embed).then(sentEmbed => {
+            sentEmbed.react(emojiCharacters["s"]);
+            sentEmbed.react(emojiCharacters["h"]);
+            sentEmbed.react(emojiCharacters["i"]);
+            sentEmbed.react(emojiCharacters["t"]);
+            sentEmbed.react(emojiCharacters["!"]);
+            ROLESMESSAGE = sentEmbed;
+        });
+        return;
+    } else if(command === "uwuify" || command === "uwu"){
+        var text = args.join(" ")
+        console.log("Uwuify (old): " + text)
+        for(let i = 0; i < text.length; i++){
+            if(text.substring(i,i+1) === "r" || text.substring(i,i+1) === "l"){
+                text = text.substring(0,i) + "w" + text.substring(i+1);
+            } else if(text.substring(i,i+1) === "t"){
+                if(text.substring(i+1, i+2) === "h")
+                    text = text.substring(0,i) + "d" + text.substring(i+2);
+            }
+        }
+        console.log("Uwuified: " + text)
+        return message.channel.send(text);
     } else if(message.content.substring(0,prefix.length) === prefix)// if the command is unrecognized and it's not just !!!!!
         return message.channel.send("my documentation's at `!help` ^-^");
 
@@ -272,6 +333,5 @@ bot.on('message', async message => {
 });
 
 bot.login(token);
-// done: owo..? returns owo?? (treat the input as owo?)
 // to do: notify when people leave a guild
 // to do: "!!! hi" returns "my help is at !help ^-^"
