@@ -28,6 +28,7 @@ bot.on("guildCreate", guild => {
 
 bot.on('messageReactionAdd', async (reaction, user) => {
     if(user.bot) return;
+    if(reaction.message !== ROLESMESSAGE) return;
     const emoji = reaction._emoji.name;
     console.log(reaction.users)
     if (reaction.partial) {
@@ -226,6 +227,20 @@ bot.on('message', async message => {
             }
         }
         console.log("Uwuified: " + text)
+        return message.channel.send(text);
+    } else if(command === "uwuifyd" || command === "uwud"){
+        var text = args.join(" ")
+        console.log("Uwuifyd (old): " + text)
+        for(let i = 0; i < text.length; i++){
+            if(text.substring(i,i+1) === "r" || text.substring(i,i+1) === "l"){
+                text = text.substring(0,i) + "w" + text.substring(i+1);
+            } else if(text.substring(i,i+1) === "t"){
+                if(text.substring(i+1, i+2) === "h")
+                    text = text.substring(0,i) + "d" + text.substring(i+2);
+            }
+        }
+        console.log("Uwuifiedd: " + text)
+        message.delete().catch(O_o=>{}); 
         return message.channel.send(text);
     } else if(message.content.substring(0,prefix.length) === prefix)// if the command is unrecognized and it's not just !!!!!
         return message.channel.send("my documentation's at `!help` ^-^");
