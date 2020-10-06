@@ -1,10 +1,16 @@
 const Discord = require('discord.js');
 const bot = new Discord.Client();
-const guilds = new Discord.Guild(bot,)
 const { token, prefix, ownerID, permittedGuilds} = require("./config.json");   
 const emojiCharacters = require("./emojiCharacters.js");
 const ytdl = require('ytdl-core');
 var ROLESMESSAGE = "";
+const fs = require('fs');
+var rickWords = ["as;ldsadklfjslfjklsdj",
+        "ksdfjsakdlf;aksdl",
+        "asdkdksfjdsfkljl",
+    ]
+var theMessageContainsARickWord = false;
+var exec = require('child_process').exec;
 
 // https://discord.com/oauth2/authorize?client_id=722289214363926592&scope=bot&permissions=3172352
 
@@ -59,8 +65,32 @@ bot.on('messageReactionAdd', async (reaction, user) => {
 
 bot.on('message', async message => {
     if(message.author.bot) return;
+
+    // if the message doesn't start with `!` or contain a rickWord or an uwuWord, then exit early. NOTE TO SELF DO NOT CHANGE
+    fs.readFileSync('uwuchannels.txt', 'utf8', function(err, uwuchannels) {
+        if (message.content.substring(0,prefix.length) !== prefix && 
+            !theMessageContainsARickWord && 
+            !message.content.toLowerCase().includes("uwu") && 
+            !message.content.toLowerCase().includes("owo") &&
+            !message.content.toLowerCase().includes("hbjyl") &&
+            !uwuchannels.includes(message.channel.id))
+        return; 
+    });
+    
+    if(message.content.includes(`!uwuchannel -rm`)){
+        // remove this channel and this person from uwuchannels.txt
+        fs.readFileSync('uwuchannels.txt', 'utf8', function(err, uwuchannels) {
+            console.log(`uwuchannels.txt (before): ${uwuchannels}`);
+            exec(`sed -i .txt /${message.channel.id}/d uwuchannels.txt`, function (error, lines) {
+                console.log(error)
+            });
+            console.log(`uwuchannel removed: ${message.channel.id} (${message.channel.name})`)
+            return message.channel.send("uwuchannel removed!")
+        });
+    }
+
     // if it starts with the prefix, then separate the message into the command (first term) and the arguments
-    const punctuationArray = ["?","!","."];
+    const punctuationArray = ["?","!",".","~"];
     if(message.content.substring(0,prefix.length) === prefix){
         var args = message.content.slice(prefix.length).trim().split(/\s+/g); // <-- NOTE TO SELF DO NOT CHANGE
         var command = args.shift().toLowerCase();
@@ -68,13 +98,8 @@ bot.on('message', async message => {
         for(let i = 0; i < command.length; i++) 
             if(punctuationArray.includes(command[i])) len++;
         if(len > 0 || len === command.length) return;
-    } else var isPunctuation = false;
+    } 
 
-    var rickWords = ["as;ldsadklfjslfjklsdj",
-        "ksdfjsakdlf;aksdl",
-        "asdkdksfjdsfkljl",
-    ]
-    var theMessageContainsARickWord = false;
     for (let i = 0; i < rickWords.length; i++){
         if(message.content.toLowerCase().includes(rickWords[i])){
             theMessageContainsARickWord = true;
@@ -82,14 +107,7 @@ bot.on('message', async message => {
             break; 
         }
     }
-    // if the message doesn't start with `!` or contain a rickWord or an uwuWord, then exit early. NOTE TO SELF DO NOT CHANGE
-    if (message.content.substring(0,prefix.length) !== prefix && 
-        !theMessageContainsARickWord && 
-        !message.content.toLowerCase().includes("uwu") && 
-        !message.content.toLowerCase().includes("owo") &&
-        !message.content.toLowerCase().includes("fpsk") &&
-        !message.content.toLowerCase().includes("hbjyl")) 
-    return; 
+    
 
     const isDm = false;
     if(!message.channel.name) {
@@ -120,7 +138,8 @@ bot.on('message', async message => {
             { name: '!echo <foo>', value: "echoes back what you tell it to, deleting the command message (deletion isn't allowed in dms). (it works for one image at a time too). \n`!echo uwu`"},
             { name: '!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...', value: 'creates a poll in an embed, deleting the command message. at least three and no more than ten arguments are permitted, set off by double quotation marks: a question and at least two options. \n`!poll "what\'s your favorite color?" "red" "blue" "green"`'},
             { name: '!ping', value: 'performs a ping; no arguments. \n`!ping`'},
-            { name: '!uwu[ify] <foo>', value: 'uwuifies your message. \n`!uwuify role of a lifetime`'},
+            { name: '!uwu[ify] <foo>', value: 'uwuifies your message.\n`!uwu role of a lifetime`'},
+            { name: '!uwuchannel [-rm]', value: "uwuifies all future messages in the current channel. the option `-rm` removes this setting.\n`!uwuchannel`"}
         )
         .setFooter('developed by radix#4520');//, 'https://i.imgur.com/wSTFkRM.png')
         return message.channel.send(helpEmbed);
@@ -216,32 +235,33 @@ bot.on('message', async message => {
         });
         return;
     } else if(command === "uwuify" || command === "uwu"){
-        var text = args.join(" ")
-        console.log("Uwuify (old): " + text)
-        for(let i = 0; i < text.length; i++){
-            if(text.substring(i,i+1) === "r" || text.substring(i,i+1) === "l"){
-                text = text.substring(0,i) + "w" + text.substring(i+1);
-            } else if(text.substring(i,i+1) === "t"){
-                if(text.substring(i+1, i+2) === "h")
-                    text = text.substring(0,i) + "d" + text.substring(i+2);
-            }
+        message.delete().catch(O_o=>{});
+        return message.channel.send(uwuify(args.join(" ")))
+    } else if(command === "uwuchannel"){
+        if(args[0] !== "-rm") {
+            fs.writeFile("uwuchannels.txt", `${message.channel.id}\n`, function(err) {
+                if(err) return console.log(err);
+            }); 
+            console.log(`New uwuchannel added: ${message.channel.id} (${message.channel.name})`);
+            return message.channel.send("New uwuchannel set!")
         }
-        console.log("Uwuified: " + text)
-        return message.channel.send(text);
-    } else if(command === "uwuifyd" || command === "uwud"){
-        var text = args.join(" ")
-        console.log("Uwuifyd (old): " + text)
-        for(let i = 0; i < text.length; i++){
-            if(text.substring(i,i+1) === "r" || text.substring(i,i+1) === "l"){
-                text = text.substring(0,i) + "w" + text.substring(i+1);
-            } else if(text.substring(i,i+1) === "t"){
-                if(text.substring(i+1, i+2) === "h")
-                    text = text.substring(0,i) + "d" + text.substring(i+2);
-            }
-        }
-        console.log("Uwuifiedd: " + text)
-        message.delete().catch(O_o=>{}); 
-        return message.channel.send(text);
+            /*
+            // remove this channel and this person from uwuchannels.txt
+            fs.readFile('uwuchannels.txt', 'utf8', function(err, uwuchannels){
+                var linesExceptUwuperson = uwuchannels.split('\n')
+                exec('wc -l uwuchannels.txt', function (error, lines) {
+                    console.log(`Number of lines: ${lines}`);
+                    for(let i = 0; i < lines; i++){
+                        if(uwuchannels.includes(`${message.channel.id}: ${message.author}`)){
+                            linesExceptUwuperson.slice(i).join('\n');
+                        }
+                    }
+                    fs.writeFile("uwuchannels.txt", linesExceptUwuperson);
+                });
+            });
+            console.log(`Uwuchannel removed: ${message.channel.id}: ${message.author} `)
+            return message.channel.send("Uwuchannel removed!")
+        }*/
     } else if(message.content.substring(0,prefix.length) === prefix)// if the command is unrecognized and it's not just !!!!!
         return message.channel.send("my documentation's at `!help` ^-^");
 
@@ -260,19 +280,8 @@ bot.on('message', async message => {
                     dispatcher.on('end', () => message.member.voice.channel.leave());
                 })
                 .catch(error => console.log(":/ there was an error: ${error}"));
-            } else {
-                // send the video in the channel
-                message.channel.send("are you okay? here, this might make you feel better >.<");
-                const rickroll = new Discord.MessageEmbed()
-                    .setColor('#e52d27')
-                    .setAuthor('YouTube')//,'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-                    .setTitle('Satisfied')
-                    .setURL('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-                    .setDescription("Renée Elise Goldsberry - Topic")
-                    .setImage('https://i.imgur.com/rOBJRja.png')
-                message.channel.send(rickroll);
-            }
-            return;
+            } 
+        return;
         } 
     }
     // if it's not rickroll-worthy
@@ -305,9 +314,18 @@ bot.on('message', async message => {
             var uwuWord = "uwu";
         else if(theMessage.includes("owo")) 
             var uwuWord = "owo";
-        else return; //!!!!!!!
+        //else return; //!!!!!!!
     }
     console.log("uwuWord: " + uwuWord);
+
+    fs.readFile('uwuchannels.txt', 'utf8', function(err, uwuchannels) {
+        if (uwuchannels.includes(message.channel.id)){
+            message.delete().catch(O_o=>{});
+            message.channel.send(`**${message.author.username}:** ` + uwuify(message.content));
+            return console.log("\n[Something was sent in an uwuchannel and it has been successfully morphed]");
+        }
+        if(err) return console.log(err);
+    }); 
 
     //if(!theMessage.includes(uwuWord)) return; // REDUNDANT
     for(let i = 0; i < notQuotations.length; i++){
@@ -337,16 +355,39 @@ bot.on('message', async message => {
                     }
                     return message.channel.send(uwuWord + lastLetters.join("") + lastLetters.join("")); 
                 }
-            } else if(lastLetters.includes(".")) {
+            } else {
+                var symbol;
+                if(lastLetters.includes("~")) symbol = "~";
+                else if(lastLetters.includes(".")) symbol = ".";
+                if(!symbol) return message.channel.send(uwuWord);
                 var num = 0;
                 for(let i = 0; i < lastLetters.length; i++)
-                    if(lastLetters[i] == ".") num++;
-                return message.channel.send(uwuWord + ".".repeat(num)); 
-            } else return message.channel.send(uwuWord);
+                    if(lastLetters[i] == symbol) num++;
+                return message.channel.send(uwuWord + symbol.repeat(num)); 
+            }
+            
         }
     }
+
+    
 });
 
 bot.login(token);
+
+function uwuify(text){
+    //console.log("Uwuify (old): " + text)
+    for(let i = 0; i < text.length; i++){
+        if(text.substring(i,i+1) === "r" || text.substring(i,i+1) === "l"){
+            text = text.substring(0,i) + "w" + text.substring(i+1);
+        } else if(text.substring(i,i+2) === "th"){
+            if(text.substring(i-1, i) === " " || i === 0)
+                text = text.substring(0,i) + "d" + text.substring(i+2);
+            else 
+                text = text.substring(0,i) + "f" + text.substring(i+2);
+        }
+    }
+    //console.log("Uwuified: " + text)
+    return text;
+}
 // to do: notify when people leave a guild
 // to do: "!!! hi" returns "my help is at !help ^-^"
