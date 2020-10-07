@@ -1,5 +1,5 @@
 # bitz — discord bot 
-bitz is a [node.js](https://nodejs.org/en/) discord bot that can delete messages, echo messages, create polls, and perform pings. bitz also responds rather interestingly to certain "owo", "uwu", and keysmash messages. :)
+bitz is a [node.js](https://nodejs.org/en/) discord bot that can echo messages, uwuify messages, delete messages, create polls, and perform pings. bitz also responds to "owo" and "uwu" messages. 
 
 ## table of contents  
 1. [general info](#general-info)
@@ -16,14 +16,12 @@ i created bitz for three reasons:
 * to apply what i learned in class studying java (and learning some git) this past year, and 
 * to have fun creating a bot for friends in the summer. 
 
-in retrospect i could've chosen to learn python and use that to write bitz, but to be honest it was hard enough figuring out the discord api already, as well as fun enough learning where exactly my java knowledge ends and the discord.js documentation (and stack overflow wisdom!) begins.
+i could've chosen to learn python and use that to write bitz, but to be honest it was hard enough figuring out the discord api already, as well as fun enough learning where exactly my java knowledge ends and the discord.js documentation (and stack overflow wisdom!) begins.
 
 ## features
-* convenient message mass-deletion (honestly, that feature is missing from discord uwu)
-* intuitive poll creation (another feature missing from discord) (h/t to telegram!)
-* anyone can `!echo` anything, which is a good feature for pseudo-anonymity and general shenanigans owo
-* good logging in the console
-* consistent green aesthetic
+* convenient message mass-deletion (honestly, that feature is missing from discord)
+* intuitive poll creation (another feature missing from discord) 
+* anyone can `!echo` anything, which is a good feature for pseudo-anonymity and general shenanigans 
 * bonus: will train you to use uwuspeak more often
 
 currently available commands (`!command <argument> [optional argument]`):
@@ -35,6 +33,8 @@ currently available commands (`!command <argument> [optional argument]`):
   + here's what a poll might look like: 
   + ![poll](https://i.imgur.com/GHtRUHem.png)
 * `!ping` : performs a ping
+* `!uwu[ify]` : uwuifies your messages
+* `!uwuchannel [-rm]` : uwuifies all future messages in the current channel. the option `-rm` removes this setting.
 
 
 here's some sample console output :)
@@ -105,28 +105,30 @@ to generate your own api token, go to your [discord developer portal](https://di
 {
   "token": "my-token-here-between-quotes",
   "prefix": "!",
-  "ownerID": "519672846075822101"
+  "ownerID": "1234567890"
 }
 ```
 (the ownerID line allows me access to any quirks i want to keep to myself :) you can add whatever constants you want, or keep it to just the two lines. just make sure the last line doesn't end with a trailing comma.)
 
-once your bot's been made, you'll need to add it to a discord guild (colloquially, "server") in which you have admin privileges. to do that, go to `https://discord.com/oauth2/authorize?client_id=YOUR_BOT_TOKEN_HERE&scope=bot&permissions=3209216`. obviously, put your own bot's id there. 
+once your bot's been made, you'll need to add it to a discord guild (colloquially, "server") in which you have admin privileges. to do that, go to `https://discord.com/oauth2/authorize?client_id=YOUR_BOT_TOKEN_HERE&scope=bot&permissions=3209216`. 
 
-once your config file has been created, you're good to go! on mac, run `node index.js` (or `nodemon` if you have that installed). then you're finished!
+once your config file has been created, you're good to go! on mac, run `node index.js` (or `nodemon`). then you're finished!
 
-on ubuntu, you might need to upgrade node if the output of `nodejs -v` is something ridiculously primitive like v4.2.6 (ahem, @ my crouton-ed chromebook). to upgrade node, run this: 
+on ubuntu, you might need to upgrade node like this: 
 ```
 # you can use a module called n to upgrade your node package
 $ sudo npm install -g n
 $ sudo n stable
 ```
-then you can run bitz using `nodejs index.js` (or, if you have it, use `nodemon`.) to be honest, i'm really not sure if this will work. so far it's not working on my chromebook, but then, that's a chromebook. :)
+then you might be able to run bitz using `nodejs index.js` (or `nodemon`.) to be honest, i'm really not sure if this will work. so far it's not working on my chromebook, but then, that's a chromebook. :)
 
 ## project status
 bitz is still in development, testing regularly in discord. eventually the sandbox guild will go public, the link will be here, and support will be available. 
 
 currently, these are my next steps: 
-* properly address errors so that error messages come back nice and neat instead of vomiting themselves into the console
+* offer option to limit bitz to certain channels in a guild
+* optimize the uwuification of words containing "th" — "three" becomes "twee," not "fwee"
+* offer option to escape certain characters in an uwuchannel
 * set up dad jokes :)
 * send a notification to the console when people leave a guild
 
