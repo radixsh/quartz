@@ -148,6 +148,6 @@ to create this project, i found the following sources incredibly useful:
 * [hosting a discord bot](https://www.writebots.com/discord-bot-hosting/#Glitch) — i haven't looked much into this, but i plan to!
 
 ## license
-released under the [gnu gpl v2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) license.
+released under the [MIT](https://opensource.org/licenses/MIT) license.
 
 bitz was named by my close friend tomega500#4689. artwork was also created by him. 
