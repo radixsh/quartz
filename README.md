@@ -1,5 +1,5 @@
 # bitz — discord bot 
-bitz is a [node.js](https://nodejs.org/en/) discord bot that can echo messages, uwuify messages, delete messages, create polls, and perform pings. bitz also responds to "owo" and "uwu" messages. 
+bitz is a [node.js](https://nodejs.org/en/) discord bot who can echo messages, uwuify messages, delete messages, create polls, and perform pings. bitz also responds to "owo" and "uwu" messages. 
 
 ## table of contents  
 1. [general info](#general-info)
@@ -13,14 +13,14 @@ bitz is a [node.js](https://nodejs.org/en/) discord bot that can echo messages, 
 ## general info
 i created bitz for three reasons: 
 * to learn a bit of javascript to complement my basic understanding of html and css, 
-* to apply what i learned in class studying java (and learning some git) this past year, and 
+* to apply what i learned in apcsa in junior year, and 
 * to have fun creating a bot for friends in the summer. 
 
-i could've chosen to learn python and use that to write bitz, but to be honest it was hard enough figuring out the discord api already, as well as fun enough learning where exactly my java knowledge ends and the discord.js documentation (and stack overflow wisdom!) begins.
+i could've chosen to learn python and use that to write bitz, but to be honest it was hard enough figuring out the discord api already, as well as fun enough learning how to use the discord.js documentation (and stack overflow wisdom!) to do what i wanted to do.
 
 ## features
 * convenient message mass-deletion (honestly, that feature is missing from discord)
-* intuitive poll creation (another feature missing from discord) 
+* poll creation (another feature missing from discord) 
 * anyone can `!echo` anything, which is a good feature for pseudo-anonymity and general shenanigans 
 * bonus: will train you to use uwuspeak more often
 
@@ -28,13 +28,14 @@ currently available commands (`!command <argument> [optional argument]`):
 
 * `!h[elp]` : shows this help page
 * `!purge <n>` : deletes the `n` most recent messages in the current channel (2 < `n` < 100), and also deletes the command message
-* `!echo <echo>` : echoes back what you tell it to, deleting the command message. (it works for one image at a time too)
+* `!echo <foo>` : echoes back what you tell it to, deleting the command message. (it works for one image at a time too)
 * `!poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...` : creates a poll in an embed, deleting the command message. at least three arguments are necessary, set off by double quotation marks: a question and at least two options.
   + here's what a poll might look like: 
   + ![poll](https://i.imgur.com/GHtRUHem.png)
 * `!ping` : performs a ping
-* `!uwu[ify]` : uwuifies your messages
+* `!uwu` : uwuifies your messages
 * `!uwuchannel [-rm]` : uwuifies all future messages in the current channel. the option `-rm` removes this setting.
+* `!data` : gets metadata of the current guild and channel, and also gives information about you.
 
 
 here's some sample console output :)
@@ -62,28 +63,9 @@ $ brew install git
 
 # install node.js using homebrew
 $ brew install node
-```
 
-on debian/ubuntu ([source](https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-18-04)): 
-```
-# refresh your local package index
-$ sudo apt update
-
-# install node (and hit y when prompted)
-# (the package is called nodejs rather than node because of a naming conflict; don't worry about that)
-$ sudo apt install nodejs
-
-# to confirm the install worked
-$ nodejs -v
-
-# install git (and hit y when prompted)
-$ sudo apt-get install git
-```
-
-then on your command line, whether mac or linux, run the following:
-```
-# install discord.js, as well as other dependencies necessary to support playing music
-$ npm install discord.js ffmpeg-binaries opusscript ytdl-core --save
+# install discord.js
+$ npm install discord.js opusscript --save
 
 # clone this repository
 $ git clone https://github.com/radradix/bitz
@@ -92,7 +74,7 @@ $ git clone https://github.com/radradix/bitz
 $ cd bitz
 ```
 
-before starting bitz, you'll need to make your own config.json file and put your api token into it. my config.json file is in thie repository — encrypted — as a kind of placeholder (and because it makes it easier for me during development). so create your own config file: 
+before starting bitz, you'll need to make your own config.json file and put your api token into it. my config.json file is in this repository — encrypted — as a kind of placeholder (and because it makes it easier for me during development). so create your own config file: 
 ```
 $ rm config.json
 $ touch config.json
@@ -105,32 +87,24 @@ to generate your own api token, go to your [discord developer portal](https://di
 {
   "token": "my-token-here-between-quotes",
   "prefix": "!",
-  "ownerID": "1234567890"
+  "permittedGuilds": "1234567890"
 }
 ```
-(the ownerID line allows me access to any quirks i want to keep to myself :) you can add whatever constants you want, or keep it to just the two lines. just make sure the last line doesn't end with a trailing comma.)
+(the permittedGuilds line allows you the option to silence bitz everywhere except the sandbox guild, for instance while testing beta features. you can add whatever constants you want to the config file, or keep it to just the two lines — just make sure the last line doesn't end with a trailing comma.)
 
 once your bot's been made, you'll need to add it to a discord guild (colloquially, "server") in which you have admin privileges. to do that, go to `https://discord.com/oauth2/authorize?client_id=YOUR_BOT_TOKEN_HERE&scope=bot&permissions=3209216`. 
 
-once your config file has been created, you're good to go! on mac, run `node index.js` (or `nodemon`). then you're finished!
-
-on ubuntu, you might need to upgrade node like this: 
-```
-# you can use a module called n to upgrade your node package
-$ sudo npm install -g n
-$ sudo n stable
-```
-then you might be able to run bitz using `nodejs index.js` (or `nodemon`.) to be honest, i'm really not sure if this will work. so far it's not working on my chromebook, but then, that's a chromebook. :)
+on mac at least, run `node index.js` (or `nodemon`) to start bitz. then you're finished!
 
 ## project status
-bitz is still in development, testing regularly in discord. eventually the sandbox guild will go public, the link will be here, and support will be available. 
+bitz is still in development, testing regularly in discord. 
 
 currently, these are my next steps: 
+* figure out how to echo images
+* daily stan messages
+* upload images and turn them into custom server emojis?
 * offer option to limit bitz to certain channels in a guild
-* optimize the uwuification of words containing "th" — "three" becomes "twee," not "fwee"
 * offer option to escape certain characters in an uwuchannel
-* set up dad jokes :)
-* send a notification to the console when people leave a guild
 
 ## sources
 to create this project, i found the following sources incredibly useful: 
