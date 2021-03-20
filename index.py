@@ -142,7 +142,7 @@ async def quote(ctx):
             '"Any man whose errors take ten years to correct is quite a man." -J. Robert Oppenheimer',
             '"One has to look out for engineers - they begin with sewing machines and end up with the atomic bomb." -Marcel Pagnol',
             '"I was born not knowing and have had only a little time to change that here and there." -Richard P. Feynman',
-            '"It has not yet become obvious to me that there\'s no real problem. I cannot define the real problem; therefore, I suspect there\'s no real problem, but I'm not sure there's no real problem." -Richard P. Feynman',
+            '"It has not yet become obvious to me that there\'s no real problem. I cannot define the real problem; therefore, I suspect there\'s no real problem, but I\'m not sure there\'s no real problem." -Richard P. Feynman',
             '"If I could explain it to the average person, it wouldn\'t have been worth the Nobel Prize." -Richard P. Feynman',
             '"If you never did you should. These things are fun, and fun is good." -Dr. Seuss',
             '"Your mountain is waiting. So… get on your way!" -Dr. Seuss',
