@@ -33,7 +33,7 @@ async def on_message(message):
             rand = random.randint(0,len(responses)+10)
             if rand >= len(responses)+5:
                 keysmash = generate_keysmash()
-                print(f'Generating keysmash: {keysmash}\n')
+                print(f'Keysmash generated to respond to {word}: {keysmash}\n')
                 await message.channel.send(keysmash)
             else:
                 if rand < len(responses):

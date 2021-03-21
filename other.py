@@ -6,7 +6,7 @@ def generate_keysmash():
     for i in range(keysmash_length):
         random_char = random.randint(0,len(valid_characters)-1)
         keysmash += valid_characters[random_char]
-    enders = [":rainbow:","wammen","yes",":two_hearts:",":weary:",":rainbow_flag:","<3"]
+    enders = [":rainbow:","wammen","yes",":two_hearts:",":weary:",":rainbow_flag:","<3","","uwu"]
     return f'{keysmash} {random.choice(enders)}'
 
 quotes = [
@@ -60,7 +60,7 @@ quotes = [
         '"I am rooted, but I flow." -Virginia Woolf',
         '"Once you hear the details of victory, it is hard to distinguish it from a defeat." -Jean-Paul Sartre',
         '"Who would not trade a raven for a dove?" -Shakespeare, *A Midsummer Night\'s Dream*',
-        '"We are all made of molecules." -Susan Nielsen',
+        '"We are all made of molecules." -Susin Nielsen',
         '"My own brain is to me the most unaccountable of machinery - always buzzing, humming, soaring roaring diving, and then buried in mud. And why? What’s this passion for?" -Virginia Woolf',
         '"Isn’t it strange that we talk least about the things that we think about most?" -Charles Lindbergh',
         '"The art of living is the art of knowing how to believe lies." -Cesare Pavese',
@@ -84,7 +84,7 @@ quotes = [
         '"You shall know the truth, and the truth shall make you mad." -Aldous Huxley',
         '"Science has explained nothing; the more we know the more fantastic the world becomes and the profounder the surrounding darkness." -Aldous Huxley',
         '"No amount of experimentation can ever prove me right; a single experiment can prove me wrong." -Albert Einstein',
-        '"You gain strength, courage, and confidence by every experience in which you really stop to look fear in the face. You are able to say to yourself, \'I lived through this horror. I can take the next thing that comes along." -Eleanor Roosevelt',
+        '"You gain strength, courage, and confidence by every experience in which you really stop to look fear in the face. You are able to say to yourself, \'I lived through this horror. I can take the next thing that comes along.'" -Eleanor Roosevelt',
         '"Good artists copy; great artists steal." -Pablo Picasso'
 ]
 
