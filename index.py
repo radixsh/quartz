@@ -27,16 +27,17 @@ async def on_message(message):
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{client.command_prefix}h'))
     if message.author == client.user:
         return
-    rainbow_words = ["gay","rainbow","lgbt","queer","wholesome","women","men","gender is"]
+    rainbow_words = ["gay","rainbow","lgbt","queer","wholesome","women"," men","gender is"]
     for word in rainbow_words:
         if word in message.content.lower():
             rand = random.randint(0,len(responses)+10)
             if rand >= len(responses)+5:
                 keysmash = generate_keysmash()
-                print(f'Keysmash generated to respond to {word}: {keysmash}\n')
                 await message.channel.send(keysmash)
+                #print(f'Keysmash generated to respond to {word}: {keysmash}\n')
             else:
                 if rand < len(responses):
+                    #print(f'Response generated to {word}: {responses[rand]}')
                     await message.channel.send(responses[rand])
             break
     await client.process_commands(message)
@@ -127,7 +128,7 @@ async def get_joke(ctx):
 def get_joke():
     response = requests.get("https://official-joke-api.appspot.com/random_joke")
     json_data = json.loads(response.text)
-    print(json_data)
+    #print(json_data)
     joke = json_data["setup"] + "-" + json_data["punchline"]
     return joke
 
