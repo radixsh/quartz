@@ -84,7 +84,7 @@ quotes = [
         '"You shall know the truth, and the truth shall make you mad." -Aldous Huxley',
         '"Science has explained nothing; the more we know the more fantastic the world becomes and the profounder the surrounding darkness." -Aldous Huxley',
         '"No amount of experimentation can ever prove me right; a single experiment can prove me wrong." -Albert Einstein',
-        '"You gain strength, courage, and confidence by every experience in which you really stop to look fear in the face. You are able to say to yourself, \'I lived through this horror. I can take the next thing that comes along.'" -Eleanor Roosevelt',
+        '"You gain strength, courage, and confidence by every experience in which you really stop to look fear in the face. You are able to say to yourself, \'I lived through this horror. I can take the next thing that comes along.\'" -Eleanor Roosevelt',
         '"Good artists copy; great artists steal." -Pablo Picasso'
 ]
 

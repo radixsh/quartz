@@ -49,7 +49,7 @@ async def get_help(ctx):
     embed.add_field(name=f"`{client.command_prefix}ping`", 
             value="Performs a ping to see if the bot is up.", inline=False)
     embed.add_field(name=f"`{client.command_prefix}quote` (aka `q`)", 
-            value="Returns a randomly selected quote from a (pitifully small; please contact @radix#4520 with ideas!) array.", inline=False)
+            value="Returns a randomly selected quote from a predefined array.", inline=False)
     embed.add_field(name=f"`{client.command_prefix}get_joke` (aka `joke`)", 
             value="Gets a joke from https://official-joke-api.appspot.com/random_joke.", inline=False)
     embed.add_field(name=f"`{client.command_prefix}get_cat` (aka `cat`)", 
@@ -182,9 +182,9 @@ async def convert(ctx, amount, currency):
 async def shift_forward(ctx,*args):
     await ctx.send(shifted_forward(args))
 def shifted_forward(args):
-    if len(args) == 0: # >forward
+    if len(args) == 0: 
         f'Error: must be in format `{client.command_prefix}shift_forward message`.'
-    elif len(args) == 1 or not args[0].isdigit(): # >forward 24
+    elif len(args) == 1 or not args[0].isdigit(): 
         shift = 1
         message_as_string = ' '.join(args)
     else:
@@ -196,7 +196,7 @@ def shifted_forward(args):
         if ord_of_character == 32:
             new_position = ord_of_character
         elif ord_of_character+shift > 1114111:
-            return f'Error: specified shift too big (ASCII table ends after 1114111 entries ;-;)'
+            return f'Error: specified shift too big (ASCII table ends after 1114111 entries)'
         else:
             new_position = ord_of_character+shift
         encoded_string += chr(new_position)
@@ -208,9 +208,9 @@ def shifted_forward(args):
 async def shift_back(ctx,*args):
     await ctx.send(shifted_back(args))
 def shifted_back(args):
-    if len(args) == 0: # >forward
+    if len(args) == 0: 
         f'Error: must be in format `{client.command_prefix}shift_forward message`.'
-    elif len(args) == 1 or not args[0].isdigit(): # >forward 24
+    elif len(args) == 1 or not args[0].isdigit():
         shift = 1
         message_as_string = ' '.join(args)
     else:
@@ -222,7 +222,7 @@ def shifted_back(args):
         if ord_of_character == 32:
             new_position = ord_of_character
         elif ord_of_character-shift > 1114111:
-            return f'Error: specified shift too big (ASCII table ends after 1114111 entries ;-;)'
+            return f'Error: specified shift too big (ASCII table ends after 1114111 entries)'
         else:
             new_position = ord_of_character-shift
         encoded_string += chr(new_position)
