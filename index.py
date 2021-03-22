@@ -27,7 +27,7 @@ async def on_message(message):
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{client.command_prefix}h'))
     if message.author == client.user:
         return
-    rainbow_words = ["gay","rainbow","lgbt","queer","wholesome","women"," men","gender is"]
+    rainbow_words = ["gay","rainbow","lgbt","queer","wholesome","women","gender is"]
     for word in rainbow_words:
         if word in message.content.lower():
             rand = random.randint(0,len(responses)+10)
