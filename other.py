@@ -1,12 +1,27 @@
 import random
 def generate_keysmash():
     keysmash_length = random.randint(7,20)
-    valid_characters = ["a","s","s","s","s","s","d","d","g","d","f","g","h","j","j","j","j","k","k","k","k","l","z","x","w",";",";",";",";","v","v",".",","]
+    valid_characters = ["a","s","s","s","s","s",
+                        "d","d","g","d","f","g","h",
+                        "j","j","j","j","k","k","k","k",
+                        "l","z","x","w",";",";",";",";",
+                        "v","v",".",","
+    ]
     keysmash = ""
     for i in range(keysmash_length):
         random_char = random.randint(0,len(valid_characters)-1)
         keysmash += valid_characters[random_char]
-    enders = [":rainbow:","wammen","yes",":two_hearts:",":weary:",":rainbow_flag:","<3","","uwu"]
+    enders = [
+        ":rainbow:",
+        "wammen",
+        "yes",
+        ":two_hearts:",
+        ":weary:",
+        ":rainbow_flag:",
+        "<3",
+        "","",
+        "uwu"
+    ]
     return f'{keysmash} {random.choice(enders)}'
 
 quotes = [
@@ -37,7 +52,7 @@ quotes = [
         '"Have you ever been in love? Horrible isn\'t it? It makes you so vulnerable. It opens your chest and it opens up your heart and it means that someone can get inside you and mess you up." -Neil Gaiman, *The Sandman, Vol. 9: The Kindly Ones*',
         '"The saddest aspect of life right now is that science gathers knowledge faster than society gathers wisdom." -Isaac Asimov',
         '"Everything that is beautiful and noble is the product of reason and calculation." -Charles Baudelaire',
-        'As a place, Night Vale is terrifying. There are a lot of things that don\'t make sense and people are dying constantly. But the thing about real life is that it\'s terrifying and there are lots of things that don\'t make sense and people are dying constantly. In Night Vale, it\'s aliens. In real life, it\'s cancer… but it\'s still the same thing." -Joseph Fink, on *Night Vale* and life',
+        '"As a place, Night Vale is terrifying. There are a lot of things that don\'t make sense and people are dying constantly. But the thing about real life is that it\'s terrifying and there are lots of things that don\'t make sense and people are dying constantly. In Night Vale, it\'s aliens. In real life, it\'s cancer… but it\'s still the same thing." -Joseph Fink, on *Night Vale* and life',
         '"We are such stuff\nAs dreams are made on; and our little life\nIs rounded with a sleep." -The Tempest, Act 4, Scene 1',
         '"\'A writer,\' she said, \'is a kind of octopus among human beings.\'" -Hans Christian Andersen, *The Wood Nymph*',
         'I’m not saying this in order to criticize, but this is sheer nonsense!" -Niels Bohr',
@@ -92,16 +107,19 @@ responses = [
         "gay rights!",
         ":rainbow: gay rights! :rainbow:",
         "gay rights!",
+        "gay rights!",
+        "gay rights!",
         "women with swords,,,,,,",
         "do you listen to girl in red?",
-        "do u listen 2 girl in red :eyes:",
         "women do be pretty though",
         "women in suits....... yes",
         "love has no gender ^-^",
         "love! has! no! gender!!!",
-        "be proud of who you are! :rainbow_flag:",
+        ":rainbow_flag:",
         ":rainbow_flag:",
         ":rainbow:",
+        "gay",
+        "gay",
         "gay",
         "gay ^-^"
 ]

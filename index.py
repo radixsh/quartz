@@ -8,8 +8,9 @@ import time #for joke
 import random #for returning "gay rights!"
 import math #for conversions
 from discord.utils import get 
-import requests 
-import json
+import requests #for talking to cat/dog APIs
+import json #for cat/dog APIs
+import aiohttp
 
 #local stuff
 from env import TOKEN 
@@ -27,19 +28,38 @@ async def on_message(message):
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{client.command_prefix}h'))
     if message.author == client.user:
         return
-    rainbow_words = ["gay","rainbow","lgbt","queer","wholesome","women","gender is"]
+    rainbow_words = ["gay",
+            "sapphic",
+            "sappho",
+            "lesbos",
+            "lesbian",
+            "lesbean",
+            "rainbow",
+            "lgbt",
+            "queer",
+            "wholesome",
+            "women",
+            "gender is"
+    ]
     for word in rainbow_words:
         if word in message.content.lower():
             rand = random.randint(0,len(responses)+10)
             if rand >= len(responses)+5:
                 keysmash = generate_keysmash()
                 await message.channel.send(keysmash)
-                #print(f'Keysmash generated to respond to {word}: {keysmash}\n')
             else:
                 if rand < len(responses):
-                    #print(f'Response generated to {word}: {responses[rand]}')
                     await message.channel.send(responses[rand])
             break
+
+    if "hi quartz" in message.content.lower():
+        async with message.channel.typing():
+            faces = [":3",":D",":)",":))","^-^","^_^",":3",":)))","<3"]
+            possible_names = [message.author.name,message.author.nick]
+            name_to_use = random.choice(possible_names)
+        if len(name_to_use.split()) > 3:
+            return await message.channel.send(f'hi, {name_to_use} {random.choice(faces)}')    
+        await message.channel.send(f'hi {name_to_use} {random.choice(faces)}')
     await client.process_commands(message)
 
 
@@ -47,26 +67,28 @@ async def on_message(message):
 @client.command(aliases=['h'])
 async def get_help(ctx):
     embed = discord.Embed(title="Help", description=f'Prefix: `{client.command_prefix}`', color=0xb2558d)
-    embed.add_field(name=f"`{client.command_prefix}ping`", 
+    embed.add_field(name=f"`{client.command_prefix}ping` (aka `p`)", 
             value="Performs a ping to see if the bot is up.", inline=False)
     embed.add_field(name=f"`{client.command_prefix}quote` (aka `q`)", 
             value="Returns a randomly selected quote from a predefined array.", inline=False)
-    embed.add_field(name=f"`{client.command_prefix}get_joke` (aka `joke`)", 
+    embed.add_field(name=f"`{client.command_prefix}get_joke` (aka `joke`,`j`)", 
             value="Gets a joke from https://official-joke-api.appspot.com/random_joke.", inline=False)
     embed.add_field(name=f"`{client.command_prefix}get_cat` (aka `cat`)", 
             value="Gets an image of a cat from https://api.thecatapi.com/v1/images/search.", inline=False)
-    embed.add_field(name=f"`{client.command_prefix}get_dog` (aka `dog`)",
+    embed.add_field(name=f"`{client.command_prefix}get_dog` (aka `dog`,`d`)",
             value="Gets an image of a dog from https://dog.ceo/api/breeds/image/random.", inline=False)
     embed.add_field(name=f'`{client.command_prefix}get_bitcoin_rate` (aka `bitcoin`, `bit`)',
             value="Gets current conversion rate from USD or GBP or euros to Bitcoin.", inline=False)
     embed.add_field(name=f'`{client.command_prefix}convert [amount] [currency]`',
             value="Converts `amount` from `currency` (USD, GBP, or euros) to Bitcoin.", inline=False)
     embed.add_field(name=f'`{client.command_prefix}shift_forward [int] [message]` (aka `forward`)',
-            value="Encodes a message by rotating it forward along the ASCII table the specified number of spaces (defaults to 1).",inline=False)
+            value="Encodes a message by rotating it forward along the ASCII table the specified number of spaces (defaults to 1).",\
+                inline=False)
     embed.add_field(name=f'`{client.command_prefix}shift_back [int] [message]` (aka `back`)',
-            value="Decodes a message by rotating it back along the ASCII table the specified number of spaces (defaults to 1)",inline=False)
-    embed.add_field(name=f'`{client.command_prefix}emoji` (aka `e`)', 
-            value="Sets attached image as a new server emoji, if there is space. Currently not working.", inline=False)
+            value="Decodes a message by rotating it back along the ASCII table the specified number of spaces (defaults to 1)",\
+                inline=False)
+    embed.add_field(name=f'`{client.command_prefix}emoji [name]` (aka `e`)', 
+            value="Sets attached image as a new server emoji with the given name, if there is space.", inline=False)
     embed.set_footer(text="Contact @radix#4520 with issues.")
     await ctx.send(embed=embed)
 
@@ -80,6 +102,8 @@ async def ping(ctx):
 #get random quote from a list
 @client.command(aliases=['q'])
 async def quote(ctx):
+    async with ctx.typing():
+        time.sleep(2)
     await ctx.send(random.choice(quotes))
 
 
@@ -89,46 +113,47 @@ async def emoji(ctx,*args):
     if len(args) == 0:
         return f'Error: filename missing.'
     name = args[0]
-    #embed = discord.Embed(title=f'{name}', description="", color=0xb2558d) 
-    #file = discord.File("path/to/image/file.png", filename="image.png")
-    #embed.set_image(url="https://i.imgur.com/MXsVHZ6.jpg")
-    #await ctx.send(embed=embed)
+    attachment_url = ctx.message.attachments[0].url
 
-    to_send = discord.File("https://i.imgur.com/MXsVHZ6.jpg", filename="image.png")
-    await create_custom_emoji(ctx.guild, name=name, image=to_send)
-    await ctx.send(to_send + "adslfkj")
-    
+    async with aiohttp.ClientSession() as session:
+        async with session.get(attachment_url, timeout = 20) as response:
+            if response.status == 200:
+                image_bytes = await response.content.read() 
+                emoji = await ctx.guild.create_custom_emoji(name=name, image=image_bytes)
+                return await ctx.send(f'New emoji: <:{emoji.name}:{emoji.id}> (`{emoji.name}``, ID `{emoji.id}``)')
+            await ctx.send(f'Something went wrong, please contact radix#4520 :(')
 
-    
-    
+
 
 #dog
-@client.command(aliases=['dog'])
+@client.command(aliases=['dog','d'])
 async def get_dog(ctx):
-    response = requests.get("https://dog.ceo/api/breeds/image/random")
-    json_data = json.loads(response.text)
-    await ctx.send(json_data["message"])
+    async with ctx.typing():
+        response = requests.get("https://dog.ceo/api/breeds/image/random")
+        json_data = json.loads(response.text)
+        await ctx.send(json_data["message"])
 
 
 #cat
 @client.command(aliases=['cat'])
 async def get_cat(ctx):
-    response = requests.get("https://api.thecatapi.com/v1/images/search")
-    json_data = json.loads(response.text)[0]
-    await ctx.send(json_data["url"])
+    async with ctx.typing():
+        response = requests.get("https://api.thecatapi.com/v1/images/search")
+        json_data = json.loads(response.text)[0]
+        await ctx.send(json_data["url"])
 
 
 #jokes
-@client.command(aliases=['joke'])
+@client.command(aliases=['joke','j'])
 async def get_joke(ctx):
-    joke = get_joke()
-    await ctx.send(joke.split("-")[0])
-    time.sleep(3)
-    await ctx.send(joke.split("-")[1])
+    async with ctx.typing():
+        joke = get_joke()
+        await ctx.send(joke.split("-")[0])
+        time.sleep(3)
+        await ctx.send(joke.split("-")[1])
 def get_joke():
     response = requests.get("https://official-joke-api.appspot.com/random_joke")
     json_data = json.loads(response.text)
-    #print(json_data)
     joke = json_data["setup"] + "-" + json_data["punchline"]
     return joke
 
@@ -136,14 +161,14 @@ def get_joke():
 #bitcoin
 @client.command(aliases=['bit','bitcoin'])
 async def get_bitcoin_rate(ctx):
-    response = requests.get("https://api.coindesk.com/v1/bpi/currentprice.json")
-    json_data = json.loads(response.text)
-    disclaimer = json_data["disclaimer"]
-    usd_rate = json_data["bpi"]["USD"]["rate"]
-    gbp_rate = json_data["bpi"]["GBP"]["rate"]
-    eur_rate = json_data["bpi"]["EUR"]["rate"]
-    date = json_data["time"]["updated"]
-    
+    async with ctx.typing():
+        response = requests.get("https://api.coindesk.com/v1/bpi/currentprice.json")
+        json_data = json.loads(response.text)
+        disclaimer = json_data["disclaimer"]
+        usd_rate = json_data["bpi"]["USD"]["rate"]
+        gbp_rate = json_data["bpi"]["GBP"]["rate"]
+        eur_rate = json_data["bpi"]["EUR"]["rate"]
+        date = json_data["time"]["updated"]
     embed = discord.Embed(title="Bitcoin Current Price", description=disclaimer+".", color=0xb2558d)
     embed.add_field(name="United States dollar ($)", value="$"+usd_rate, inline=False)
     embed.add_field(name="British pound sterling (£)", value="£"+gbp_rate, inline=False)
@@ -155,9 +180,10 @@ async def get_bitcoin_rate(ctx):
 #bitcoin conversions
 @client.command(aliases=['c'])
 async def convert(ctx, amount, currency):
-    response = requests.get("https://api.coindesk.com/v1/bpi/currentprice.json")
-    json_data = json.loads(response.text)
-    date = json_data["time"]["updated"]
+    async with ctx.typing():
+        response = requests.get("https://api.coindesk.com/v1/bpi/currentprice.json")
+        json_data = json.loads(response.text)
+        date = json_data["time"]["updated"]
     if "$" in currency or "dollar" in currency or "usd" in currency.lower():
         usd_rate = json_data["bpi"]["USD"]["rate"].replace(",","")
         amount_in_bitcoin = float(usd_rate)*float(amount)
@@ -232,6 +258,9 @@ def shifted_back(args):
 #info
 @client.command(aliases=['i'])
 async def info(ctx):
-    await ctx.send( f'**{ctx.author}** ({ctx.author.id}) joined **{ctx.guild}** ({ctx.guild.id}) **at {ctx.author.joined_at}.**' )
-
+    await ctx.send(f'Name: {ctx.author} aka {ctx.author.nick} ({ctx.author.id}')
+    await ctx.send(f'Joined {ctx.guild} ({ctx.guild.id}) at {ctx.author.joined_at}')
+    if len(ctx.author.activities) != 0:
+        await ctx.send(f'{ctx.author}\'s current activities include {ctx.author.activities}')
+    
 client.run(TOKEN)
