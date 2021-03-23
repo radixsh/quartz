@@ -111,17 +111,28 @@ async def quote(ctx):
 @client.command(aliases=['e'])
 async def emoji(ctx,*args):
     if len(args) == 0:
-        return f'Error: filename missing.'
+        return await ctx.send(f'Error: filename missing.')
     name = args[0]
-    attachment_url = ctx.message.attachments[0].url
+    attachment_url = ""
+    try:
+        attachment_url = ctx.message.attachments[0].url
+    except IndexError:
+        return await ctx.send(f'Error: please attach the image to your message. Also, Discord won\'t let me set external images as emojis, so please attach/upload the image instead of sending a link :(')
+
+    extensions = [".png",".jpg",".jpeg"]
+    if not any(ext in attachment_url for ext in extensions):
+        return await ctx.send(f'Error: please make sure the image is `.png`, `.jpg`, or `.jpeg` format.')
 
     async with aiohttp.ClientSession() as session:
         async with session.get(attachment_url, timeout = 20) as response:
-            if response.status == 200:
+            if len(ctx.guild.emojis) >= ctx.guild.emoji_limit:
+                await ctx.send(f'Error: all the emoji spots ({ctx.guild.emoji_limit}) are already taken!')
+            elif response.status == 200:
                 image_bytes = await response.content.read() 
                 emoji = await ctx.guild.create_custom_emoji(name=name, image=image_bytes)
-                return await ctx.send(f'New emoji: <:{emoji.name}:{emoji.id}> (`{emoji.name}``, ID `{emoji.id}``)')
-            await ctx.send(f'Something went wrong, please contact radix#4520 :(')
+                return await ctx.send(f'New emoji: <:{emoji.name}:{emoji.id}> (`<:{emoji.name}:{emoji.id}>`)')
+            else:
+                await ctx.send(f'Something went wrong, please contact radix#4520 :(')
 
 
 
