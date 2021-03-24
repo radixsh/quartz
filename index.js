@@ -1,10 +1,14 @@
 const Discord = require('discord.js');
 const bot = new Discord.Client();
-const { token, prefix, permittedGuilds} = require("./config.json");   
+const { token, prefix, permittedGuilds, inferkitToken} = require("./config.json");   
 const emojiCharacters = require("./emojiCharacters.js");
 const fs = require('fs');
 var exec = require('child_process').exec;
 var isDm = false;
+
+require('dotenv').config();
+const InferKit = require("./inferkitIndex.js")
+
 
 bot.on('ready', () => {
     console.log(`Logged in as ${bot.user.tag}!`); 
@@ -65,6 +69,7 @@ bot.on('message', async message => {
     const punctuationArray = ["?","!",".","~"];
     if(message.content.substring(0,prefix.length) === prefix){
         var args = message.content.slice(prefix.length).trim().split(/\s+/g); 
+        var argsAsMessage = args.join(" ")
         var command = args.shift().toLowerCase();
         var len = 0;
         for(let i = 0; i < command.length; i++) 
@@ -77,7 +82,7 @@ bot.on('message', async message => {
             isDm = true;
             console.log(`\n${message.createdAt}\n${message.author.username} (dm)`);
         } else console.log(`\n${message.createdAt}\n${message.author.username} (#${message.channel.name} in ${message.guild.name})`);
-        if (command) console.log(`Command: ${command}\t\tArgs (${args.length}): ${args}`);
+        if (command) console.log(`Command: ${command}\t\tArgs (${args.length}): ${argsAsMessage}`);
         
 
         if (command === 'ping') {
@@ -129,7 +134,7 @@ bot.on('message', async message => {
         else if(command === "purge") {
             if(isDm) return message.channel.send("(i'm not allowed to delete things in dms :/)");
             const deleteCount = parseInt(args[0], 10);
-            if(!deleteCount || deleteCount < 2 || deleteCount > 100)
+            if(!deleteCount || deleteCount < 2 || deleteCount > 99)
                 return message.channel.send("you're supposed to provide a number between 2 and 99 for the number of messages to delete :/");
             try { 
                 message.channel.bulkDelete(deleteCount+1); 
@@ -219,9 +224,21 @@ bot.on('message', async message => {
             var info = `guild: ${message.guild} (\`${message.guild.id}\`)\nchannel: ${message.channel.name} (\`${message.channel.id}\`)\nuser: ${message.author.username} (${message.guild.member(message.author).displayName}) (\`${message.author.id}\`)`
             return message.channel.send(info)
         } 
+
+
+
+        else if(command === "ai"){
+            const inferkit = new InferKit(inferkitToken);
+            const m = await message.channel.send("generating a response...");
+            let result = await inferkit.process(argsAsMessage)//, {length: 150})
+            m.delete().catch(O_o=>{});
+            message.channel.send(result)
+            
+            //m.edit(result)
+        }
         
         
-        else if(message.content.substring(0,prefix.length) === prefix)
+        else if(message.content.substring(0,prefix.length) === prefix && message.content.slice(-1) !== "$")
             return message.channel.send(`my documentation's at ${prefix}help`);
     }
     

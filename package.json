@@ -1,14 +1,39 @@
 {
-  "name": "onehentwoducks",
-  "version": "1.0.0",
-  "description": "",
+  "name": "inferkit",
+  "version": "1.0.3",
+  "description": "a wrapper for the inferkit api",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
-  "author": "",
+  "author": "ryan forever",
   "license": "ISC",
   "dependencies": {
-    "time-stamp": "^2.2.0"
-  }
+    "axios": "^0.21.1",
+    "discord": "^0.8.2",
+    "discord.js": "^12.5.1"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryanfarber/inferkit.git"
+  },
+  "keywords": [
+    "ai",
+    "api",
+    "generator",
+    "inferkit",
+    "megatron",
+    "natural language processing",
+    "natural language understanding",
+    "neural network",
+    "nlp",
+    "text generation"
+  ],
+  "bugs": {
+    "url": "https://github.com/ryanfarber/inferkit/issues"
+  },
+  "homepage": "https://github.com/ryanfarber/inferkit#readme"
 }
