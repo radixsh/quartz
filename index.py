@@ -20,12 +20,12 @@ from other import quotes, responses, generate_keysmash
 @client.event
 async def on_ready():
     print(f'Logged in as {client.user}!')
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{client.command_prefix}h'))
 
 
 #main
 @client.event
 async def on_message(message):
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{client.command_prefix}h'))
     if message.author == client.user:
         return
     rainbow_words = ["gay",
@@ -51,7 +51,8 @@ async def on_message(message):
                 if rand < len(responses):
                     await message.channel.send(responses[rand])
             break
-
+    
+    #respond to own name
     if "hi quartz" in message.content.lower():
         async with message.channel.typing():
             faces = [":3",":D",":)",":))","^-^","^_^",":3",":)))","<3"]
@@ -60,6 +61,7 @@ async def on_message(message):
         if len(name_to_use.split()) > 3:
             return await message.channel.send(f'hi, {name_to_use} {random.choice(faces)}')    
         await message.channel.send(f'hi {name_to_use} {random.choice(faces)}')
+
     await client.process_commands(message)
 
 
@@ -110,9 +112,16 @@ async def quote(ctx):
 #emoji
 @client.command(aliases=['e'])
 async def emoji(ctx,*args):
-    if len(args) == 0:
-        return await ctx.send(f'Error: filename missing.')
+    async with ctx.typing():
+        if len(args) == 0:
+            return await ctx.send(f'Error: give the emoji a name!')
     name = args[0]
+    if len(name) < 2 or len(name) > 32:
+        return await ctx.send(f'Error: the emoji\'s name must be between 2 and 32 in length.')
+    if name in str(ctx.guild.emojis):
+        return await ctx.send(f'Error: that name is taken!')
+
+    #get attached image's url
     attachment_url = ""
     try:
         attachment_url = ctx.message.attachments[0].url
@@ -133,7 +142,6 @@ async def emoji(ctx,*args):
                 return await ctx.send(f'New emoji: <:{emoji.name}:{emoji.id}> (`<:{emoji.name}:{emoji.id}>`)')
             else:
                 await ctx.send(f'Something went wrong, please contact radix#4520 :(')
-
 
 
 #dog
@@ -273,5 +281,6 @@ async def info(ctx):
     await ctx.send(f'Joined {ctx.guild} ({ctx.guild.id}) at {ctx.author.joined_at}')
     if len(ctx.author.activities) != 0:
         await ctx.send(f'{ctx.author}\'s current activities include {ctx.author.activities}')
-    
+
+
 client.run(TOKEN)
