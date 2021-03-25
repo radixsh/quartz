@@ -132,17 +132,24 @@ async def emoji(ctx,*args):
     if not any(ext in attachment_url for ext in extensions):
         return await ctx.send(f'Error: please make sure the image is `.png`, `.jpg`, or `.jpeg` format.')
 
+    if len(ctx.guild.emojis) >= ctx.guild.emoji_limit:
+        await ctx.send(f'Error: all the emoji spots ({ctx.guild.emoji_limit}) are already taken!')
+
     async with aiohttp.ClientSession() as session:
-        async with session.get(attachment_url, timeout = 20) as response:
-            if len(ctx.guild.emojis) >= ctx.guild.emoji_limit:
-                await ctx.send(f'Error: all the emoji spots ({ctx.guild.emoji_limit}) are already taken!')
-            elif response.status == 200:
+        async with session.get(attachment_url, timeout = 20) as response:        
+            if response.status == 200:
                 image_bytes = await response.content.read() 
-                emoji = await ctx.guild.create_custom_emoji(name=name, image=image_bytes)
-                return await ctx.send(f'New emoji: <:{emoji.name}:{emoji.id}> (`<:{emoji.name}:{emoji.id}>`)')
+                try:
+                    emoji = await ctx.guild.create_custom_emoji(name=name, image=image_bytes)
+                except aiohttp.ServerTimeoutError:
+                    return await ctx.send(f'Sorry, server timed out! Try again?')
+                except Exception as exc:
+                    if "String value did not match validation regex" in str(exc):
+                        return await ctx.send(f'Sorry, special characters aren\'t allowed!')
+                    return await ctx.send(exc)
+                await ctx.send(f'New emoji: <:{emoji.name}:{emoji.id}> (`<:{emoji.name}:{emoji.id}>`)')
             else:
                 await ctx.send(f'Something went wrong, please contact radix#4520 :(')
-
 
 #dog
 @client.command(aliases=['dog','d'])
