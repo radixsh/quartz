@@ -245,21 +245,22 @@ bot.on('message', async message => {
     if(message.content.match(/^yay$/))
         return message.channel.send("yay");
 
-    if(message.content.includes("mwah"))
+    msg = message.content.toLowerCase()
+    if(msg.includes("mwah"))
         return message.react("💋");
 
-    if(message.content.includes("μωμ"))
+    if(msg.includes("μωμ"))
         return message.channel.send("μωμ")
         
-    if(message.content.includes("uwu") && message.content.includes("owo")){
-        if(message.content.indexOf("uwu") < message.content.indexOf("owo")) 
+    if(msg.includes("uwu") && msg.includes("owo")){
+        if(msg.indexOf("uwu") < msg.indexOf("owo")) 
             var uwuWord = "uwu";
         else 
             var uwuWord = "owo";
     } else{
-        if(message.content.includes("uwu")) 
+        if(msg.includes("uwu")) 
             var uwuWord = "uwu";
-        else if(message.content.includes("owo")) 
+        else if(msg.includes("owo")) 
             var uwuWord = "owo";
     }
     if(uwuWord) console.log("uwuWord: " + uwuWord);
@@ -272,7 +273,7 @@ bot.on('message', async message => {
         if(err) return console.log(err);
     }); 
 
-    msg = message.content.split(/\s+/g); //msg is message separated into an array by spaces 
+    msg = message.content.toLowerCase().split(/\s+/g); //msg is message separated into an array by spaces 
     for(let i = 0; i < msg.length; i++){
         if(msg[i].includes(uwuWord)){
             var lastLetters = msg[i].substring(msg[i].indexOf(uwuWord)+3).split(""); 
