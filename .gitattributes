@@ -1,4 +1,0 @@
- # Files that are going to be encrypted
-config.json filter=git-crypt diff=git-crypt
-# Making sure that .gitattributes is never encrypted
- .gitattributes !filter !diff

@@ -38,6 +38,10 @@ bot.on('message', async message => {
     }
 
     if (message.author.bot) return;
+    
+    //uncomment this line if you want to silence bitz everywhere except the permitted guilds: 
+    //if(!permittedGuilds.includes(message.guild.id)) return;
+    
     fs.readFile('uwuchannels.txt', 'utf8', function(err, uwuchannels) {
         if (message.content.substring(0,prefix.length) !== prefix && 
             !message.content.toLowerCase().includes("uwu") && 
@@ -47,8 +51,6 @@ bot.on('message', async message => {
             !uwuchannels.includes(message.channel.id))
         return; 
     });
-    
-    //if(!permittedGuilds.includes(message.guild.id)) return message.channel.send("sorry, i'm down for testing ;-;")
     
     if(message.content === `${prefix}uwuchannel -rm`){
         console.log(`\n${message.createdAt}\n${message.author.username} (# ${message.channel.name} in ${message.guild.name})`);

@@ -1,5 +1,7 @@
 # bitz — discord bot 
-bitz is a [node.js](https://nodejs.org/en/) discord bot who can echo messages, uwuify messages, delete messages, and create polls. their most distinctive feature, however, is that they respond to messages containing the strings `owo` and `uwu`.
+bitz is a [node.js](https://nodejs.org/en/) discord bot who can echo messages, uwuify messages, delete messages, and create polls. their most distinctive feature is that they respond to messages containing the strings `owo` and `uwu`. 
+
+bitz was named by my close friend tumega500#4689; their profile picture art was also created by him. 
 
 ## table of contents  
 1. [general info](#general-info)
@@ -44,10 +46,10 @@ here's some sample console output :)
 
 ## technologies
 this project was created with: 
-* [node.js](https://nodejs.org/en/) v12.18.0 — an open-source, cross-platform javascript runtime environment that executes javascript code outside a web browser
-* [discord.js](https://discord.js.org/#/) v12.2.0 ([documentation](https://discordjs-fork.readthedocs.io/en/latest/index.html)) — a powerful object-oriented node.js module that allows easy interaction with the discord api
+* [node.js](https://nodejs.org/en/) v12.18.0: an open-source, cross-platform javascript runtime environment that executes javascript code outside a web browser
+* [discord.js](https://discord.js.org/#/) v12.2.0 ([documentation](https://discordjs-fork.readthedocs.io/en/latest/index.html)): a powerful object-oriented node.js module that allows easy interaction with the discord api
 * [discord api](https://discord.com/developers/docs/intro) 
-* [nodemon](https://www.npmjs.com/package/nodemon) v2.0.4 — a tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected
+* [nodemon](https://www.npmjs.com/package/nodemon) v2.0.4: a tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected
 
 ## setup
 to clone and run this application, you'll need git and node.js (which comes with npm).
@@ -74,23 +76,23 @@ $ git clone https://github.com/radradix/bitz
 $ cd bitz
 ```
 
-before starting bitz, you'll need to make your own config.json file and put your api token into it. my config.json file is in this repository — encrypted — as a kind of placeholder (and because it makes it easier for me during development). so create your own config file: 
+before starting bitz, you'll need to make your own config.json file:
+
 ```sh
 $ rm config.json
 $ touch config.json
 ```
 
-the config file will hold, at minimum, your token and your chosen command prefix (in the command `$help`, for instance, the prefix is `$`). 
-
-to generate your own api token, go to your [discord developer portal](https://discord.com/developers/applications) and create an application. click the subheading "bot" in the menubar on the left and add a bot, and a token will have been generated under the bot's username. (this token must be kept secret.) here's the format that i used: 
+the config file will hold, at minimum, your token and your chosen command prefix (in the command `$help`, for instance, the prefix is `$`). to generate your own api token, go to your [discord developer portal](https://discord.com/developers/applications) and create an application. click the subheading "bot" in the menubar on the left and add a bot, and a token will have been generated under the bot's username. (this token must be kept secret.) here's the format that i used: 
 ```js
 {
   "token": "my-token-here-between-quotes",
   "prefix": "$",
   "permittedGuilds": "1234567890"
+  "inferkitToken": "asdkfjaksdjf-ksdjfkdjf"
 }
 ```
-(the permittedGuilds line allows you the option to silence bitz everywhere except the sandbox guild, for instance while testing beta features. you can add whatever constants you want to the config file, or keep it to just the two lines — just make sure the last line doesn't end with a trailing comma.)
+(the permittedGuilds line allows you the option to silence bitz everywhere except the sandbox guild, for instance while testing beta features. you can add whatever constants you want to the config file; just make sure the last line doesn't end with a trailing comma.)
 
 once your bot's been made, you'll need to add it to a discord guild (colloquially, "server") in which you have admin privileges. to do that, go to your developer portal again and create a bot invite link with the permissions integer `3209216`. 
 
@@ -115,5 +117,3 @@ to create this project, i found the following sources incredibly useful:
 
 ## license
 released under [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
-
-bitz was named by my close friend tumega500#4689. their profile picture art was also created by him. 
