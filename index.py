@@ -129,7 +129,7 @@ async def create_emoji(ctx,*args):
         return await ctx.send(f'Error: please attach the image to your message. Also, Discord won\'t let me set external images as emojis, so please attach/upload the image instead of sending a link :(')
 
     extensions = [".png",".jpg",".jpeg"]
-    if not any(ext in attachment_url for ext in extensions):
+    if not any(ext in attachment_url.lower() for ext in extensions):
         return await ctx.send(f'Error: please make sure the image is `.png`, `.jpg`, or `.jpeg` format.')
 
     if len(ctx.guild.emojis) >= ctx.guild.emoji_limit:
