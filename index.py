@@ -28,7 +28,9 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
+    msg = message.content.lower().split()
     rainbow_words = ["gay",
+            "gae",
             "sapphic",
             "sappho",
             "lesbos",
@@ -39,18 +41,19 @@ async def on_message(message):
             "queer",
             "wholesome",
             "women",
-            "gender is"
     ]
-    for word in rainbow_words:
-        if word in message.content.lower():
-            rand = random.randint(0,len(responses)+10)
-            if rand >= len(responses)+5:
-                keysmash = generate_keysmash()
-                await message.channel.send(keysmash)
-            else:
-                if rand < len(responses):
-                    await message.channel.send(responses[rand])
-            break
+    sad_words = ["bible","suicide","death","depress","pain","test","trump","die"]
+    if any(word in msg for word in sad_words): 
+        return
+    if any(word in msg for word in rainbow_words):
+        roof = len(responses)+90
+        rand = random.randint(0,roof)
+        if rand >= (roof-10):
+            keysmash = generate_keysmash()
+            await message.channel.send(keysmash)
+        else:
+            if rand < len(responses):
+                await message.channel.send(responses[rand])
     
     #respond to own name
     if "hi quartz" in message.content.lower():
@@ -83,13 +86,13 @@ async def get_help(ctx):
             value="Gets current conversion rate from USD or GBP or euros to Bitcoin.", inline=False)
     embed.add_field(name=f'`{client.command_prefix}convert [amount] [currency]`',
             value="Converts `amount` from `currency` (USD, GBP, or euros) to Bitcoin.", inline=False)
-    embed.add_field(name=f'`{client.command_prefix}shift_forward [int] [message]` (aka `forward`)',
+    embed.add_field(name=f'`{client.command_prefix}shift_forward [shift=1] foo` (aka `forward`)',
             value="Encodes a message by rotating it forward along the ASCII table the specified number of spaces (defaults to 1).",\
                 inline=False)
-    embed.add_field(name=f'`{client.command_prefix}shift_back [int] [message]` (aka `back`)',
+    embed.add_field(name=f'`{client.command_prefix}shift_back [shift=1] bar` (aka `back`)',
             value="Decodes a message by rotating it back along the ASCII table the specified number of spaces (defaults to 1)",\
                 inline=False)
-    embed.add_field(name=f'`{client.command_prefix}emoji [name]` (aka `e`)', 
+    embed.add_field(name=f'`{client.command_prefix}emoji foo` (aka `e`)', 
             value="Sets attached image as a new server emoji with the given name, if there is space.", inline=False)
     embed.set_footer(text="Contact @radix#4520 with issues.")
     await ctx.send(embed=embed)
