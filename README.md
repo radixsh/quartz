@@ -5,8 +5,8 @@ Quartz is a discord.py bot I created for APCSP class. Main functionalities inclu
    - `cat`: sends a cat picture from https://api.thecatapi.com/v1/images/search
    - `dog`: sends a dog picture from https://dog.ceo/api/breeds/image/random
    - `bitcoin`: sends Bitcoin conversion rates from https://api.coindesk.com/v1/bpi/currentprice.json
-- `shift_forward [shift=1] [foo]`: shifts `foo` forward `shift` spaces in the ASCII table
-- `shift_backward [shift=1] [foo]`: shifts `foo` back `shift` spaces in the ASCII table
+- `shift_forward [shift=1] foo`: shifts `foo` forward `shift` spaces in the ASCII table (`shift` defaults to 1)
+- `shift_backward [shift=1] bar`: shifts `bar` back `shift` spaces in the ASCII table (`shift` defaults to 1)
 - `emoji [name]`: Custom emoji uploading is now supported! Run this command, and attach the image file. If Quartz has the necessary permissions, the image will be uploaded as a custom emoji in that guild. 
 
 ## Technologies used
