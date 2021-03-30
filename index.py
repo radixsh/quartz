@@ -113,8 +113,8 @@ async def quote(ctx):
 
 
 #emoji
-@client.command(aliases=['e'])
-async def emoji(ctx,*args):
+@client.command(aliases=['emoji','e','create'])
+async def create_emoji(ctx,*args):
     async with ctx.typing():
         if len(args) == 0:
             return await ctx.send(f'Error: give the emoji a name!')
@@ -123,9 +123,6 @@ async def emoji(ctx,*args):
         return await ctx.send(f'Error: the emoji\'s name must be between 2 and 32 in length.')
     if name in str(ctx.guild.emojis):
         return await ctx.send(f'Error: that name is taken!')
-
-    #get attached image's url
-    attachment_url = ""
     try:
         attachment_url = ctx.message.attachments[0].url
     except IndexError:
@@ -153,6 +150,16 @@ async def emoji(ctx,*args):
                 await ctx.send(f'New emoji: <:{emoji.name}:{emoji.id}> (`<:{emoji.name}:{emoji.id}>`)')
             else:
                 await ctx.send(f'Something went wrong, please contact radix#4520 :(')
+
+
+@client.command(aliases=['remove','rm'])
+async def remove_emoji(ctx,*args):
+    if len(args) == 0:
+        return await ctx.send(f'Send me the emoji to remove!')
+    for emoji in ctx.guild.emojis:
+        if args[0] in str(emoji):
+            await emoji.delete()
+            return await ctx.send(f'Successfully deleted that emoji. It is no more.')
 
 #dog
 @client.command(aliases=['dog','d'])
