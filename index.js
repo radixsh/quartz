@@ -107,7 +107,7 @@ bot.on('message', async message => {
                     { name: `\`${prefix}ping\``, value: 'performs a ping.'},
                     { name: `\`${prefix}uwu bar\``, value: 'uwuifies your message (turning "bar" into "baw").'},
                     { name: `\`${prefix}uwuchannel [-rm]\``, value: "uwuifies all future messages in the current channel. the option `-rm` removes this setting."},
-                    { name: `\`${prefix}ai `, value: "lets you talk with inferkit's api."}
+                    { name: `\`${prefix}ai `, value: "lets you talk with inferkit's api."},
                     { name: `\`${prefix}data\``, value: "gets data about the current guild, current channel, and you :)"}
                 )
                 .setFooter('developed by radix#4520');
