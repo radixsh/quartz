@@ -87,7 +87,7 @@ bot.on('message', async message => {
         if (command) console.log(`Command: ${command}\t\tArgs (${args.length}): ${argsAsMessage}`);
         
 
-        if (command === 'ping') {
+        if (command === 'ping' || command === 'p') {
             const m = await message.channel.send("ping?");
             return m.edit(`pong! latency is ${m.createdTimestamp - message.createdTimestamp} ms :)`);
         } 
