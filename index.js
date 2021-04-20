@@ -97,16 +97,17 @@ bot.on('message', async message => {
             const helpEmbed = new Discord.MessageEmbed()
                 .setColor('#8db255')
                 .setTitle('help')
-                .setDescription(`current prefix: \`${prefix}\`. \nthings in <greater/less than symbols> are necessary arguments; things in [square brackets] are not.`)
+                .setDescription(`current prefix: \`${prefix}\`. \nthings in [square brackets] are optional.`)
                 .setThumbnail('https://i.imgur.com/r3KSiQ2.png')
                 .addFields(
-                    { name: `\`${prefix}h[elp]\``, value: "shows this help page; no arguments."},
-                    { name: `\`${prefix}purge <n>\``, value: "deletes the `n` most recent messages in the current channel (2 < `n` < 100), and also deletes the command message. (deletion isn't allowed in dms or for messages older than like... 10 days or smth, idk google it)"},
-                    { name: `\`${prefix}echo <foo>\``, value: "echoes back what you tell it to, deleting the command message (deletion isn't allowed in dms). (it works for one image at a time too)."},
-                    { name: `\`${prefix}poll "<polling question>" "<poll answer 1>" "<poll answer 2"> "[poll answer 3]" ...\``, value: 'creates a poll in an embed, deleting the command message. at least three and no more than ten arguments are permitted, set off by double quotation marks: a question and at least two options.'},
-                    { name: `\`${prefix}ping\``, value: 'performs a ping; no arguments.'},
-                    { name: `\`${prefix}uwu <foo>\``, value: 'uwuifies your message.'},
+                    { name: `\`${prefix}h[elp]\``, value: "shows this help page."},
+                    { name: `\`${prefix}purge foo\``, value: "deletes the `n` most recent messages in the current channel (2 < `n` < 100), and also deletes the command message. (deletion isn't allowed in dms or for messages older than like... 10 days or smth, idk google it)"},
+                    { name: `\`${prefix}echo bar\``, value: "echoes back what you tell it to, deleting the command message (deletion isn't allowed in dms). (it works for one image at a time too)."},
+                    { name: `\`${prefix}poll "foo?" "bar" "bar but not" ["bar but better"] ...\``, value: 'creates a poll in an embed, deleting the command message. at least three and no more than ten arguments are permitted, set off by double quotation marks: a question and at least two options.'},
+                    { name: `\`${prefix}ping\``, value: 'performs a ping.'},
+                    { name: `\`${prefix}uwu bar\``, value: 'uwuifies your message (turning "bar" into "baw").'},
                     { name: `\`${prefix}uwuchannel [-rm]\``, value: "uwuifies all future messages in the current channel. the option `-rm` removes this setting."},
+                    { name: `\`${prefix}ai `, value: "lets you talk with inferkit's api."}
                     { name: `\`${prefix}data\``, value: "gets data about the current guild, current channel, and you :)"}
                 )
                 .setFooter('developed by radix#4520');
