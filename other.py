@@ -13,13 +13,13 @@ def generate_keysmash():
         keysmash += valid_characters[random_char]
     enders = [
         ":rainbow:",
-        "wammen",
         "yes",
         ":two_hearts:",
         ":weary:",
         ":rainbow_flag:",
         "<3",
-        "","",
+        "",
+        "",
         "uwu"
     ]
     return f'{keysmash} {random.choice(enders)}'
@@ -110,16 +110,16 @@ responses = [
         "gay rights!",
         "gay rights!",
         "women with swords,,,,,,",
-        "do you listen to girl in red?",
+        #"do you listen to girl in red?",
         "women do be pretty though",
-        "women in suits....... yes",
+        #"women in suits....... yes",
         "love has no gender ^-^",
-        "love! has! no! gender!!!",
+        #"love! has! no! gender!!!",
         ":rainbow_flag:",
         ":rainbow_flag:",
         ":rainbow:",
         "gay",
         "gay",
-        "gay",
+        "gay :D",
         "gay ^-^"
 ]

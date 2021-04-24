@@ -40,7 +40,6 @@ async def on_message(message):
             "lgbt",
             "queer",
             "wholesome",
-            "women",
     ]
     sad_words = ["bible","suicide","death","depress","pain","test","trump","die"]
     if any(word in msg for word in sad_words): 
@@ -90,10 +89,12 @@ async def get_help(ctx):
             value="Encodes a message by rotating it forward along the ASCII table the specified number of spaces (defaults to 1).",\
                 inline=False)
     embed.add_field(name=f'`{client.command_prefix}shift_back [shift=1] bar` (aka `back`)',
-            value="Decodes a message by rotating it back along the ASCII table the specified number of spaces (defaults to 1)",\
+            value="Decodes a message by rotating it back along the ASCII table the specified number of spaces (defaults to 1).",\
                 inline=False)
-    embed.add_field(name=f'`{client.command_prefix}emoji foo` (aka `e`)', 
-            value="Sets attached image as a new server emoji with the given name, if there is space.", inline=False)
+    embed.add_field(name=f'`{client.command_prefix}create_emoji foo` (aka `emoji`, `e`)', 
+            value="Sets attached image as a custom server emoji with the given name.", inline=False)
+    embed.add_field(name=f'`{client.command_prefix}remove_emoji :bar:` (aka `remove`, `rm`)',
+            value="Removes the custom emoji with the given name.", inline=False)
     embed.set_footer(text="Contact @radix#4520 with issues.")
     await ctx.send(embed=embed)
 
