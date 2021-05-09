@@ -107,7 +107,9 @@ bot.on('message', async message => {
                     { name: `\`${prefix}ping\``, value: 'performs a ping.'},
                     { name: `\`${prefix}uwu bar\``, value: 'uwuifies your message (turning "bar" into "baw").'},
                     { name: `\`${prefix}uwuchannel [-rm]\``, value: "uwuifies all future messages in the current channel. the option `-rm` removes this setting."},
-                    { name: `\`${prefix}ai `, value: "lets you talk with inferkit's api."}
+                    { name: `\`${prefix}cc [-d]\``, value: "counts characters in your message (ignoring the command's length)."},
+                    { name: `\`${prefix}wc\``, value: "counts words in your message (ignoring the command's length)." },
+                    { name: `\`${prefix}ai `, value: "lets you talk with inferkit's api."},
                     { name: `\`${prefix}data\``, value: "gets data about the current guild, current channel, and you :)"}
                 )
                 .setFooter('developed by radix#4520');
@@ -141,7 +143,7 @@ bot.on('message', async message => {
                 return message.channel.send("you're supposed to provide a number between 2 and 99 for the number of messages to delete :/");
             try { 
                 message.channel.bulkDelete(deleteCount+1); 
-                message.channel.send(`successfully purged ${deleteCount} messages :)`)
+                message.channel.send(`successfully purged ${deleteCount} messages!`)
             }
             catch(error) { message.channel.send(`couldn't delete because: ${error}`); } 
             return;
@@ -213,14 +215,6 @@ bot.on('message', async message => {
             } 
         } 
         
-        else if(command === "dance"){
-            const danceArray = ["starts twerking","dances to WAP","starts waltzing around by themself","does the cupid shuffle","does the whip and nae nae"]
-            var index = Math.floor(Math.random()*danceArray.length)
-            let nickname = message.guild.member(message.author) ? message.guild.member(message.author).displayName : null;
-            return message.channel.send(`${nickname} ${danceArray[index]}.`)
-        } 
-        
-        
         
         
         else if(command === "data"){
@@ -228,6 +222,14 @@ bot.on('message', async message => {
             return message.channel.send(info)
         } 
 
+
+        else if(command === "cc"){
+            return message.channel.send(message.content.length - 4)
+        }
+
+        else if(command === "wc"){
+            return message.channel.send(args.length)
+        }
 
 
         else if(command === "ai"){
