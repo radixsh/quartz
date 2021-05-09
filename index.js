@@ -107,11 +107,8 @@ bot.on('message', async message => {
                     { name: `\`${prefix}ping\``, value: 'performs a ping.'},
                     { name: `\`${prefix}uwu bar\``, value: 'uwuifies your message (turning "bar" into "baw").'},
                     { name: `\`${prefix}uwuchannel [-rm]\``, value: "uwuifies all future messages in the current channel. the option `-rm` removes this setting."},
-<<<<<<< HEAD
                     { name: `\`${prefix}cc [-d]\``, value: "counts characters in your message (ignoring the command's length)."},
                     { name: `\`${prefix}wc\``, value: "counts words in your message (ignoring the command's length)." },
-=======
->>>>>>> bdef1f304dca745b805a2df4ed3b297443b00e72
                     { name: `\`${prefix}ai `, value: "lets you talk with inferkit's api."},
                     { name: `\`${prefix}data\``, value: "gets data about the current guild, current channel, and you :)"}
                 )
