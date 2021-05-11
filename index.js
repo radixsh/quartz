@@ -243,8 +243,11 @@ bot.on('message', async message => {
         }
         
         
-        else if(message.content.substring(0,prefix.length) === prefix && message.content.slice(-1) !== "$")
+        else if (message.content.substring(0, prefix.length) === prefix && 
+                isNaN(message.content.substring(1, message.content.length)) && 
+                message.content.substring(message.content.length-1) !== "$" ) {
             return message.channel.send(`my documentation's at ${prefix}help`);
+        }
     }
     
     if(message.content.match(/^yay$/))
