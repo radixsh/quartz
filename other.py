@@ -1,16 +1,15 @@
 import random
 def generate_keysmash():
-    keysmash_length = random.randint(7,20)
-    valid_characters = ["a","s","s","s","s","s",
-                        "d","d","g","d","f","g","h",
-                        "j","j","j","j","k","k","k","k",
-                        "l","z","x","w",";",";",";",";",
-                        "v","v",".",","
+    valid_characters = [
+        "a","s","s","s","s","s",
+        "d","d","g","d","f","g","h",
+        "j","j","j","j","k","k","k","k",
+        "l","z","x","w",";",";",";",";",
+        "v","v",".",","
     ]
     keysmash = ""
-    for i in range(keysmash_length):
-        random_char = random.randint(0,len(valid_characters)-1)
-        keysmash += valid_characters[random_char]
+    for i in range(random.randint(7,20)):
+        keysmash += random.choice(valid_characters)
     enders = [
         ":rainbow:",
         "yes",
@@ -109,12 +108,13 @@ responses = [
         "gay rights!",
         "gay rights!",
         "gay rights!",
-        "women with swords,,,,,,",
-        #"do you listen to girl in red?",
-        "women do be pretty though",
-        #"women in suits....... yes",
-        "love has no gender ^-^",
-        #"love! has! no! gender!!!",
+        #"women with swords,,,,,,",
+        #"women do be pretty though",
+        "wammen",
+        "w o m e n",
+        ":rainbow_flag:",
+        ":rainbow_flag:",
+        ":rainbow_flag:",
         ":rainbow_flag:",
         ":rainbow_flag:",
         ":rainbow:",
