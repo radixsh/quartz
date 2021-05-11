@@ -1,7 +1,10 @@
 #config
 import discord
 from discord.ext import commands
-client = commands.Bot(command_prefix='>')
+#client = commands.Bot(command_prefix='>')
+intents = discord.Intents.default()
+intents.members = True
+client = commands.Bot(command_prefix='>', intents = intents)
 
 #dependencies
 import time #for joke
@@ -14,7 +17,7 @@ import aiohttp
 
 #local stuff
 from env import TOKEN 
-from other import quotes, responses, generate_keysmash
+from other import generate_keysmash, quotes, responses
 
 #signing in
 @client.event
@@ -29,41 +32,47 @@ async def on_message(message):
     if message.author == client.user:
         return
     msg = message.content.lower().split()
-    rainbow_words = ["gay",
-            "gae",
-            "sapphic",
-            "sappho",
-            "lesbos",
-            "lesbian",
-            "lesbean",
-            "rainbow",
-            "lgbt",
-            "queer",
-            "wholesome",
+    rainbow_words = [
+        "gay",
+        "gae",
+        "sapphic",
+        "sappho",
+        "lesbos",
+        "lesbian",
+        "lesbean",
+        "rainbow",
+        "lgbt",
+        "queer",
+        "wholesome",
+        "wlw",
+        "mlm",
+        "nblm",
+        "nblnb",
+        "nblw",
     ]
     sad_words = ["bible","suicide","death","depress","pain","test","trump","die"]
     if any(word in msg for word in sad_words): 
         return
     if any(word in msg for word in rainbow_words):
-        roof = len(responses)+90
-        rand = random.randint(0,roof)
-        if rand >= (roof-10):
-            keysmash = generate_keysmash()
-            await message.channel.send(keysmash)
-        else:
-            if rand < len(responses):
-                await message.channel.send(responses[rand])
-    
+        #make this weird rand number so that we don't have to generate another random number later to choose which of the responses we send
+        rand = random.randint(0,len(responses)+80) 
+        try:
+            await message.channel.send(responses[rand])
+        except IndexError:
+            if rand > (len(responses)+40):
+                await message.channel.send(generate_keysmash())
+        
     #respond to own name
-    if "hi quartz" in message.content.lower():
-        async with message.channel.typing():
-            faces = [":3",":D",":)",":))","^-^","^_^",":3",":)))","<3"]
-            possible_names = [message.author.name,message.author.nick]
-            name_to_use = random.choice(possible_names)
-        if len(name_to_use.split()) > 3:
-            return await message.channel.send(f'hi, {name_to_use} {random.choice(faces)}')    
-        await message.channel.send(f'hi {name_to_use} {random.choice(faces)}')
-
+    greetings = ["hi","hello","greetings","welcome"]
+    for greeting in greetings:
+        if f'{greeting} quartz' in message.content.lower() or f'{greeting}, quartz' in message.content.lower():
+            async with message.channel.typing():
+                faces = [":3",":3",":D",":)",":))",":)))","^-^","^_^","<3","!","!!"]
+                possible_names = [message.author.name,message.author.nick]
+                name_to_use = random.choice(possible_names).lower()
+            if len(name_to_use.split()) > 3:
+                return await message.channel.send(f'hi, {name_to_use} {random.choice(faces)}')    
+            await message.channel.send(f'hi {name_to_use} {random.choice(faces)}')
     await client.process_commands(message)
 
 
@@ -92,8 +101,8 @@ async def get_help(ctx):
             value="Decodes a message by rotating it back along the ASCII table the specified number of spaces (defaults to 1).",\
                 inline=False)
     embed.add_field(name=f'`{client.command_prefix}create_emoji foo` (aka `emoji`, `e`)', 
-            value="Sets attached image as a custom server emoji with the given name.", inline=False)
-    embed.add_field(name=f'`{client.command_prefix}remove_emoji :bar:` (aka `remove`, `rm`)',
+            value="Sets attached image as a custom server emoji with the given name (in this case, \"foo\").", inline=False)
+    embed.add_field(name=f'`{client.command_prefix}remove_emoji bar` (aka `remove`, `rm`)',
             value="Removes the custom emoji with the given name.", inline=False)
     embed.set_footer(text="Contact @radix#4520 with issues.")
     await ctx.send(embed=embed)
@@ -247,7 +256,7 @@ async def shift_forward(ctx,*args):
     await ctx.send(shifted_forward(args))
 def shifted_forward(args):
     if len(args) == 0: 
-        f'Error: must be in format `{client.command_prefix}shift_forward message`.'
+        return f'Error: must be in format `{client.command_prefix}shift_forward message`.'
     elif len(args) == 1 or not args[0].isdigit(): 
         shift = 1
         message_as_string = ' '.join(args)
@@ -273,7 +282,7 @@ async def shift_back(ctx,*args):
     await ctx.send(shifted_back(args))
 def shifted_back(args):
     if len(args) == 0: 
-        f'Error: must be in format `{client.command_prefix}shift_forward message`.'
+        return f'Error: must be in format `{client.command_prefix}shift_forward message`.'
     elif len(args) == 1 or not args[0].isdigit():
         shift = 1
         message_as_string = ' '.join(args)
@@ -294,11 +303,39 @@ def shifted_back(args):
 
 #info
 @client.command(aliases=['i'])
-async def info(ctx):
-    await ctx.send(f'Name: {ctx.author} aka {ctx.author.nick} ({ctx.author.id}')
-    await ctx.send(f'Joined {ctx.guild} ({ctx.guild.id}) at {ctx.author.joined_at}')
-    if len(ctx.author.activities) != 0:
-        await ctx.send(f'{ctx.author}\'s current activities include {ctx.author.activities}')
+async def info(ctx,*args):
+    def get_guild_details():
+        details = f'{ctx.guild} (`{ctx.guild.id}`)'
+        if not len(ctx.guild.premium_subscribers) == 0:
+            details += f'\nBoosters: {ctx.guild.premium_subscribers}'
+        details += f'\n{ctx.guild.member_count} members:\n'
+        for m in ctx.guild.members:
+            details += f'{m.name}, '
+        return details
+    def get_user_details(target):
+        details = f'**{target.nick}** aka {ctx.author.nick} (`{ctx.author.id}`)'
+        details += f'\nJoined {ctx.guild} (`{ctx.guild.id}`) on {ctx.author.joined_at.strftime("%A, %-d %B %Y at %H:%M:%S %Z")}'
+        if len(ctx.author.activities) != 0:
+            details += f'\nCurrent activities include {ctx.author.activities}'
+        else: 
+            details += f'\nNo current activities'
+        return details
+    return await ctx.send("waiting on consent!")
+    
+    '''
+    if len(args) > 1:
+        return await ctx.send(f'Error: please specify only one person')
+    elif len(args) == 0:
+        await ctx.send(get_guild_details())
+    else: #one argument given
+        target = args[0] 
+        for m in ctx.guild.members:
+            if m.nick == target or m.name == target:
+                get_user_details(target)
+    '''
+    
 
+    
+        
 
 client.run(TOKEN)
