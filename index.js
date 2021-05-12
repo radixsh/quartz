@@ -107,8 +107,8 @@ bot.on('message', async message => {
                     { name: `\`${prefix}ping\``, value: 'performs a ping.'},
                     { name: `\`${prefix}uwu bar\``, value: 'uwuifies your message (turning "bar" into "baw").'},
                     { name: `\`${prefix}uwuchannel [-rm]\``, value: "uwuifies all future messages in the current channel. the option `-rm` removes this setting."},
-                    { name: `\`${prefix}cc [-d]\``, value: "counts characters in your message (ignoring the command's length)."},
-                    { name: `\`${prefix}wc\``, value: "counts words in your message (ignoring the command's length)." },
+                    { name: `\`${prefix}cc[d]\``, value: "counts characters in your message (ignoring the command's length). use `ccd` instead to delete the message."},
+                    { name: `\`${prefix}wc[d]\``, value: "counts words in your message (ignoring the command's length). use `wcd` instead to delete the message." },
                     { name: `\`${prefix}ai `, value: "lets you talk with inferkit's api."},
                     { name: `\`${prefix}data\``, value: "gets data about the current guild, current channel, and you :)"}
                 )
@@ -227,9 +227,32 @@ bot.on('message', async message => {
             return message.channel.send(message.content.length - 4)
         }
 
+        else if (command === "ccd") {
+            try {
+                message.delete();
+                message.channel.send(message.content.length - 5)
+            }
+            catch (error) { 
+                message.channel.send(`couldn't delete because: ${error}`); 
+            }
+            return
+        }
+
         else if(command === "wc"){
             return message.channel.send(args.length)
         }
+
+        else if (command === "wcd") {
+            try {
+                message.delete();
+                message.channel.send(args.length)
+            }
+            catch (error) {
+                message.channel.send(`couldn't delete because: ${error}`);
+            }
+            return
+        }
+
 
 
         else if(command === "ai"){
