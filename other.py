@@ -123,3 +123,41 @@ responses = [
         "gay :D",
         "gay ^-^"
 ]
+
+
+rainbow_words = [
+    "gay",
+    "gae",
+    "sapphic",
+    "sappho",
+    "lesbos",
+    "lesbian",
+    "lesbean",
+    "rainbow",
+    "lgbt",
+    "queer",
+    "wholesome",
+    "wlw",
+    "mlm",
+    "nblm",
+    "nblnb",
+    "nblw",
+]
+sad_words = [
+    "bible",
+    "suicide",
+    "death",
+    "depress",
+    "pain",
+    "test",
+    "trump",
+    "die",
+    "yell",
+    "D:",
+    ":/",
+    ":(",
+    "hate",
+    "sad",
+    "slur",
+    "phobic"
+]

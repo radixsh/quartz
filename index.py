@@ -1,3 +1,4 @@
+import string
 #config
 import discord
 from discord.ext import commands
@@ -17,7 +18,7 @@ import aiohttp
 
 #local stuff
 from env import TOKEN 
-from other import generate_keysmash, quotes, responses
+from other import generate_keysmash, quotes, responses, rainbow_words, sad_words
 
 #signing in
 @client.event
@@ -31,26 +32,8 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
+    #responding to rainbows
     msg = message.content.lower().split()
-    rainbow_words = [
-        "gay",
-        "gae",
-        "sapphic",
-        "sappho",
-        "lesbos",
-        "lesbian",
-        "lesbean",
-        "rainbow",
-        "lgbt",
-        "queer",
-        "wholesome",
-        "wlw",
-        "mlm",
-        "nblm",
-        "nblnb",
-        "nblw",
-    ]
-    sad_words = ["bible","suicide","death","depress","pain","test","trump","die"]
     if any(word in msg for word in sad_words): 
         return
     if any(word in msg for word in rainbow_words):
@@ -59,7 +42,7 @@ async def on_message(message):
         try:
             await message.channel.send(responses[rand])
         except IndexError:
-            if rand > (len(responses)+40):
+            if rand > (len(responses)+50):
                 await message.channel.send(generate_keysmash())
         
     #respond to own name
@@ -73,6 +56,18 @@ async def on_message(message):
             if len(name_to_use.split()) > 3:
                 return await message.channel.send(f'hi, {name_to_use} {random.choice(faces)}')    
             await message.channel.send(f'hi {name_to_use} {random.choice(faces)}')
+
+    #responding to "no homo"
+    if message.content.lower().translate(str.maketrans('', '', string.punctuation)) == "no homo":
+        if random.randint(0,10) > 8:
+            await message.channel.send(f'not even a little? {generate_keysmash()}')
+        else: 
+            await message.channel.send(f'not even a little? :pleading_face:')
+
+    #responding to "aaaaa"
+    if message.content.lower() == len(message.content.lower())*'a':
+        await message.channel.send(len(message.content.lower())*'a')
+
     await client.process_commands(message)
 
 
@@ -82,28 +77,30 @@ async def get_help(ctx):
     embed = discord.Embed(title="Help", description=f'Prefix: `{client.command_prefix}`', color=0xb2558d)
     embed.add_field(name=f"`{client.command_prefix}ping` (aka `p`)", 
             value="Performs a ping to see if the bot is up.", inline=False)
-    embed.add_field(name=f"`{client.command_prefix}quote` (aka `q`)", 
-            value="Returns a randomly selected quote from a predefined array.", inline=False)
-    embed.add_field(name=f"`{client.command_prefix}get_joke` (aka `joke`,`j`)", 
-            value="Gets a joke from https://official-joke-api.appspot.com/random_joke.", inline=False)
-    embed.add_field(name=f"`{client.command_prefix}get_cat` (aka `cat`)", 
-            value="Gets an image of a cat from https://api.thecatapi.com/v1/images/search.", inline=False)
-    embed.add_field(name=f"`{client.command_prefix}get_dog` (aka `dog`,`d`)",
-            value="Gets an image of a dog from https://dog.ceo/api/breeds/image/random.", inline=False)
-    embed.add_field(name=f'`{client.command_prefix}get_bitcoin_rate` (aka `bitcoin`, `bit`)',
-            value="Gets current conversion rate from USD or GBP or euros to Bitcoin.", inline=False)
-    embed.add_field(name=f'`{client.command_prefix}convert [amount] [currency]`',
-            value="Converts `amount` from `currency` (USD, GBP, or euros) to Bitcoin.", inline=False)
-    embed.add_field(name=f'`{client.command_prefix}shift_forward [shift=1] foo` (aka `forward`)',
-            value="Encodes a message by rotating it forward along the ASCII table the specified number of spaces (defaults to 1).",\
-                inline=False)
-    embed.add_field(name=f'`{client.command_prefix}shift_back [shift=1] bar` (aka `back`)',
-            value="Decodes a message by rotating it back along the ASCII table the specified number of spaces (defaults to 1).",\
-                inline=False)
     embed.add_field(name=f'`{client.command_prefix}create_emoji foo` (aka `emoji`, `e`)', 
             value="Sets attached image as a custom server emoji with the given name (in this case, \"foo\").", inline=False)
     embed.add_field(name=f'`{client.command_prefix}remove_emoji bar` (aka `remove`, `rm`)',
             value="Removes the custom emoji with the given name.", inline=False)
+    embed.add_field(name=f'`{client.command_prefix}info` (aka `i`)',
+            value="Gets guild and user information.", inline=True)
+    embed.add_field(name=f"`{client.command_prefix}quote` (aka `q`)", 
+            value="Returns a randomly selected quote from a predefined array.", inline=True)
+    embed.add_field(name=f"`{client.command_prefix}get_joke` (aka `joke`,`j`)", 
+            value="Gets a joke from https://official-joke-api.appspot.com/random_joke.", inline=True)
+    embed.add_field(name=f"`{client.command_prefix}get_cat` (aka `cat`,`c`)", 
+            value="Gets an image of a cat from https://api.thecatapi.com/v1/images/search.", inline=True)
+    embed.add_field(name=f"`{client.command_prefix}get_dog` (aka `dog`,`d`)",
+            value="Gets an image of a dog from https://dog.ceo/api/breeds/image/random.", inline=True)
+    embed.add_field(name=f'`{client.command_prefix}get_bitcoin_rate` (aka `bitcoin`, `bit`)',
+            value="Gets current conversion rate from USD or GBP or euros to Bitcoin.", inline=True)
+    embed.add_field(name=f'`{client.command_prefix}convert [amount] [currency]`',
+            value="Converts `amount` from `currency` (USD, GBP, or euros) to Bitcoin.", inline=True)
+    embed.add_field(name=f'`{client.command_prefix}shift_forward [shift=1] foo` (aka `forward`)',
+            value="Encodes a message by rotating it forward along the ASCII table the specified number of spaces (defaults to 1).",
+            inline=True)
+    embed.add_field(name=f'`{client.command_prefix}shift_back [shift=1] bar` (aka `back`)',
+            value="Decodes a message by rotating it back along the ASCII table the specified number of spaces (defaults to 1).",
+            inline=True)
     embed.set_footer(text="Contact @radix#4520 with issues.")
     await ctx.send(embed=embed)
 
@@ -175,18 +172,18 @@ async def remove_emoji(ctx,*args):
 @client.command(aliases=['dog','d'])
 async def get_dog(ctx):
     async with ctx.typing():
-        response = requests.get("https://dog.ceo/api/breeds/image/random")
-        json_data = json.loads(response.text)
-        await ctx.send(json_data["message"])
+        response = requests.get("https://dog.ceo/api/breeds/image/random")    
+    json_data = json.loads(response.text)
+    await ctx.send(json_data["message"])
 
 
 #cat
-@client.command(aliases=['cat'])
+@client.command(aliases=['cat','c'])
 async def get_cat(ctx):
     async with ctx.typing():
         response = requests.get("https://api.thecatapi.com/v1/images/search")
-        json_data = json.loads(response.text)[0]
-        await ctx.send(json_data["url"])
+    json_data = json.loads(response.text)[0]
+    await ctx.send(json_data["url"])
 
 
 #jokes
@@ -224,7 +221,7 @@ async def get_bitcoin_rate(ctx):
 
 
 #bitcoin conversions
-@client.command(aliases=['c'])
+@client.command()
 async def convert(ctx, amount, currency):
     async with ctx.typing():
         response = requests.get("https://api.coindesk.com/v1/bpi/currentprice.json")
@@ -304,23 +301,65 @@ def shifted_back(args):
 #info
 @client.command(aliases=['i'])
 async def info(ctx,*args):
-    def get_guild_details():
-        details = f'{ctx.guild} (`{ctx.guild.id}`)'
+    def get_details(target):
+        guild_details = f'{ctx.guild}'
+        guild_details += f'\nID: `{ctx.guild.id}`'
+        guild_details += f'\n{ctx.guild.member_count} members'
+        guild_details += f'\n{len(ctx.guild.premium_subscribers)} Nitro supporters'
+        '''
         if not len(ctx.guild.premium_subscribers) == 0:
-            details += f'\nBoosters: {ctx.guild.premium_subscribers}'
-        details += f'\n{ctx.guild.member_count} members:\n'
-        for m in ctx.guild.members:
-            details += f'{m.name}, '
-        return details
-    def get_user_details(target):
-        details = f'**{target.nick}** aka {ctx.author.nick} (`{ctx.author.id}`)'
-        details += f'\nJoined {ctx.guild} (`{ctx.guild.id}`) on {ctx.author.joined_at.strftime("%A, %-d %B %Y at %H:%M:%S %Z")}'
-        if len(ctx.author.activities) != 0:
-            details += f'\nCurrent activities include {ctx.author.activities}'
+            for s in ctx.guild.premium_subscribers:
+                boosters += f'{s.name}#{s.discriminator},'
+            details += f'\nBoosters: {boosters}
+        '''
+        embed = discord.Embed(title="Information", description=guild_details, color=0xb2558d)
+        
+        if target.nick == None:
+            name = target.name
         else: 
-            details += f'\nNo current activities'
-        return details
-    return await ctx.send("waiting on consent!")
+            name = target.nick
+        user_details = f'Username: `{target.name}#{target.discriminator}`'
+        user_details += f'\nID: `{target.id}`'
+        user_details += f'\nJoined on {target.joined_at.strftime("%A, %-d %B %Y at %H:%M:%S %Z")}'
+        if len(target.activities) != 0:
+            user_details += f'\nCurrent activities include {target.activities}'
+        else: 
+            user_details += f'\nNo current activities'
+        
+        embed.add_field(name=f'{name}', value=user_details, inline=True)
+
+        for m in ctx.guild.members:
+            if m.bot == True: 
+                if m.nick == None:
+                    name = m.name
+                else: 
+                    name = m.nick
+                member_details = f'Username: `{m.name}#{m.discriminator}`'
+                member_details += f'\nID: `{m.id}`'
+                member_details += f'\nJoined on {m.joined_at.strftime("%A, %-d %B %Y at %H:%M:%S %Z")}'
+                if len(m.activities) != 0:
+                    member_details += f'\nCurrent activities include {m.activities[0]} {m.activities.name}'
+                else: 
+                    member_details += f'\nNo current activities'
+                embed.add_field(name=f'{name}', value=member_details, inline=True)
+        '''
+        for m in ctx.guild.members:
+            if m.bot == True:
+                pass
+            member_details = f'Username: {m.name}#{m.discriminator}'
+            member_details += f'\nID: `{m.id}`'
+            member_details += f'\nJoined on {marget.joined_at.strftime("%A, %-d %B %Y at %H:%M:%S %Z")}'
+            if len(m.activities) != 0:
+                member_details += f'\nCurrent activities include {m.activities}'
+            else: 
+                member_details += f'\nNo current activities'
+            embed.add_field(name=f'{m.nick}', value=member_details, inline=True)
+        '''
+
+
+
+        return embed
+    await ctx.send(embed=get_details(ctx.author))
     
     '''
     if len(args) > 1:
