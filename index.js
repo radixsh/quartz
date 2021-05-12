@@ -253,6 +253,10 @@ bot.on('message', async message => {
     if(message.content.match(/^yay$/))
         return message.channel.send("yay");
 
+    if (message.content.match(/^joe$/))
+        return message.channel.send("joe mama");
+
+
     msg = message.content.toLowerCase()
     if(msg.includes("mwah"))
         return message.react("💋");
