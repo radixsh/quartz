@@ -66,8 +66,10 @@ async def on_message(message):
             await message.channel.send(f'not even a little? :pleading_face:')
 
     #responding to "aaaaa"
+    '''
     if message.content.lower() == len(message.content.lower())*'a' and len(message.content) > 2:
         return await message.channel.send(len(message.content.lower())*'a')
+    '''
 
     await client.process_commands(message)
 
