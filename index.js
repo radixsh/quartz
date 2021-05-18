@@ -109,7 +109,7 @@ bot.on('message', async message => {
                     { name: `\`${prefix}uwuchannel [-rm]\``, value: "uwuifies all future messages in the current channel. the option `-rm` removes this setting."},
                     { name: `\`${prefix}cc[d]\``, value: "counts characters in your message (ignoring the command's length). use `ccd` instead to delete the message."},
                     { name: `\`${prefix}wc[d]\``, value: "counts words in your message (ignoring the command's length). use `wcd` instead to delete the message." },
-                    { name: `\`${prefix}ai `, value: "lets you talk with inferkit's api."},
+                    { name: `\`${prefix}ai foo bar`, value: "lets you talk with inferkit's api."},
                     { name: `\`${prefix}data\``, value: "gets data about the current guild, current channel, and you :)"}
                 )
                 .setFooter('developed by radix#4520');
@@ -238,14 +238,28 @@ bot.on('message', async message => {
             return
         }
 
-        else if(command === "wc"){
-            return message.channel.send(args.length)
+        else if (command === "wc") {
+            var separateWords = message.content.split(/\s|\–|\—/);
+            var filteredWords = separateWords.filter(
+                function (element) {
+                    return element !== "" && element !== "-";
+                }
+            )
+            num = filteredWords.length - 1
+            return message.channel.send("bitz beta: " + num)
         }
 
         else if (command === "wcd") {
             try {
-                message.delete();
-                message.channel.send(args.length)
+                var separateWords = message.content.split(/\s|\–|\—/);
+                var filteredWords = separateWords.filter(
+                    function (element) {
+                        return element !== "" && element !=="-";
+                    }
+                )
+                num = filteredWords.length - 1
+                message.channel.send("bitz beta: " + num)
+                return message.delete();
             }
             catch (error) {
                 message.channel.send(`couldn't delete because: ${error}`);
@@ -299,6 +313,10 @@ bot.on('message', async message => {
             var uwuWord = "owo";
     }
     if(uwuWord) console.log("uwuWord: " + uwuWord);
+
+    if (message.content.match(/^a+$/)) {
+        return message.channel.send(message.content)
+    }
 
     fs.readFile('uwuchannels.txt', 'utf8', function(err, uwuchannels) {
         if (uwuchannels.includes(message.channel.id)){
