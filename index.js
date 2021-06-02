@@ -314,7 +314,7 @@ bot.on('message', async message => {
     }
     if(uwuWord) console.log("uwuWord: " + uwuWord);
 
-    if (message.content.match(/^a+$/)) {
+    if (message.content.toLowerCase().match(/^a+$/)) {
         return message.channel.send(message.content)
     }
 
