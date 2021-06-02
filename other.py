@@ -12,14 +12,11 @@ def generate_keysmash():
         keysmash += random.choice(valid_characters)
     enders = [
         ":rainbow:",
-        "yes",
         ":two_hearts:",
-        ":weary:",
         ":rainbow_flag:",
+        "uwu",
         "<3",
-        "",
-        "",
-        "uwu"
+        "", "", "", "", "", "", "", "", "",
     ]
     return f'{keysmash} {random.choice(enders)}'
 
@@ -108,10 +105,6 @@ responses = [
         "gay rights!",
         "gay rights!",
         "gay rights!",
-        #"women with swords,,,,,,",
-        #"women do be pretty though",
-        "wammen",
-        "w o m e n",
         ":rainbow_flag:",
         ":rainbow_flag:",
         ":rainbow_flag:",
@@ -128,9 +121,8 @@ responses = [
 rainbow_words = [
     "gay",
     "gae",
+    " gey"
     "sapphic",
-    "sappho",
-    "lesbos",
     "lesbian",
     "lesbean",
     "rainbow",
@@ -146,18 +138,20 @@ rainbow_words = [
 sad_words = [
     "bible",
     "suicide",
-    "death",
     "depress",
     "pain",
-    "test",
     "trump",
     "die",
+    "death",
     "yell",
     "D:",
     ":/",
     ":(",
     "hate",
     "sad",
+    "mad",
+    "anxi",
+    "angry"
     "slur",
-    "phobic"
+    "phobi"
 ]
