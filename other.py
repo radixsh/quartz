@@ -70,8 +70,8 @@ sad_words = [
     "hate",
     "sad",
     "mad",
-    "anxi",
+    "anxiety",
     "angry"
     "slur",
-    "phobi"
+    "homophobia"
 ]

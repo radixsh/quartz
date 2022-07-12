@@ -1,5 +1,11 @@
 import string
+import random
+import requests
+import json
+import aiohttp
+
 import discord
+from discord.utils import get 
 from discord.ext import commands
 intents = discord.Intents.default()
 intents.members = True
@@ -8,22 +14,16 @@ intents.typing = True
 intents.reactions = True
 client = commands.Bot(command_prefix='>', intents=intents, help_command=None)
 
-# dependencies
-import random       #for returning "gay rights!"
-import math         #for conversions
-from discord.utils import get 
-import requests     #for talking to cat API
-import json         #for cat API
-import aiohttp
-
-# local 
 from env import TOKEN 
 from other import generate_keysmash, responses, rainbow_words, sad_words
+
 
 @client.event
 async def on_ready():
     print(f'Logged in as {client.user}!')
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=f'{client.command_prefix}h'))
+    await client.change_presence(activity=discord.Activity(
+        type=discord.ActivityType.listening,
+        name=f'{client.command_prefix}help'))
 
 @client.event
 async def on_message(message):
@@ -32,11 +32,12 @@ async def on_message(message):
 
     await client.process_commands(message)
     
-    # responding to rainbows
+    # Responding to rainbows
     text = message.content.lower() 
-    if not any(word in text for word in sad_words) \
+    if text[0] != client.command_prefix and not any(word in text for word in sad_words) \
                and any(word in text for word in rainbow_words):
-        # make this weird rand number so that we don't have to generate another random number later to choose which of the responses we send
+        # Make this weird rand number so that we don't have to generate another
+        # random number later to choose which of the responses we send
         rand = random.randint(0, len(responses) + 80) 
         try:
             return await message.channel.send(responses[rand])
@@ -53,15 +54,12 @@ async def on_message(message):
             return await message.channel.send(f'hi, {name_to_use} {random.choice(faces)}')    
         return await message.channel.send(f'hi {name_to_use} {random.choice(faces)}')
 
-    # responding to "no homo"
+    # Responding to "no homo", "aaaa", etc
     if "no homo" in text: 
         if random.randint(0, 10) > 8:
-            return await message.channel.send(f'not even a little? {generate_keysmash()}')
-
-    # responding to "aaaaa"
+            return await message.channel.send(f'not even a little? :pleading:')
     if text == len(text) * 'a' and len(message.content) > 3:
         return await message.channel.send(len(text) * 'a')
-
     if "mwah" in text: 
         # https://stackoverflow.com/questions/53636253/discord-bot-adding-reactions-to-a-message-discord-py-no-custom-emojis
         return await message.add_reaction("💋");
@@ -71,9 +69,10 @@ async def on_message(message):
         return await message.channel.send("yay");
     if text == "joe" or text == "jo":
         return await message.channel.send("joe mama");
-   
+  
+    # Responding to uwu words
     uwu_word = ""
-    if "uwu" in text and ">uwuify" not in text:
+    if "uwu" in text and text[0] != client.command_prefix:
         uwu_word = "uwu"
     elif "owo" in text:
         uwu_word = "owo"
@@ -105,26 +104,26 @@ async def _help(ctx):
             value="Performs a ping to see if the bot is up.", 
             inline=False)
     embed.add_field(name=f'`{client.command_prefix}create_emoji foo` (aka `create`, `emoji`)', 
-            value="Sets attached image as a custom server emoji with the given name (in this case, \"foo\").", 
+            value="Sets attached image as a custom server emoji with the given name.", 
             inline=False)
     embed.add_field(name=f'`{client.command_prefix}info` (aka `i`)',
             value="Gets guild and user information.", 
             inline=False)
-    embed.add_field(name=f"`{client.command_prefix}uwuify some message here` (aka `uwu`)", 
-            value="Uwuifies your message.", 
-            inline=False)
-    embed.add_field(name=f"`{client.command_prefix}cat` (aka `c`)", 
-            value="Gets an image of a cat from https://api.thecatapi.com/v1/images/search.", 
+    embed.add_field(name=f"`{client.command_prefix}uwuify something` (aka `uwu`)", 
+            value="Uwuifies your message, deleting the command message.", 
             inline=False)
     embed.add_field(name=f"`{client.command_prefix}echo something`", 
-            value="Echoes back what you tell it to, deleting the command message.",
+            value="Echoes back your message, deleting the command message.",
             inline=False)
-    embed.set_footer(text="Contact @radix#9084 with issues.")
+    embed.add_field(name=f"`{client.command_prefix}cat` (aka `c`)", 
+            value="Shows a cat from https://api.thecatapi.com/v1/images/search.", 
+            inline=False)
+    embed.set_footer(text="Contact radix#9084 with issues.")
     return await ctx.send(embed=embed)
 
 @client.command(aliases=['ping', 'p'])
 async def _ping(ctx):
-    await ctx.send(f'Pong! {round(client.latency*1000)} ms :)')
+    await ctx.send(f'Pong! {round(client.latency * 1000)} ms :)')
 
 @client.command(aliases=['emoji', 'create', 'create_emoji'])
 async def _create_emoji(ctx, *args):
@@ -180,15 +179,15 @@ async def _info(ctx, *args):
         embed = discord.Embed(title="Information", description=guild_details, color=0xb2558d)
 
         for m in ctx.guild.members:
-            if (m.nick == None):
-                name = m.name
-            else: 
+            if m.nick:
                 name = m.nick
-            
+            else:
+                name = m.name
+                 
             member_details = f'Username: {m.name}#{m.discriminator}'
             member_details += f'\nID: `{m.id}`'
-            member_details += f'\nJoined on {m.joined_at.strftime("%-d %b %Y")}'# at %H:%M:%S %Z")}'
-            if len(m.activities) != 0:
+            member_details += f'\nJoined on {m.joined_at.strftime("%-d %b %Y")}'
+            if len(m.activities):
                 gerund = str(m.activities[0].type)
                 gerund = gerund[gerund.index('.')+1:]+" "
                 if gerund == "listening ":
@@ -205,6 +204,7 @@ async def _info(ctx, *args):
 @client.command(aliases=['uwuify', 'uwu'])
 async def _uwuify(ctx, *, arg):
     text = arg.replace("r", "w").replace("l", "w")
+    await ctx.message.delete()
     await ctx.send(text)
 
 @client.command(aliases=['echo'])
@@ -217,23 +217,5 @@ def should_respond_to_own_name(text):
         if f'{greeting} quartz' in text or f'{greeting}, quartz' in text:
             return True
 
-@client.command(aliases=['purge'])
-async def _purge(ctx, *argv):
-    # https://stackoverflow.com/questions/69589089/takes-1-positional-argument-but-2-were-given-discord-py
-    if ctx.guild is None:
-        return await ctx.send("Sorry, I can't delete messages in DMs")
-
-    try:
-        num = int(argv[0])
-    except:
-        return await ctx.send(f"Usage: `{client.command_prefix}purge n`, where 1 < n < 100") 
-    if num <= 1 or num >= 100: 
-        return await ctx.send(f"Usage: `{client.command_prefix}purge n`, where 1 < n < 100") 
-
-    try:
-        await ctx.channel.purge(limit=int(num))
-        return await ctx.send(f"*Successfully deleted {num} messages :)*", delete_after=3)
-    except Exception as e:
-        return await ctx.send(f"Couldn't delete because {e}")
-
 client.run(TOKEN)
+
