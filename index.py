@@ -34,7 +34,7 @@ async def on_message(message):
     
     # Responding to rainbows
     text = message.content.lower() 
-    if text[0] != client.command_prefix and not any(word in text for word in sad_words) \
+    if message.content[0] != client.command_prefix and not any(word in text for word in sad_words) \
                and any(word in text for word in rainbow_words):
         # Make this weird rand number so that we don't have to generate another
         # random number later to choose which of the responses we send
@@ -103,7 +103,7 @@ async def _help(ctx):
     embed.add_field(name=f"`{client.command_prefix}ping` (aka `p`)",
             value="Performs a ping to see if the bot is up.", 
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}create_emoji foo` (aka `create`, `emoji`)', 
+    embed.add_field(name=f'`{client.command_prefix}create_emoji emojiname` (aka `create`, `emoji`)', 
             value="Sets attached image as a custom server emoji with the given name.", 
             inline=False)
     embed.add_field(name=f'`{client.command_prefix}info` (aka `i`)',
@@ -203,9 +203,14 @@ async def _info(ctx, *args):
 
 @client.command(aliases=['uwuify', 'uwu'])
 async def _uwuify(ctx, *, arg):
-    text = arg.replace("r", "w").replace("l", "w")
     await ctx.message.delete()
-    await ctx.send(text)
+    arg = arg.replace("r", "w")
+    arg = arg.replace("small", "smol")
+    arg = arg.replace("l", "w")
+    arg = arg.replace("na","nya")
+    arg = arg.replace("no", "nyo")
+    arg = arg.replace("smow", "smol")
+    await ctx.send(arg)
 
 @client.command(aliases=['echo'])
 async def _echo(ctx, *, arg):
@@ -214,8 +219,7 @@ async def _echo(ctx, *, arg):
 def should_respond_to_own_name(text):
     greetings = ["hi", "hello", "greetings", "welcome"]
     for greeting in greetings:
-        if f'{greeting} quartz' in text or f'{greeting}, quartz' in text:
+        if f'{greeting} qubitz' in text or f'{greeting}, qubitz' in text:
             return True
 
 client.run(TOKEN)
-
