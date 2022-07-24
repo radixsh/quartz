@@ -45,7 +45,7 @@ async def on_message(message):
                and any(word in text for word in rainbow_words):
         # Make this weird rand number so that we don't have to generate another
         # random number later to choose which of the responses we send
-        rand = random.randint(0, len(responses) + 80) 
+        rand = random.randint(0, len(responses) + 100) 
         try:
             return await message.channel.send(responses[rand])
         except IndexError:
@@ -222,6 +222,7 @@ async def _uwuify(ctx, *, arg):
 
 @client.command(aliases=['echo'])
 async def _echo(ctx, *, arg):
+    await ctx.message.delete()
     await ctx.send(arg)
 
 def greeting_required(text):
