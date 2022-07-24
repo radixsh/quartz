@@ -28,11 +28,10 @@ async def on_ready():
     await client.change_presence(activity=discord.Activity(
         type=discord.ActivityType.listening,
         name=f'{client.command_prefix}help'))
-    print("Servers: ")
+    print("\nServers: ")
     for guild in client.guilds:
         print(f"* {guild.name} ({guild.member_count} members)")
-    # start_time = datetime.now()
-    print(f"Start time: {start_time}\n")
+    print(f"\nStart time: {start_time}\n")
 
 @client.event
 async def on_message(message):
@@ -266,7 +265,6 @@ async def background_task():
     # Make sure loop doesn't start after {WHEN} as then it will send
     # immediately the first time as negative seconds will make the sleep yield instantly
     if now.time() > WHEN: 
-        print("Too late today, waiting until tomorrow")
 	# Don't start the for loop until tomorrow 
         tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
         seconds = (tomorrow - now).total_seconds()  
