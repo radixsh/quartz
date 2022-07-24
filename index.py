@@ -4,6 +4,10 @@ import requests
 import json
 import aiohttp
 
+# stan
+from datetime import datetime, time, timedelta
+import asyncio
+
 import discord
 from discord.utils import get 
 from discord.ext import commands
@@ -17,13 +21,16 @@ client = commands.Bot(command_prefix='>', intents=intents, help_command=None)
 from env import TOKEN 
 from other import generate_keysmash, responses, rainbow_words, sad_words
 
-
 @client.event
 async def on_ready():
     print(f'Logged in as {client.user}!')
     await client.change_presence(activity=discord.Activity(
         type=discord.ActivityType.listening,
         name=f'{client.command_prefix}help'))
+    print("Servers: ")
+    for guild in client.guilds:
+        print(f"* {guild.name} ({guild.member_count} members)")
+    print()
 
 @client.event
 async def on_message(message):
@@ -45,7 +52,7 @@ async def on_message(message):
             if rand > (len(responses) + 50):
                 return await message.channel.send(generate_keysmash())
         
-    if should_respond_to_own_name(text):
+    if greeting_required(text):
         async with message.channel.typing():
             faces = [":3", ":3", ":D", ":)", ":))", ":)))", "^-^", "^_^", "<3", "!", "!!", '', '']
             possible_names = [message.author.name, message.author.nick]
@@ -94,6 +101,7 @@ async def on_message(message):
                 return await message.channel.send("...okay you win ;-;")
             most_common_punct = max(puncts, key=puncts.get) 
             return await message.channel.send(uwu_word + puncts[most_common_punct] * 2 * most_common_punct)
+    
 
 @client.command(aliases=['help', 'h'])
 async def _help(ctx):
@@ -216,10 +224,49 @@ async def _uwuify(ctx, *, arg):
 async def _echo(ctx, *, arg):
     await ctx.send(arg)
 
-def should_respond_to_own_name(text):
+def greeting_required(text):
     greetings = ["hi", "hello", "greetings", "welcome"]
     for greeting in greetings:
         if f'{greeting} qubitz' in text or f'{greeting}, qubitz' in text:
             return True
 
+
+# https://stackoverflow.com/questions/63769685/discord-py-how-to-send-a-message-everyday-at-a-specific-time
+async def stan():
+    # Make sure your guild cache is ready so the channel can be found via get_channel
+    await client.wait_until_ready()
+    channel = client.get_guild(731654031839330374).get_channel(768001893389303808)
+   # await channel.send("stan!")
+    channel = client.get_guild(722299969792507955).get_channel(869578017310122014)
+    await channel.send("stan!")
+
+async def background_task():
+    now = datetime.utcnow()
+    # 1am UTC = 6pm PST
+    WHEN = time(1, 0, 0)
+    # Make sure loop doesn't start after {WHEN} as then it will send
+    # immediately the first time as negative seconds will make the sleep yield instantly
+    if now.time() > WHEN: 
+        print("Too late today, waiting until tomorrow")
+	# Don't start the for loop until tomorrow 
+        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
+        seconds = (tomorrow - now).total_seconds()  
+        await asyncio.sleep(seconds)
+    while True:
+        now = datetime.utcnow() 
+        target_time = datetime.combine(now.date(), WHEN)  
+        seconds_until_target = (target_time - now).total_seconds()
+	# Sleep until we hit the target time
+        print(f"Waiting {seconds_until_target} seconds to stan...")
+        await asyncio.sleep(seconds_until_target)  
+	
+	# Call the helper function that sends the message
+        await stan()  
+
+	# Sleep until tomorrow and then the loop will start a new iteration
+        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
+        seconds = (tomorrow - now).total_seconds() 
+        await asyncio.sleep(seconds) 
+
+client.loop.create_task(background_task())
 client.run(TOKEN)
