@@ -20,6 +20,7 @@ client = commands.Bot(command_prefix='>', intents=intents, help_command=None)
 
 from env import TOKEN 
 from other import generate_keysmash, responses, rainbow_words, sad_words
+start_time = datetime.now()
 
 @client.event
 async def on_ready():
@@ -30,7 +31,8 @@ async def on_ready():
     print("Servers: ")
     for guild in client.guilds:
         print(f"* {guild.name} ({guild.member_count} members)")
-    print()
+    # start_time = datetime.now()
+    print(f"Start time: {start_time}\n")
 
 @client.event
 async def on_message(message):
@@ -224,6 +226,22 @@ async def _uwuify(ctx, *, arg):
 async def _echo(ctx, *, arg):
     await ctx.message.delete()
     await ctx.send(arg)
+
+@client.command(aliases=['uptime', 'up', 'u'])
+async def _uptime(ctx):
+    current_time = datetime.now()
+    delta = current_time - start_time
+
+    seconds = int(delta.total_seconds() % 60)
+    minutes = int(seconds // 60)
+    hours = int(minutes // 60)
+    days = int(hours // 24)
+    uptime = f"{days} days, {hours % 24} hours, {minutes % 60} minutes, {seconds % 60} seconds"
+    
+    string = f"Uptime: {uptime}"
+    print(string)
+    await ctx.send(string)
+
 
 def greeting_required(text):
     greetings = ["hi", "hello", "greetings", "welcome"]
