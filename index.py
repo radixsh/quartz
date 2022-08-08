@@ -254,8 +254,6 @@ async def stan():
     # Make sure your guild cache is ready so the channel can be found via get_channel
     await client.wait_until_ready()
     channel = client.get_guild(731654031839330374).get_channel(768001893389303808)
-   # await channel.send("stan!")
-    channel = client.get_guild(722299969792507955).get_channel(869578017310122014)
     await channel.send("stan!")
 
 async def background_task():
