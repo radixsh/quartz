@@ -1,12 +1,9 @@
-import string
-import random
-import requests
-import json
-import aiohttp
-
-# stan
-from datetime import datetime, time, timedelta
-import asyncio
+import random       # gay
+import requests     # cat
+import json         # cat
+import aiohttp      # emoji creation
+from datetime import datetime, time, timedelta   # stan
+import asyncio      # stan
 
 import discord
 from discord.utils import get 
@@ -30,7 +27,7 @@ async def on_ready():
         name=f'{client.command_prefix}help'))
     print("\nServers: ")
     for guild in client.guilds:
-        print(f"* {guild.name} ({guild.member_count} members)")
+        print(f"- {guild.name} ({guild.member_count} members)")
     print(f"\nStart time: {start_time}\n")
 
 @client.event
@@ -42,16 +39,14 @@ async def on_message(message):
     
     # Responding to rainbows
     text = message.content.lower() 
-    if message.content[0] != client.command_prefix and not any(word in text for word in sad_words) \
-               and any(word in text for word in rainbow_words):
-        # Make this weird rand number so that we don't have to generate another
-        # random number later to choose which of the responses we send
-        rand = random.randint(0, len(responses) + 100) 
-        try:
-            return await message.channel.send(responses[rand])
-        except IndexError:
-            if rand > (len(responses) + 50):
-                return await message.channel.send(generate_keysmash())
+    if message.content[0] != client.command_prefix \
+            and not any(word in text for word in sad_words) \
+            and any(word in text for word in rainbow_words):
+        rand = random.randint(0, 100) 
+        if rand < 1:    # 1% chance lol
+            return await message.channel.send(generate_keysmash())
+        elif rand > 5:  # 5% chance
+            return await message.channel.send(random.choice(responses))
         
     if greeting_required(text):
         async with message.channel.typing():
@@ -66,8 +61,8 @@ async def on_message(message):
     if "no homo" in text: 
         if random.randint(0, 10) > 8:
             return await message.channel.send(f'not even a little? :pleading:')
-    if text == len(text) * 'a' and len(message.content) > 3:
-        return await message.channel.send(len(text) * 'a')
+    if len(message.content) > 3 and (text == len(text) * 'a' or text == len(text) * 'A'): 
+        return await message.channel.send(text)
     if "mwah" in text: 
         # https://stackoverflow.com/questions/53636253/discord-bot-adding-reactions-to-a-message-discord-py-no-custom-emojis
         return await message.add_reaction("💋");
@@ -77,10 +72,14 @@ async def on_message(message):
         return await message.channel.send("yay");
     if text == "joe" or text == "jo":
         return await message.channel.send("joe mama");
-  
-    # Responding to uwu words
+ 
+    if text[0] == client.command_prefix:
+        return 
+
+    # Qubitz responds to uwu words only if the message sent was not a command
+    # directly to them 
     uwu_word = ""
-    if "uwu" in text and text[0] != client.command_prefix:
+    if "uwu" in text:
         uwu_word = "uwu"
     elif "owo" in text:
         uwu_word = "owo"
@@ -101,7 +100,8 @@ async def on_message(message):
             if len(word) > 999:
                 return await message.channel.send("...okay you win ;-;")
             most_common_punct = max(puncts, key=puncts.get) 
-            return await message.channel.send(uwu_word + puncts[most_common_punct] * 2 * most_common_punct)
+            uwu_response = uwu_word + puncts[most_common_punct] * 2 * most_common_punct
+            return await message.channel.send(uwu_response)
     
 
 @client.command(aliases=['help', 'h'])

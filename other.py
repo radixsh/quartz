@@ -63,7 +63,6 @@ sad_words = [
     "pain",
     "die",
     "death",
-    "yell",
     "D:",
     ":/",
     ":(",
@@ -71,7 +70,12 @@ sad_words = [
     "sad",
     "mad",
     "anxiety",
+    "anxious",
     "angry"
     "slur",
-    "homophobia"
+    "homophobia",
+    "transphobia",
+    "queerphobia",
+    "tokenism",
+    "stereotype"
 ]
