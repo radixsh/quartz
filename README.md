@@ -21,8 +21,13 @@ Qubitz's functionalities include:
   for pseudo-anonymity and general shenanigans.
 - `uwuify [any message here]`: Uwuifies your messages, turning "hello" into
   "hewwo" and so on.
-- `cat`: Get a cat picture using [The Cat
-  API](https://api.thecatapi.com/v1/images/search).
+- `cat`: Get a cat picture using [The Cat API](https://api.thecatapi.com/v1/images/search).
+- `list`: List each role, along with the users with that role. This
+  functionality was ported from Amicitia, a bot intended to help students in my
+  university Discord server find people with the same major. Amicitia's
+  dedicated repo is now dead and gone in favor of Qubitz.
+- `find [any role here]`: Print a list of everyone with a given role. This
+  functionality was ported from Amicitia.
 
 ## Technologies
 - [discord.py](https://discordpy.readthedocs.io/en/latest/index.html)
@@ -30,16 +35,15 @@ Qubitz's functionalities include:
 - [Discord API](https://discord.com/developers/docs/intro)
 - [node.js](https://nodejs.org/en/)
 - [nodemon](https://nodemon.io/)
-    - [`nodemon --exec python3
-      hello.py`](https://stackoverflow.com/questions/65021005/how-to-run-python-3-with-nodemon)
+    - [`nodemon --exec python3 hello.py`](https://stackoverflow.com/questions/65021005/how-to-run-python-3-with-nodemon)
 - [The Cat API](https://thecatapi.com/)
 
 ## Usage
 To set Qubitz up locally, you'll need `python3` and the packages for `discord`,
 `requests`, and `aiohttp`.
 
-You'll also need an API token, which you do by going to your Discord [developer
-portal](https://discord.com/developers/applications) and creating an
+You'll also need an API token, which you do by going to your Discord 
+[developer portal](https://discord.com/developers/applications) and creating an
 application. Click the subheading "bot" in the menubar on the left and add a
 bot, and a secret token will have been generated under the bot's username.
 
@@ -49,8 +53,8 @@ TOKEN = "your-token-here-between-quotes"
 ```
 
 In the developer portal again, under Bot, enable the server members and message
-content intents. Under OAuth2 > URL Generator, generate an [invite
-link](https://discord.com/api/oauth2/authorize?client_id=812437788535423008&permissions=3468352&scope=bot)
+content intents. Under OAuth2 > URL Generator, generate an 
+[invite link](https://discord.com/api/oauth2/authorize?client_id=812437788535423008&permissions=3468352&scope=bot)
 by selecting the "bot" scope and adding the following permissions:
 - Read Messages/View Channels
 - Send Mesages
@@ -69,7 +73,8 @@ $ nodemon --exec python3 index.py
 ```
 
 ## Acknowledgements
-- [aiohttp documentation](https://docs.aiohttp.org/en/stable/client.html), especially [this comparison](https://docs.aiohttp.org/en/stable/http_request_lifecycle.html#aiohttp-request-lifecycle) between aiohttp and requests
+- [aiohttp documentation](https://docs.aiohttp.org/en/stable/client.html),
+  especially [this comparison](https://docs.aiohttp.org/en/stable/http_request_lifecycle.html#aiohttp-request-lifecycle) between aiohttp and requests
 - [discord.js guide](https://discordjs.guide/)
     - [Getting user input](https://discordjs.guide/creating-your-bot/commands-with-user-input.html#basic-arguments)
     - [Adding more commands](https://discordjs.guide/creating-your-bot/adding-more-commands.html)
