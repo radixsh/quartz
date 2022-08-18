@@ -325,6 +325,26 @@ async def _play(ctx, *prompt):
     else:
         await ctx.voice_client.move_to(ctx.author.voice.channel)
 
+    song_title, url = get_info(prompt)
+
+    audio_player = get(client.voice_clients, guild=ctx.guild)
+    FFMPEG_OPTIONS = {
+            'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+            'options': '-vn'
+            }
+    audio_source = discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS)
+    enqueue(ctx.guild, song_title, audio_source)
+    # If not already playing music, then play the first song to get started,
+    # then call play_next() once finished
+    if not audio_player.is_playing():
+        await ctx.send(f'Playing "{song_title}"')
+        audio_player.play(song_queue[ctx.guild.id][0]['source'], after=lambda e:
+                asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
+    else:
+        await ctx.send(f'Enqueued "{song_title}"')
+
+def get_info(prompt: str):
+    print(prompt)
     YTDL_OPTIONS = {
         'format': 'bestaudio',
         'default_search': 'auto',
@@ -346,22 +366,7 @@ async def _play(ctx, *prompt):
         url = info['entries'][0]['formats'][0]['url']
     elif 'formats' in info:
         url = info['formats'][0]['url']
-
-    audio_player = get(client.voice_clients, guild=ctx.guild)
-    FFMPEG_OPTIONS = {
-            'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-            'options': '-vn'
-            }
-    audio_source = discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS)
-    enqueue(ctx.guild, song_title, audio_source)
-    # If not already playing music, then play the first song to get started,
-    # then call thank_you_next() once finished
-    if not audio_player.is_playing():
-        await ctx.send(f'Playing "{song_title}"')
-        audio_player.play(song_queue[ctx.guild.id][0]['source'], after=lambda e:
-                asyncio.run_coroutine_threadsafe(thank_you_next(ctx), client.loop))
-    else:
-        await ctx.send(f'Enqueued "{song_title}"')
+    return song_title, url
 
 def enqueue(guild, song_title, audio_source):
     '''
@@ -372,13 +377,14 @@ def enqueue(guild, song_title, audio_source):
     if not song_queue.get(guild.id):
         song_queue[guild.id] = []
     song_queue[guild.id].append({'title': song_title, 'source': audio_source})
-async def thank_you_next(ctx):
+
+async def play_next(ctx):
     song_queue[ctx.guild.id].pop(0)
     new_song = song_queue[ctx.guild.id][0]
     audio_player = get(client.voice_clients, guild=ctx.guild)
     await ctx.send(f'Moving on to "{new_song["title"]}"')
     audio_player.play(new_song['source'], after=lambda e:
-            asyncio.run_coroutine_threadsafe(thank_you_next(ctx), client.loop))
+            asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
 
 @client.command(aliases=['np'])
 async def _now_playing(ctx):
