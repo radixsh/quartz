@@ -10,7 +10,6 @@ import discord
 from discord.utils import get
 from discord.ext import commands
 from discord import FFmpegPCMAudio
-from discord import TextChannel
 intents = discord.Intents.all()
 intents.members = True
 intents.presences = True
@@ -18,12 +17,11 @@ intents.typing = True
 intents.reactions = True
 client = commands.Bot(command_prefix='>', intents=intents, help_command=None)
 
-song_queue = {}
-
-
 from env import TOKEN
 from other import generate_keysmash, responses, rainbow_words, sad_words
+
 start_time = datetime.now()
+song_queue = {}
 
 @client.event
 async def on_ready():
@@ -258,7 +256,7 @@ async def _uptime(ctx):
     await ctx.send(string)
 
 @client.command(aliases=['list', 'l'])
-async def _list_all_roles(ctx,*args):
+async def _list_all_roles(ctx, *args):
     ALL_ROLES = {}
 
     # Get all roles
@@ -286,7 +284,7 @@ async def _list_all_roles(ctx,*args):
     return
 
 @client.command(aliases=['find', 'f'])
-async def _find_people_with_role(ctx,*,role):
+async def _find_people_with_role(ctx, *, role):
     real_roles = []
     for real_role in ctx.guild.roles:
         real_roles.append(real_role.name)
@@ -317,7 +315,9 @@ async def _find_people_with_role(ctx,*,role):
     return
 
 @client.command(aliases=['play', 'p', 'pl', 'pla'])
-async def _play(ctx, *, prompt):
+async def _play(ctx, *prompt):
+    if not prompt:
+        return await ctx.send("I need a song name to look up!")
     if ctx.author.voice is None:
         return await ctx.send("You are not in a voice channel!")
     if ctx.voice_client is None:
@@ -364,10 +364,14 @@ async def _play(ctx, *, prompt):
         await ctx.send(f'Enqueued "{song_title}"')
 
 def enqueue(guild, song_title, audio_source):
-    if not song_queue.get(guild.id): # guild.id not in song_queue:
+    '''
+    song_queue = {
+        guild1_id: [song1, song2],
+        guild2_id: [song3, song4]}
+    '''
+    if not song_queue.get(guild.id):
         song_queue[guild.id] = []
     song_queue[guild.id].append({'title': song_title, 'source': audio_source})
-
 async def thank_you_next(ctx):
     song_queue[ctx.guild.id].pop(0)
     new_song = song_queue[ctx.guild.id][0]
