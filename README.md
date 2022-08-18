@@ -28,6 +28,11 @@ Qubitz's functionalities include:
   dedicated repo is now dead and gone in favor of Qubitz.
 - `find [any role here]`: Print a list of everyone with a given role. This
   functionality was ported from Amicitia.
+- `play [any YouTube search term here]`: Find a song on YouTube and play its
+  audio in vc.
+- `queue`: View song queue.
+- `now_playing`: View currently playing song.
+- `stop`: Clear queue and disconnect from vc.
 
 ## Technologies
 - [discord.py](https://discordpy.readthedocs.io/en/latest/index.html)
