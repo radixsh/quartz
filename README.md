@@ -90,6 +90,7 @@ $ nodemon --exec python3 index.py
     - [Take file as argument](https://stackoverflow.com/questions/59181208/discord-py-bot-take-file-as-argument-to-command) (Stack Overflow)
     - [Discord bot send attachments](https://www.reddit.com/r/learnpython/comments/9ishxs/discord_bot_send_attachments/e6m0trf/) (Reddit): pointed me to aiohttp
     - [Using nodemon with python3](https://stackoverflow.com/questions/65021005/how-to-run-python-3-with-nodemon) (Stack Overflow)
+- [Eric Yeung's Discord music bot](https://github.com/eric-yeung/Discord-Bot/blob/master/main.py)
 
 Bitz was named by my close friend Tumega500#1234.
 
