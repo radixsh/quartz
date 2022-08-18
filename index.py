@@ -4,12 +4,9 @@ import json         # cat
 import aiohttp      # emoji creation
 from datetime import datetime, time, timedelta   # stan
 import asyncio      # stan
-import youtube_dl
 
 import discord
-from discord.utils import get
 from discord.ext import commands
-from discord import FFmpegPCMAudio
 intents = discord.Intents.all()
 intents.members = True
 intents.presences = True
@@ -19,9 +16,9 @@ client = commands.Bot(command_prefix='>', intents=intents, help_command=None)
 
 from env import TOKEN
 from other import generate_keysmash, responses, rainbow_words, sad_words
+client.load_extension('music')
 
 start_time = datetime.now()
-song_queue = {}
 
 @client.event
 async def on_ready():
@@ -233,6 +230,7 @@ async def _uwuify(ctx, *, arg):
     arg = arg.replace("l", "w")
     arg = arg.replace("na","nya")
     arg = arg.replace("no", "nyo")
+    # Fix overcorrection
     arg = arg.replace("smow", "smol")
     await ctx.send(arg)
 
@@ -259,11 +257,10 @@ async def _uptime(ctx):
 async def _list_all_roles(ctx, *args):
     ALL_ROLES = {}
 
-    # Get all roles
     for m in ctx.guild.members:
         for role in m.roles:
             if role.name != "@everyone":
-                if ALL_ROLES.__contains__(role.name):
+                if role.name in ALL_ROLES:
                     ALL_ROLES[role.name].append(f'`{m.name}#{m.discriminator}`')
                 else:
                     ALL_ROLES[role.name] = [f'`{m.name}#{m.discriminator}`']
@@ -314,108 +311,6 @@ async def _find_people_with_role(ctx, *, role):
             print(f'Failed to ctx.send: {long_list[i:temp]}')
     return
 
-@client.command(aliases=['play', 'p', 'pl', 'pla'])
-async def _play(ctx, *prompt):
-    if not prompt:
-        return await ctx.send("I need a song name to look up!")
-    if ctx.author.voice is None:
-        return await ctx.send("You are not in a voice channel!")
-    if ctx.voice_client is None:
-        await ctx.author.voice.channel.connect()
-    else:
-        await ctx.voice_client.move_to(ctx.author.voice.channel)
-
-    song_title, url = get_info(prompt)
-
-    audio_player = get(client.voice_clients, guild=ctx.guild)
-    FFMPEG_OPTIONS = {
-            'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-            'options': '-vn'
-            }
-    audio_source = discord.FFmpegPCMAudio(url, **FFMPEG_OPTIONS)
-    enqueue(ctx.guild, song_title, audio_source)
-    # If not already playing music, then play the first song to get started,
-    # then call play_next() once finished
-    if not audio_player.is_playing():
-        await ctx.send(f'Playing "{song_title}"')
-        audio_player.play(song_queue[ctx.guild.id][0]['source'], after=lambda e:
-                asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
-    else:
-        await ctx.send(f'Enqueued "{song_title}"')
-
-def get_info(prompt: str):
-    print(prompt)
-    YTDL_OPTIONS = {
-        'format': 'bestaudio',
-        'default_search': 'auto',
-        'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
-        'restrictfilenames': True,
-        'noplaylist': True,
-        'nocheckcertificate': True,
-        'ignoreerrors': False,
-        'logtostderr': False,
-        'quiet': True,
-        'no_warnings': True,
-        'source_address': '0.0.0.0'
-        }
-    ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
-    # https://qa.wujigu.com/qa/?qa=1057550/python-3-x-playing-music-with-a-bot-from-youtube-without-downloading-the-file
-    info = ytdl.extract_info(prompt, download=False)
-    song_title = info['entries'][0]['title']
-    if 'entries' in info:
-        url = info['entries'][0]['formats'][0]['url']
-    elif 'formats' in info:
-        url = info['formats'][0]['url']
-    return song_title, url
-
-def enqueue(guild, song_title, audio_source):
-    '''
-    song_queue = {
-        guild1_id: [song1, song2],
-        guild2_id: [song3, song4]}
-    '''
-    if not song_queue.get(guild.id):
-        song_queue[guild.id] = []
-    song_queue[guild.id].append({'title': song_title, 'source': audio_source})
-
-async def play_next(ctx):
-    song_queue[ctx.guild.id].pop(0)
-    new_song = song_queue[ctx.guild.id][0]
-    audio_player = get(client.voice_clients, guild=ctx.guild)
-    await ctx.send(f'Moving on to "{new_song["title"]}"')
-    audio_player.play(new_song['source'], after=lambda e:
-            asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
-
-@client.command(aliases=['np'])
-async def _now_playing(ctx):
-    audio_player = get(client.voice_clients, guild=ctx.guild)
-    if not audio_player:
-        await ctx.send(f'Not playing anything at the moment')
-    else:
-        await ctx.send(f'Now playing "{song_queue[ctx.guild.id][0]["title"]}"')
-
-@client.command(aliases=['stop', 'disconnect', 'dc'])
-async def _stop(ctx):
-    song_queue[ctx.guild.id] = []
-    audio_player = get(client.voice_clients, guild=ctx.guild)
-    if audio_player is not None:
-        await audio_player.disconnect()
-        await ctx.send(f"Disconnected")
-
-@client.command(aliases=['q'])
-async def queue(ctx):
-    if len(song_queue[ctx.guild.id]) == 0:
-        return await ctx.send("Nothing in queue")
-    embed = discord.Embed(title="Current queue", color=0xb2558d)
-    index = 0
-    for song in song_queue[ctx.guild.id]:
-        index += 1
-        embed.add_field(
-                name=f"{index}. {song['title']}",
-                value=song['source'],
-                inline=False)
-    return await ctx.send(embed=embed)
-
 # https://stackoverflow.com/questions/63769685/discord-py-how-to-send-a-message-everyday-at-a-specific-time
 async def stan():
     # Make sure your guild cache is ready so the channel can be found via get_channel
@@ -450,7 +345,6 @@ async def daily_stan():
         tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
         seconds = (tomorrow - now).total_seconds()
         await asyncio.sleep(seconds)
-
 
 client.loop.create_task(daily_stan())
 client.run(TOKEN)
