@@ -114,14 +114,17 @@ def greeting_required(text):
 
 @client.command(aliases=['help', 'h'])
 async def _help(ctx):
-    embed = discord.Embed(title="Help",
-            description=f'Prefix: `{client.command_prefix}`',
+    embed = discord.Embed(title="Qubitz manpage",
+            description=f"Qubitz's prefix is `{client.command_prefix}`",
             color=0xb2558d)
     embed.add_field(name=f"`{client.command_prefix}ping` (aka `p`)",
-            value="Performs a ping to see if the bot is up.",
+            value="Pokes Qubitz to see if they're awake.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}create_emoji emojiname` (aka `create`, `emoji`)',
-            value="Sets attached image as a custom server emoji with the given name.",
+    embed.add_field(name=f"`{client.command_prefix}uptime` (aka `u`, `up`)",
+            value="Displays how long Qubitz has been awake.",
+            inline=False)
+    embed.add_field(name=f'`{client.command_prefix}create_emoji foo` (aka `emoji`, `create`)',
+            value="Sets attached image as a custom server emoji named `foo`",
             inline=False)
     embed.add_field(name=f'`{client.command_prefix}info` (aka `i`)',
             value="Gets guild and user information.",
@@ -136,15 +139,42 @@ async def _help(ctx):
             value="Shows a cat from https://api.thecatapi.com/v1/images/search.",
             inline=False)
     embed.add_field(name=f'`{client.command_prefix}list`',
-            value="Lists each role and everyone in them.", inline=False)
+            value="Lists each role and everyone in them.",
+            inline=False)
     embed.add_field(name=f'`{client.command_prefix}find foo`',
-            value="Prints a list of everyone with role `foo`.", inline=False)
+            value="Prints a list of everyone with role `foo`.",
+            inline=False)
+    embed.add_field(name=f'`{client.command_prefix}play bar` (aka `p`, `pl`, `pla`)',
+            value="Searches YouTube and streams the first result for `bar` in vc.",
+            inline=False)
+    embed.add_field(name=f'`{client.command_prefix}now_playing` (aka `np`)',
+            value="Displays the currently playing song.",
+            inline=False)
+    embed.add_field(name=f'`{client.command_prefix}queue` (aka `q`)',
+            value="Displays the song queue.",
+            inline=False)
+    embed.add_field(name=f'`{client.command_prefix}stop` (aka `disconnect`, `dc`)',
+            value="Disconnects Qubitz from vc.",
+            inline=False)
     embed.set_footer(text="Contact radix#9084 with issues.")
     return await ctx.send(embed=embed)
 
 @client.command(aliases=['ping'])
 async def _ping(ctx):
     await ctx.send(f'Pong! {round(client.latency * 1000)} ms :)')
+
+@client.command(aliases=['uptime', 'up', 'u'])
+async def _uptime(ctx):
+    current_time = datetime.now()
+    delta = int((current_time - start_time).total_seconds())
+    d, rem = divmod(delta, 24 * 60 * 60)
+    h, rem = divmod(rem, 60 * 60)
+    m, s = divmod(rem, 60)
+    uptime = f"Uptime: `{d} day{'' if d == 1 else 's'}, "
+    uptime += f"{h} hour{'' if h == 1 else 's'}, "
+    uptime += f"{m} minute{'' if m == 1 else 's'}, "
+    uptime += f"{s} second{'' if s == 1 else 's'}`"
+    await ctx.send(uptime)
 
 @client.command(aliases=['emoji', 'create', 'create_emoji'])
 async def _create_emoji(ctx, *args):
@@ -183,13 +213,6 @@ async def _create_emoji(ctx, *args):
                 await ctx.send(f'New emoji: <:{emoji.name}:{emoji.id}> (`<:{emoji.name}:{emoji.id}>`)')
             else:
                 await ctx.send(f'Something went wrong, please contact radix#9084 :(')
-
-@client.command(aliases=['cat', 'c'])
-async def _cat(ctx):
-    async with ctx.typing():
-        response = requests.get("https://api.thecatapi.com/v1/images/search")
-    json_data = json.loads(response.text)[0]
-    await ctx.send(json_data["url"])
 
 @client.command(aliases=['info', 'i'])
 async def _info(ctx, *args):
@@ -239,18 +262,12 @@ async def _echo(ctx, *, arg):
     await ctx.message.delete()
     await ctx.send(arg)
 
-@client.command(aliases=['uptime', 'up', 'u'])
-async def _uptime(ctx):
-    current_time = datetime.now()
-    delta = int((current_time - start_time).total_seconds())
-    d, rem = divmod(delta, 24 * 60 * 60)
-    h, rem = divmod(rem, 60 * 60)
-    m, s = divmod(rem, 60)
-    uptime = f"Uptime: `{d} day{'' if d == 1 else 's'}, "
-    uptime += f"{h} hour{'' if h == 1 else 's'}, "
-    uptime += f"{m} minute{'' if m == 1 else 's'}, "
-    uptime += f"{s} second{'' if s == 1 else 's'}`"
-    await ctx.send(uptime)
+@client.command(aliases=['cat', 'c'])
+async def _cat(ctx):
+    async with ctx.typing():
+        response = requests.get("https://api.thecatapi.com/v1/images/search")
+    json_data = json.loads(response.text)[0]
+    await ctx.send(json_data["url"])
 
 @client.command(aliases=['list', 'l'])
 async def _list_all_roles(ctx, *args):

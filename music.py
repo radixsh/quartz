@@ -84,7 +84,7 @@ async def play_next(ctx):
     ctx.voice_client.play(new_song['source'], after=lambda e:
             asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
 
-@commands.command(aliases=['np'])
+@commands.command(aliases=['now_playing', 'np'])
 async def _now_playing(ctx):
     if not ctx.voice_client:
         await ctx.send(f'Not playing anything at the moment')
