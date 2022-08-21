@@ -12,7 +12,7 @@ intents.members = True
 intents.presences = True
 intents.typing = True
 intents.reactions = True
-client = commands.Bot(command_prefix='>', intents=intents, help_command=None)
+client = commands.Bot(command_prefix='.', intents=intents, help_command=None)
 
 from env import TOKEN
 from other import generate_keysmash, responses, rainbow_words, sad_words
@@ -242,16 +242,15 @@ async def _echo(ctx, *, arg):
 @client.command(aliases=['uptime', 'up', 'u'])
 async def _uptime(ctx):
     current_time = datetime.now()
-    delta = current_time - start_time
-    seconds = int(delta.total_seconds() % 60)
-    minutes = int(seconds // 60)
-    hours = int(minutes // 60)
-    days = int(hours // 24)
-    uptime = f"{days} days, {hours % 24} hours, {minutes % 60} minutes, {seconds % 60} seconds"
-
-    string = f"Uptime: {uptime}"
-    print(string)
-    await ctx.send(string)
+    delta = int((current_time - start_time).total_seconds())
+    d, rem = divmod(delta, 24 * 60 * 60)
+    h, rem = divmod(rem, 60 * 60)
+    m, s = divmod(rem, 60)
+    uptime = f"Uptime: `{d} day{'' if d == 1 else 's'}, "
+    uptime += f"{h} hour{'' if h == 1 else 's'}, "
+    uptime += f"{m} minute{'' if m == 1 else 's'}, "
+    uptime += f"{s} second{'' if s == 1 else 's'}`"
+    await ctx.send(uptime)
 
 @client.command(aliases=['list', 'l'])
 async def _list_all_roles(ctx, *args):
