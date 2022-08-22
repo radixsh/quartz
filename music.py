@@ -9,16 +9,11 @@ from index import client
 
 song_queue = {}
 
-class Song(commands.Cog):
-    def __init__(self, bot):
-        super().__init__()
-        self.bot = bot
+class Song():
+    def __init__(self, prompt):
+        # self.prompt = prompt 
 
-    @commands.command()
     async def define_as(self, prompt: str):
-        await self.do_setup(prompt)
-
-    async def do_setup(self, prompt: str):
         YTDL_OPTIONS = {
             'format': 'bestaudio',
             'default_search': 'auto',
@@ -65,9 +60,9 @@ async def _play(ctx, *args):
     else:
         await ctx.voice_client.move_to(ctx.author.voice.channel)
 
-    chanson = Song(client)
+    chanson = Song(prompt)
     await chanson.define_as(prompt)
-    print(f"Song: {chanson.title}")
+    print(f'Playing "{chanson.title}" by {chanson.artist}')
 
     enqueue(ctx.guild, chanson)
 
@@ -75,7 +70,8 @@ async def _play(ctx, *args):
     # then call play_next() once finished
     if not ctx.voice_client.is_playing():
         await ctx.send(f'Playing "{chanson.title}" by {chanson.artist}')
-        ctx.voice_client.play(song_queue[ctx.guild.id][0].audio_source, after=lambda e:
+        source = song_queue[ctx.guild.id][0].audio_source
+        ctx.voice_client.play(source, after=lambda e:
                 asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
     else:
         await ctx.send(f'Enqueued "{song_title}"')
@@ -133,4 +129,4 @@ def setup(bot):
     bot.add_command(_now_playing)
     bot.add_command(_queue)
     bot.add_command(_stop)
-    bot.add_cog(Song(bot))
+    # bot.add_cog(Song(bot))
