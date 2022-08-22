@@ -2,9 +2,11 @@
 I began developing an uwubot named Bitz for Discord in June 2020, in discord.js
 because the first guides I found were in JavaScript. This turned out to be very
 misguided, because (as I realized when our AP Computer Science Principles
-teacher taught us the basics of discord.py later that year) discord.py is far
-superior. Over the summer of 2020, I developed and hosted both bots on my
-Chromebook.
+teacher taught us Python and the basics of discord.py later that year)
+discord.py is far superior. Over the summer of 2020, I developed and hosted both
+bots on my Chromebook. Sometime or other I also spun up another discord.py bot,
+Amicitia, to help students in a university Discord server find people with the
+same major (majors being defined in roles).
 
 I've wanted to translate Bitz's uwubot functionalities to Python for a while,
 and I finally did, almost two years later. Bitz, the original uwubot I created,
@@ -13,26 +15,23 @@ Qubitz.
 
 ## Functionalities
 Qubitz's functionalities include:
-- `create_emoji [name]`: Create custom emojis by running this command and
-  attaching an image file. If Qubitz has the necessary permissions, the image
-  will be uploaded as a custom emoji in that guild.
-- `info`: Get data about users in the guild.
-- `echo [any message here]`: Anyone can `echo` anything, which is a good feature
-  for pseudo-anonymity and general shenanigans.
-- `uwuify [any message here]`: Uwuifies your messages, turning "hello" into
-  "hewwo" and so on.
-- `cat`: Get a cat picture using [The Cat API](https://api.thecatapi.com/v1/images/search).
-- `list`: List each role, along with the users with that role. This
-  functionality was ported from Amicitia, a bot intended to help students in my
-  university Discord server find people with the same major. Amicitia's
-  dedicated repo is now dead and gone in favor of Qubitz.
-- `find [any role here]`: Print a list of everyone with a given role. This
-  functionality was ported from Amicitia.
-- `play [any YouTube search term here]`: Find a song on YouTube and play its
-  audio in vc.
-- `queue`: View song queue.
-- `now_playing`: View currently playing song.
-- `stop`: Clear queue and disconnect from vc.
+- `ping`: Poke Qubitz to see if they're awake.
+- `uptime`: Display how long Qubitz has been awake.
+- `create_emoji [name]`: Set attached image as a custom server emoji with the
+  given name.
+- `info`: Get guild and user information.
+- `uwuify [any message here]`: Uwuify your messages, deleting the comand
+  message.
+- `echo [any message here]`: Echo back your message, deleting the command
+  message.
+- `cat`: Show a cat from [The Cat API](https://api.thecatapi.com/v1/images/search).
+- `list`: List each role and everyone in them.
+- `find [any role here]`: Print a list of everyone with the given role.
+- `play [any YouTube search term here]`: Search YouTube and stream the audio of
+  the first result for the given search term in vc.
+- `now_playing`: Display the currently playing song.
+- `queue`: Display the song queue.
+- `stop`: Disconnect Qubitz from vc, and clear the song queue.
 
 ## Technologies
 - [discord.py](https://discordpy.readthedocs.io/en/latest/index.html)
@@ -40,17 +39,16 @@ Qubitz's functionalities include:
 - [Discord API](https://discord.com/developers/docs/intro)
 - [node.js](https://nodejs.org/en/)
 - [nodemon](https://nodemon.io/)
-    - [`nodemon --exec python3 hello.py`](https://stackoverflow.com/questions/65021005/how-to-run-python-3-with-nodemon)
 - [The Cat API](https://thecatapi.com/)
 
 ## Usage
 To set Qubitz up locally, you'll need `python3` and the packages for `discord`,
 `requests`, and `aiohttp`.
 
-You'll also need an API token, which you do by going to your Discord 
-[developer portal](https://discord.com/developers/applications) and creating an
-application. Click the subheading "bot" in the menubar on the left and add a
-bot, and a secret token will have been generated under the bot's username.
+You'll also need an API token, which you get by creating an application in your
+Discord [developer portal](https://discord.com/developers/applications). Click
+the subheading "bot" in the menubar on the left and add a bot, and a secret
+token will have been generated under the bot's username.
 
 Create a file called `env.py` with this as its contents:
 ```sh
@@ -58,10 +56,10 @@ TOKEN = "your-token-here-between-quotes"
 ```
 
 In the developer portal again, under Bot, enable the server members and message
-content intents. Under OAuth2 > URL Generator, generate an 
+content intents. Under OAuth2 > URL Generator, generate an
 [invite link](https://discord.com/api/oauth2/authorize?client_id=812437788535423008&permissions=3468352&scope=bot)
 by selecting the "bot" scope and adding the following permissions:
-- Read Messages/View Channels
+- Read Messages / View Channels
 - Send Mesages
 - Manage Messages
 - Embed Links
@@ -69,13 +67,8 @@ by selecting the "bot" scope and adding the following permissions:
 - Use External Emojis
 - Add Reactions
 
-Then you can run Qubitz:
-```
-$ python3 index.py
-
-# Or, if you're a cool kid and you have nodemon:
-$ nodemon --exec python3 index.py
-```
+Then you can run Qubitz with `python3 index.py` (or `nodemon --exec python3
+index.py`).
 
 ## Acknowledgements
 - [aiohttp documentation](https://docs.aiohttp.org/en/stable/client.html),

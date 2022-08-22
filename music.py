@@ -1,7 +1,6 @@
 import youtube_dl
 import asyncio
 import discord
-import pprint
 from discord.utils import get
 from discord.ext import commands
 from discord import FFmpegPCMAudio
@@ -11,7 +10,7 @@ song_queue = {}
 
 class Song():
     def __init__(self, prompt):
-        # self.prompt = prompt 
+        self.prompt = prompt
 
     async def define_as(self, prompt: str):
         YTDL_OPTIONS = {
@@ -32,21 +31,17 @@ class Song():
         info = ytdl.extract_info(prompt, download=False)
         if 'entries' in info:
             info = info['entries'][0]
-        
+
         self.title = info['title']
-        # print(self.title)
         self.artist = info['channel']
-        # print(self.artist)
         self.bot_url = info['url']
-        # print(self.bot_url)
         self.human_url = f"https://youtube.com/watch?q={info['display_id']}"
-        # print(self.human_url)
         FFMPEG_OPTIONS = {
                 'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
                 'options': '-vn'
                 }
         self.audio_source = discord.FFmpegPCMAudio(self.bot_url, **FFMPEG_OPTIONS)
-        return self 
+        return self
 
 @commands.command(aliases=['play', 'p', 'pl', 'pla'])
 async def _play(ctx, *args):
@@ -70,11 +65,10 @@ async def _play(ctx, *args):
     # then call play_next() once finished
     if not ctx.voice_client.is_playing():
         await ctx.send(f'Playing "{chanson.title}" by {chanson.artist}')
-        source = song_queue[ctx.guild.id][0].audio_source
-        ctx.voice_client.play(source, after=lambda e:
+        ctx.voice_client.play(chanson.audio_source, after=lambda e:
                 asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
     else:
-        await ctx.send(f'Enqueued "{song_title}"')
+        await ctx.send(f'Enqueued "{chanson.title}"')
 
 def enqueue(guild: discord.guild.Guild, chanson: Song):
     '''
@@ -82,7 +76,7 @@ def enqueue(guild: discord.guild.Guild, chanson: Song):
             guild1_id: [Song song1, Song song2]
             guild2_id: [Song song3, Song song4]
             }
-    '''      
+    '''
     if not song_queue.get(guild.id):
         song_queue[guild.id] = []
     song_queue[guild.id].append(chanson)
@@ -90,8 +84,8 @@ def enqueue(guild: discord.guild.Guild, chanson: Song):
 async def play_next(ctx):
     song_queue[ctx.guild.id].pop(0)
     new_song = song_queue[ctx.guild.id][0]
-    await ctx.send(f'Moving on to "{new_song["title"]}"...')
-    ctx.voice_client.play(new_song['source'], after=lambda e:
+    await ctx.send(f'Moving on to "{new_song.title}"...')
+    ctx.voice_client.play(new_song.audio_source, after=lambda e:
             asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
 
 @commands.command(aliases=['now_playing', 'np'])
@@ -99,7 +93,7 @@ async def _now_playing(ctx):
     if not ctx.voice_client or not song_queue[ctx.guild.id]:
         await ctx.send(f'Not playing anything at the moment ;)')
     else:
-        await ctx.send(f'Now playing "{song_queue[ctx.guild.id][0]["title"]}"')
+        await ctx.send(f'Now playing "{song_queue[ctx.guild.id][0].title}"')
 
 @commands.command(aliases=['queue', 'q'])
 async def _queue(ctx):
@@ -110,23 +104,22 @@ async def _queue(ctx):
     for song in song_queue[ctx.guild.id]:
         index += 1
         embed.add_field(
-                name=f"{index}. {song['title']}",
-                value=song['url'],
+                name=f"{index}. {song.title}",
+                value=song.human_url,
                 inline=False)
     return await ctx.send(embed=embed)
 
 @commands.command(aliases=['stop', 'disconnect', 'dc'])
 async def _stop(ctx):
-    song_queue[ctx.guild.id] = []
     if ctx.voice_client is not None:
         await ctx.voice_client.disconnect()
         await ctx.send(f"Disconnected")
     else:
         await ctx.send(f"Wasn't connected in the first place lol")
+    song_queue[ctx.guild.id] = []
 
 def setup(bot):
     bot.add_command(_play)
     bot.add_command(_now_playing)
     bot.add_command(_queue)
     bot.add_command(_stop)
-    # bot.add_cog(Song(bot))

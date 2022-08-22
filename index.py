@@ -16,8 +16,9 @@ client = commands.Bot(command_prefix='.', intents=intents, help_command=None)
 
 from env import TOKEN
 from other import generate_keysmash, responses, rainbow_words, sad_words
-client.load_extension('music')
-print(client.load_extension('music'))
+status = client.load_extension('music')
+if "ExtensionAlreadyLoaded" not in status:
+    print(str(status) + "\n")
 
 start_time = datetime.now()
 
@@ -343,7 +344,7 @@ async def daily_stan():
     # immediately the first time as negative seconds will make the sleep yield
     # instantly
     if now.time() > WHEN:
-    # Don't start the for loop until tomorrow
+        # Don't start the for loop until tomorrow
         tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
         seconds = (tomorrow - now).total_seconds()
         await asyncio.sleep(seconds)
