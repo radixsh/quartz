@@ -16,9 +16,10 @@ client = commands.Bot(command_prefix='.', intents=intents, help_command=None)
 
 from env import TOKEN
 from other import generate_keysmash, responses, rainbow_words, sad_words
-status = client.load_extension('music')
-if "ExtensionAlreadyLoaded" not in status:
-    print(str(status) + "\n")
+status = str(client.load_extension('music'))
+# Report, but only if there are any errors
+if "ExtensionAlreadyLoaded" not in status and "True" not in status:
+    print(status + "\n")
 
 start_time = datetime.now()
 

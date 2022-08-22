@@ -57,17 +57,17 @@ async def _play(ctx, *args):
 
     chanson = Song(prompt)
     await chanson.define_as(prompt)
-    print(f'Playing "{chanson.title}" by {chanson.artist}')
+    print(f'Playing/queuing "{chanson.title}" by {chanson.artist}')
 
     enqueue(ctx.guild, chanson)
 
     # If not already playing music, then play the first song to get started,
     # then call play_next() once finished
-    if not ctx.voice_client.is_playing():
+    try:
         await ctx.send(f'Playing "{chanson.title}" by {chanson.artist}')
         ctx.voice_client.play(chanson.audio_source, after=lambda e:
                 asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
-    else:
+    except discord.errors.ClientException:
         await ctx.send(f'Enqueued "{chanson.title}"')
 
 def enqueue(guild: discord.guild.Guild, chanson: Song):
@@ -82,18 +82,21 @@ def enqueue(guild: discord.guild.Guild, chanson: Song):
     song_queue[guild.id].append(chanson)
 
 async def play_next(ctx):
+    # We only pop the song when finished with it, so that _now_playing() can
+    # access any currently playing song
     song_queue[ctx.guild.id].pop(0)
-    new_song = song_queue[ctx.guild.id][0]
-    await ctx.send(f'Moving on to "{new_song.title}"...')
-    ctx.voice_client.play(new_song.audio_source, after=lambda e:
+    chanson = song_queue[ctx.guild.id][0]
+    await ctx.send(f'Playing "{chanson.title}" by {chanson.artist}')
+    ctx.voice_client.play(chanson.audio_source, after=lambda e:
             asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
 
 @commands.command(aliases=['now_playing', 'np'])
 async def _now_playing(ctx):
     if not ctx.voice_client or not song_queue[ctx.guild.id]:
-        await ctx.send(f'Not playing anything at the moment ;)')
+        await ctx.send(f'Not playing anything at the moment')
     else:
-        await ctx.send(f'Now playing "{song_queue[ctx.guild.id][0].title}"')
+        chanson = song_queue[ctx.guild.id][0]
+        await ctx.send(f'Now playing "{chanson.title}" by {chanson.artist}')
 
 @commands.command(aliases=['queue', 'q'])
 async def _queue(ctx):
