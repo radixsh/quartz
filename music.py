@@ -5,14 +5,53 @@ import pprint
 from discord.utils import get
 from discord.ext import commands
 from discord import FFmpegPCMAudio
-intents = discord.Intents.all()
-intents.members = True
-intents.presences = True
-intents.typing = True
-intents.reactions = True
-client = commands.Bot(command_prefix='>', intents=intents, help_command=None)
+from index import client
 
 song_queue = {}
+
+class Song(commands.Cog):
+    def __init__(self, bot):
+        super().__init__()
+        self.bot = bot
+
+    @commands.command()
+    async def define_as(self, prompt: str):
+        await self.do_setup(prompt)
+
+    async def do_setup(self, prompt: str):
+        YTDL_OPTIONS = {
+            'format': 'bestaudio',
+            'default_search': 'auto',
+            'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
+            'restrictfilenames': True,
+            'noplaylist': True,
+            'nocheckcertificate': True,
+            'ignoreerrors': False,
+            'logtostderr': False,
+            'quiet': True,
+            'no_warnings': True,
+            'source_address': '0.0.0.0'
+            }
+        ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
+        # https://qa.wujigu.com/qa/?qa=1057550/python-3-x-playing-music-with-a-bot-from-youtube-without-downloading-the-file
+        info = ytdl.extract_info(prompt, download=False)
+        if 'entries' in info:
+            info = info['entries'][0]
+        
+        self.title = info['title']
+        # print(self.title)
+        self.artist = info['channel']
+        # print(self.artist)
+        self.bot_url = info['url']
+        # print(self.bot_url)
+        self.human_url = f"https://youtube.com/watch?q={info['display_id']}"
+        # print(self.human_url)
+        FFMPEG_OPTIONS = {
+                'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+                'options': '-vn'
+                }
+        self.audio_source = discord.FFmpegPCMAudio(self.bot_url, **FFMPEG_OPTIONS)
+        return self 
 
 @commands.command(aliases=['play', 'p', 'pl', 'pla'])
 async def _play(ctx, *args):
@@ -26,73 +65,31 @@ async def _play(ctx, *args):
     else:
         await ctx.voice_client.move_to(ctx.author.voice.channel)
 
-    song_title, artist, audio_source, url = get_info(prompt)
+    chanson = Song(client)
+    await chanson.define_as(prompt)
+    print(f"Song: {chanson.title}")
 
-    enqueue(ctx.guild, song_title, artist, audio_source, url)
+    enqueue(ctx.guild, chanson)
+
     # If not already playing music, then play the first song to get started,
     # then call play_next() once finished
     if not ctx.voice_client.is_playing():
-        await ctx.send(f'Playing "{song_title}" by {artist}')
-        ctx.voice_client.play(song_queue[ctx.guild.id][0]['source'], after=lambda e:
+        await ctx.send(f'Playing "{chanson.title}" by {chanson.artist}')
+        ctx.voice_client.play(song_queue[ctx.guild.id][0].audio_source, after=lambda e:
                 asyncio.run_coroutine_threadsafe(play_next(ctx), client.loop))
     else:
         await ctx.send(f'Enqueued "{song_title}"')
 
-def get_info(prompt: str):
-    YTDL_OPTIONS = {
-        'format': 'bestaudio',
-        'default_search': 'auto',
-        'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
-        'restrictfilenames': True,
-        'noplaylist': True,
-        'nocheckcertificate': True,
-        'ignoreerrors': False,
-        'logtostderr': False,
-        'quiet': True,
-        'no_warnings': True,
-        'source_address': '0.0.0.0'
-        }
-    ytdl = youtube_dl.YoutubeDL(YTDL_OPTIONS)
-    # https://qa.wujigu.com/qa/?qa=1057550/python-3-x-playing-music-with-a-bot-from-youtube-without-downloading-the-file
-    info = ytdl.extract_info(prompt, download=False)
-    # pprint.pprint(info)
-    entry = info['entries'][0]
-    song_title = entry['title']
-    artist = entry['channel']
-    FFMPEG_OPTIONS = {
-            'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-            'options': '-vn'
-            }
-    if 'entries' in info:
-        googlevideo = entry['formats'][0]['url']
-        url = f"https://youtube.com/watch?q={entry['display_id']}"
-    elif 'formats' in info:
-        googlevideo = info['formats'][0]['url']
-        url = f"https://youtube.com/watch?q={info['display_id']}"
-    audio_source = discord.FFmpegPCMAudio(googlevideo, **FFMPEG_OPTIONS)
-    return song_title, artist, audio_source, url
-
-def enqueue(guild, song_title, artist, audio_source, url):
+def enqueue(guild: discord.guild.Guild, chanson: Song):
     '''
     song_queue = {
-            guild1_id: [
-                {'title': 'song1', 'artist': 'Someone', 'source': audio_source, 'url': 'song1.com/song1.mp3'}
-                {'title': 'song2', 'artist': 'Someone Else', 'source': audio_source, 'url': 'song2.com/song2.mp3'}
-                ]
-            guild2_id: [
-                {'title': 'song3', 'source': audio_source, 'url': 'song3.com/song3.mp3'}
-                {'title': 'song4', 'source': audio_source, 'url': 'song4.com/song4.mp3'}
-                ]
+            guild1_id: [Song song1, Song song2]
+            guild2_id: [Song song3, Song song4]
             }
     '''      
     if not song_queue.get(guild.id):
         song_queue[guild.id] = []
-    song_queue[guild.id].append({
-        'title': song_title, 
-        'artist': artist,
-        'source': audio_source, 
-        'url': url
-        })
+    song_queue[guild.id].append(chanson)
 
 async def play_next(ctx):
     song_queue[ctx.guild.id].pop(0)
@@ -136,3 +133,4 @@ def setup(bot):
     bot.add_command(_now_playing)
     bot.add_command(_queue)
     bot.add_command(_stop)
+    bot.add_cog(Song(bot))
