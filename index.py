@@ -17,6 +17,7 @@ client = commands.Bot(command_prefix='.', intents=intents, help_command=None)
 from env import TOKEN
 from other import generate_keysmash, responses, rainbow_words, sad_words
 client.load_extension('music')
+print(client.load_extension('music'))
 
 start_time = datetime.now()
 
