@@ -15,13 +15,15 @@ intents.reactions = True
 client = commands.Bot(command_prefix='.', intents=intents, help_command=None)
 
 from env import TOKEN
-from other import generate_keysmash, responses, rainbow_words, sad_words
+from other import (greeting_required, generate_keysmash, responses, 
+        rainbow_words, sad_words)
 status = str(client.load_extension('music'))
 # Report, but only if there are any errors
 if "ExtensionAlreadyLoaded" not in status and "True" not in status:
     print(status + "\n")
 
 start_time = datetime.now()
+
 
 @client.event
 async def on_ready():
@@ -43,11 +45,12 @@ async def on_message(message):
 
     # Responding to rainbows
     text = message.content.lower()
-    if not text:
+    if not text or text[0] == client.command_prefix:
         return
-    if text[0] != client.command_prefix \
-            and not any(word in text for word in sad_words) \
-            and any(word in text for word in rainbow_words):
+
+    if (text[0] != client.command_prefix
+            and not any(word in text for word in sad_words) 
+            and any(word in text for word in rainbow_words)):
         rand = random.randint(0, 100)
         if rand < 1:    # 1% chance lol
             return await message.channel.send(generate_keysmash())
@@ -67,7 +70,8 @@ async def on_message(message):
     if "no homo" in text:
         if random.randint(0, 10) > 8:
             return await message.channel.send(f'not even a little? :pleading:')
-    if len(message.content) > 3 and (text == len(text) * 'a' or text == len(text) * 'A'):
+    if (len(message.content) > 3 
+            and (text == len(text) * 'a' or text == len(text) * 'A')):
         return await message.channel.send(text)
     if "mwah" in text:
         # https://stackoverflow.com/questions/53636253/discord-bot-adding-reactions-to-a-message-discord-py-no-custom-emojis
@@ -78,9 +82,6 @@ async def on_message(message):
         return await message.channel.send("yay");
     if text == "joe" or text == "jo":
         return await message.channel.send("joe mama");
-
-    if text[0] == client.command_prefix:
-        return
 
     # Qubitz responds to uwu words only if the message sent was not a command
     # directly to them
@@ -106,19 +107,18 @@ async def on_message(message):
             if len(word) > 999:
                 return await message.channel.send("...okay you win ;-;")
             most_common_punct = max(puncts, key=puncts.get)
-            uwu_response = uwu_word + puncts[most_common_punct] * 2 * most_common_punct
+            uwu_response = (uwu_word 
+                            + puncts[most_common_punct] * 2 * most_common_punct)
             return await message.channel.send(uwu_response)
 
-def greeting_required(text):
-    greetings = ["hi", "hello", "greetings", "welcome"]
-    for greeting in greetings:
-        if f'{greeting} qubitz' in text or f'{greeting}, qubitz' in text:
-            return True
-
-@client.command(aliases=['help', 'h'])
-async def _help(ctx):
+@client.command(aliases=['h'])
+async def help(ctx):
     embed = discord.Embed(title="Qubitz manpage",
-            description=f"Qubitz's prefix is `{client.command_prefix}`",
+            description=f"Qubitz is an uwubot and a music bot, with "
+            "custom emoji uploading capability, role-finding, and connectivity "
+            "to The Cat API just for fun. Their source code can be found at "
+            "https://github.com/radixsh/qubitz." + "\n" + f"Qubitz's prefix is "
+            f"`{client.command_prefix}`.",
             color=0xb2558d)
     embed.add_field(name=f"`{client.command_prefix}ping` (aka `p`)",
             value="Pokes Qubitz to see if they're awake.",
@@ -126,29 +126,34 @@ async def _help(ctx):
     embed.add_field(name=f"`{client.command_prefix}uptime` (aka `u`, `up`)",
             value="Displays how long Qubitz has been awake.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}create_emoji foo` (aka `emoji`, `create`)',
-            value="Sets attached image as a custom server emoji named `foo`",
+    embed.add_field(name=f'`{client.command_prefix}create_emoji [emoji name]` '
+                    '(aka `emoji`, `create`)',
+            value="Sets attached image as a custom server emoji with the given "
+                    "name.", 
             inline=False)
     embed.add_field(name=f'`{client.command_prefix}info` (aka `i`)',
             value="Gets guild and user information.",
             inline=False)
-    embed.add_field(name=f"`{client.command_prefix}uwuify something` (aka `uwu`)",
+    embed.add_field(name=f"`{client.command_prefix}uwuify [something]` "
+                    "(aka `uwu`)",
             value="Uwuifies your message, deleting the command message.",
             inline=False)
-    embed.add_field(name=f"`{client.command_prefix}echo something`",
+    embed.add_field(name=f"`{client.command_prefix}echo [something]`",
             value="Echoes back your message, deleting the command message.",
             inline=False)
-    embed.add_field(name=f"`{client.command_prefix}cat` (aka `c`)",
-            value="Shows a cat from https://api.thecatapi.com/v1/images/search.",
+    embed.add_field(name=f"`{client.command_prefix}cat`",
+            value=f"Shows a cat from "
+                    "https://api.thecatapi.com/v1/images/search.",
             inline=False)
     embed.add_field(name=f'`{client.command_prefix}list`',
             value="Lists each role and everyone in them.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}find foo`',
-            value="Prints a list of everyone with role `foo`.",
+    embed.add_field(name=f'`{client.command_prefix}find [some role]`',
+            value="Prints a list of everyone with the given role.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}play bar` (aka `p`, `pl`, `pla`)',
-            value="Searches YouTube and streams the first result for `bar` in vc.",
+    embed.add_field(name=f'`{client.command_prefix}play [search term]` '
+                    '(aka `p`, `pl`)', 
+            value="Searches YouTube and streams the first result in vc.",
             inline=False)
     embed.add_field(name=f'`{client.command_prefix}now_playing` (aka `np`)',
             value="Displays the currently playing song.",
@@ -156,24 +161,26 @@ async def _help(ctx):
     embed.add_field(name=f'`{client.command_prefix}queue` (aka `q`)',
             value="Displays the song queue.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}remove` (aka `rm`)',
-            value="Remove a song from the queue.",
+    embed.add_field(name=f'`{client.command_prefix}remove [some song]` '
+                    '(aka `rm`)',
+            value="Removes a song from the queue.",
             inline=False)
     embed.add_field(name=f'`{client.command_prefix}skip`',
-            value="Skip the currently playing song.",
+            value="Skips the currently playing song.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}stop` (aka `disconnect`, `dc`)',
+    embed.add_field(name=f'`{client.command_prefix}stop` '
+                    '(aka `disconnect`, `dc`)',
             value="Disconnects Qubitz from vc.",
             inline=False)
     embed.set_footer(text="Contact radix#9084 with issues.")
     return await ctx.send(embed=embed)
 
-@client.command(aliases=['ping'])
-async def _ping(ctx):
+@client.command(aliases=[])
+async def ping(ctx):
     await ctx.send(f'Pong! {round(client.latency * 1000)} ms :)')
 
-@client.command(aliases=['uptime', 'up', 'u'])
-async def _uptime(ctx):
+@client.command(aliases=['up', 'u'])
+async def uptime(ctx):
     current_time = datetime.now()
     delta = int((current_time - start_time).total_seconds())
     d, rem = divmod(delta, 24 * 60 * 60)
@@ -185,51 +192,62 @@ async def _uptime(ctx):
     uptime += f"{s} second{'' if s == 1 else 's'}`"
     await ctx.send(uptime)
 
-@client.command(aliases=['emoji', 'create', 'create_emoji'])
-async def _create_emoji(ctx, *args):
+@client.command(aliases=['emoji', 'create'])
+async def create_emoji(ctx, *args):
     async with ctx.typing():
         if len(args) == 0:
             return await ctx.send(f'Error: give the emoji a name!')
     name = args[0]
     if len(name) < 2 or len(name) > 32:
-        return await ctx.send(f'Error: the emoji\'s name must be between 2 and 32 in length.')
+        return await ctx.send(f'Error: the emoji\'s name must be between 2 and '
+                '32 in length.')
     if name in str(ctx.guild.emojis):
         return await ctx.send(f'Error: that name is taken!')
     try:
         attachment_url = ctx.message.attachments[0].url
     except IndexError:
-        return await ctx.send(f'Error: please attach the image to your message. Also, Discord won\'t let me set external images as emojis, so please attach/upload the image instead of sending a link :(')
+        return await ctx.send(f'Error: please attach the image to your message.'
+                ' Also, Discord won\'t let me set external images as emojis, so'
+                ' please attach/upload the image instead of sending a link :(')
 
     extensions = [".png",".jpg",".jpeg"]
     if not any(ext in attachment_url.lower() for ext in extensions):
-        return await ctx.send(f'Error: please make sure the image is `.png`, `.jpg`, or `.jpeg` format.')
+        return await ctx.send(f'Error: please make sure the image is `.png`, '
+                '`.jpg`, or `.jpeg` format.')
 
     if len(ctx.guild.emojis) >= ctx.guild.emoji_limit:
-        await ctx.send(f'Error: all the emoji spots ({ctx.guild.emoji_limit}) are already taken!')
+        await ctx.send(f'Error: all the emoji spots ({ctx.guild.emoji_limit}) '
+                'are already taken!')
 
     async with aiohttp.ClientSession() as session:
         async with session.get(attachment_url, timeout = 20) as response:
             if response.status == 200:
                 image_bytes = await response.content.read()
                 try:
-                    emoji = await ctx.guild.create_custom_emoji(name=name, image=image_bytes)
+                    emoji = await ctx.guild.create_custom_emoji(name=name, 
+                            image=image_bytes)
                 except aiohttp.ServerTimeoutError:
-                    return await ctx.send(f'Sorry, server timed out! Try again?')
+                    return await ctx.send(f'Sorry, server timed out! '
+                            'Try again?')
                 except Exception as e:
                     if "String value did not match validation regex" in str(e):
-                        return await ctx.send(f'Sorry, special characters aren\'t allowed!')
+                        return await ctx.send(f"Sorry, special characters "
+                                "aren't allowed!")
                     return await ctx.send(e)
-                await ctx.send(f'New emoji: <:{emoji.name}:{emoji.id}> (`<:{emoji.name}:{emoji.id}>`)')
+                await ctx.send(f'New emoji: <:{emoji.name}:{emoji.id}> '
+                        '(`<:{emoji.name}:{emoji.id}>`)')
             else:
-                await ctx.send(f'Something went wrong, please contact radix#9084 :(')
+                await ctx.send(f'Something went wrong; please contact '
+                        'radix#9084 :(')
 
-@client.command(aliases=['info', 'i'])
-async def _info(ctx, *args):
+@client.command(aliases=['i'])
+async def info(ctx, *args):
     def _details():
         guild_details = f'{ctx.guild}'
         guild_details += f'\nID: `{ctx.guild.id}`'
         guild_details += f'\n{ctx.guild.member_count} members'
-        embed = discord.Embed(title="Information", description=guild_details, color=0xb2558d)
+        embed = discord.Embed(title="Information", 
+                description=guild_details, color=0xb2558d)
 
         for m in ctx.guild.members:
             if m.nick:
@@ -254,8 +272,8 @@ async def _info(ctx, *args):
         return embed
     await ctx.send(embed=_details())
 
-@client.command(aliases=['uwuify', 'uwu'])
-async def _uwuify(ctx, *, arg):
+@client.command(aliases=['uwu'])
+async def uwuify(ctx, *, arg):
     await ctx.message.delete()
     arg = arg.replace("r", "w")
     arg = arg.replace("small", "smol")
@@ -266,20 +284,20 @@ async def _uwuify(ctx, *, arg):
     arg = arg.replace("smow", "smol")
     await ctx.send(arg)
 
-@client.command(aliases=['echo'])
-async def _echo(ctx, *, arg):
+@client.command(aliases=[])
+async def echo(ctx, *, arg):
     await ctx.message.delete()
     await ctx.send(arg)
 
-@client.command(aliases=['cat', 'c'])
-async def _cat(ctx):
+@client.command(aliases=['c'])
+async def cat(ctx):
     async with ctx.typing():
         response = requests.get("https://api.thecatapi.com/v1/images/search")
     json_data = json.loads(response.text)[0]
     await ctx.send(json_data["url"])
 
-@client.command(aliases=['list', 'l'])
-async def _list_all_roles(ctx, *args):
+@client.command(aliases=['l'])
+async def list(ctx, *args):
     ALL_ROLES = {}
 
     for m in ctx.guild.members:
@@ -299,14 +317,15 @@ async def _list_all_roles(ctx, *args):
             for i in range(0, len(long_list), 1000):
                 parts.append(long_list[i:i+1000])
             if len(parts) > 3:
-                await ctx.send(f'(**{role}** has too many people in it to list)')
+                await ctx.send(f'(**{role}** has too many people in it to '
+                        'list)')
             else:
                 for part in parts:
                     await ctx.send(part)
     return
 
-@client.command(aliases=['find', 'f'])
-async def _find_people_with_role(ctx, *, role):
+@client.command(aliases=['f'])
+async def find(ctx, *, role):
     real_roles = []
     for real_role in ctx.guild.roles:
         real_roles.append(real_role.name)
@@ -336,12 +355,15 @@ async def _find_people_with_role(ctx, *, role):
             print(f'Failed to ctx.send: {long_list[i:temp]}')
     return
 
+
 # https://stackoverflow.com/questions/63769685/discord-py-how-to-send-a-message-everyday-at-a-specific-time
 async def stan():
     # Make sure your guild cache is ready so the channel can be found via get_channel
     await client.wait_until_ready()
-    channel = client.get_guild(731654031839330374).get_channel(768001893389303808)
-    await channel.send("stan!")
+    stan_guild = client.get_guild(731654031839330374)
+    stan_channel = stan_guild.get_channel(768001893389303808)
+    await stan_channel.send("stan!")
+
 
 async def daily_stan():
     now = datetime.utcnow()
@@ -366,7 +388,8 @@ async def daily_stan():
         # Call the helper function that sends the message
         await stan()
 
-        # Sleep until tomorrow and then the loop will start a new iteration
+        # Sleep until tomorrow, at which point the loop will start a new
+        # iteration
         tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
         seconds = (tomorrow - now).total_seconds()
         await asyncio.sleep(seconds)

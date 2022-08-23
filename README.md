@@ -1,4 +1,7 @@
 # Bitz? Quartz?
+Qubitz is an uwubot and a music bot that can upload custom emojis and help you
+find people by their roles.
+
 I began developing an uwubot named Bitz for Discord in June 2020, in discord.js
 because the first guides I found were in JavaScript. This turned out to be very
 misguided, because (as I realized when our AP Computer Science Principles
@@ -15,25 +18,25 @@ Qubitz.
 
 ## Functionalities
 Qubitz's functionalities include:
-- `ping`: Poke Qubitz to see if they're awake.
-- `uptime`: Display how long Qubitz has been awake.
-- `create_emoji [name]`: Set attached image as a custom server emoji with the
+- `ping`: Pokes Qubitz to see if they're awake.
+- `uptime`: Displays how long Qubitz has been awake.
+- `create_emoji [name]`: Sets attached image as a custom server emoji with the
   given name.
-- `info`: Get guild and user information.
-- `uwuify [any message here]`: Uwuify your messages, deleting the comand
+- `info`: Gets guild and user information.
+- `uwuify [any message here]`: Uwuifies your message, deleting the comand
   message.
-- `echo [any message here]`: Echo back your message, deleting the command
+- `echo [any message here]`: Echoes back your message, deleting the command
   message.
-- `cat`: Show a cat from [The Cat API](https://api.thecatapi.com/v1/images/search).
-- `list`: List each role and everyone in them.
-- `find [any role here]`: Print a list of everyone with the given role.
-- `play [any YouTube search term here]`: Search YouTube and stream the audio of
-  the first result for the given search term in vc.
-- `now_playing`: Display the currently playing song.
-- `queue`: Display the song queue.
-- `remove`: Remove a song from the queue.
-- `skip`: Skip the currently playing song. 
-- `stop`: Disconnect Qubitz from vc, and clear the song queue.
+- `cat`: Shows a cat from [The Cat API](https://api.thecatapi.com/v1/images/search).
+- `list`: Lists each role and everyone in them.
+- `find [any role here]`: Prints a list of everyone with the given role.
+- `play [any YouTube search term here]`: Searches YouTube and streams the audio
+  of the first result in vc.
+- `now_playing`: Displays the currently playing song.
+- `queue`: Displays the song queue.
+- `remove`: Removes a song from the queue.
+- `skip`: Skips the currently playing song.
+- `stop`: Disconnects Qubitz from vc and clears the song queue.
 
 ## Technologies
 - [discord.py](https://discordpy.readthedocs.io/en/latest/index.html)
@@ -81,11 +84,11 @@ index.py`).
     - [Creating embeds](https://discordjs.guide/popular-topics/embeds.html#embed-preview)
     - [Some basic es6 syntax examples](https://discordjs.guide/additional-info/es6-syntax.html#template-literals)
     - [Dynamically executing commands](https://discordjs.guide/command-handling/dynamic-commands.html#dynamically-executing-commands)
-    - [Miscellaneous examples](https://discordjs.guide/popular-topics/miscellaneous-examples.html#play-music-from-youtube), 
-    including playing music from youtube and retrieving emoji characters from
+    - [Miscellaneous examples](https://discordjs.guide/popular-topics/miscellaneous-examples.html#play-music-from-youtube),
+    including playing music from YouTube and retrieving emoji characters from
     another file created in the same directory as index.js
 - [How to create a music bot](https://www.freecodecamp.org/news/how-to-create-a-music-bot-using-discord-js-4436f5f3f0f8/) (Free Code Camp)
-- [Adding a config file](https://anidiots.guide/first-bot/adding-a-config-file) 
+- [Adding a config file](https://anidiots.guide/first-bot/adding-a-config-file)
     (An Idiot's Guide) – This was helpful for conceptualizing the flow of order
     when the bot is running under `nodemon`. Using a config file taught me how
     the config file responds to calls from the index file.

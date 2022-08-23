@@ -1,4 +1,11 @@
 import random
+
+def greeting_required(text):
+    greetings = ["hi", "hello", "greetings", "welcome"]
+    for greeting in greetings:
+        if f'{greeting} qubitz' in text or f'{greeting}, qubitz' in text:
+            return True
+
 def generate_keysmash():
     valid_characters = [
         "a","s","s","s","s","s",
@@ -52,9 +59,6 @@ rainbow_words = [
     "queer",
     "wlw",
     "mlm",
-    "nblm",
-    "nblnb",
-    "nblw",
 ]
 sad_words = [
     "bible",
