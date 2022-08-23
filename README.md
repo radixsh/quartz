@@ -31,6 +31,8 @@ Qubitz's functionalities include:
   the first result for the given search term in vc.
 - `now_playing`: Display the currently playing song.
 - `queue`: Display the song queue.
+- `remove`: Remove a song from the queue.
+- `skip`: Skip the currently playing song. 
 - `stop`: Disconnect Qubitz from vc, and clear the song queue.
 
 ## Technologies
@@ -79,9 +81,14 @@ index.py`).
     - [Creating embeds](https://discordjs.guide/popular-topics/embeds.html#embed-preview)
     - [Some basic es6 syntax examples](https://discordjs.guide/additional-info/es6-syntax.html#template-literals)
     - [Dynamically executing commands](https://discordjs.guide/command-handling/dynamic-commands.html#dynamically-executing-commands)
-    - [Miscellaneous examples](https://discordjs.guide/popular-topics/miscellaneous-examples.html#play-music-from-youtube), including playing music from youtube and retrieving emoji characters from another file created in the same directory as index.js
+    - [Miscellaneous examples](https://discordjs.guide/popular-topics/miscellaneous-examples.html#play-music-from-youtube), 
+    including playing music from youtube and retrieving emoji characters from
+    another file created in the same directory as index.js
 - [How to create a music bot](https://www.freecodecamp.org/news/how-to-create-a-music-bot-using-discord-js-4436f5f3f0f8/) (Free Code Camp)
-- [Adding a config file](https://anidiots.guide/first-bot/adding-a-config-file) (An Idiot's Guide) – This was helpful for conceptualizing the flow of order when the bot is running under `nodemon`. Using a config file taught me how the config file responds to calls from the index file.
+- [Adding a config file](https://anidiots.guide/first-bot/adding-a-config-file) 
+    (An Idiot's Guide) – This was helpful for conceptualizing the flow of order
+    when the bot is running under `nodemon`. Using a config file taught me how
+    the config file responds to calls from the index file.
     - [Understanding roles and permissions](https://anidiots.guide/understanding/roles)
 - And, of course, places where people before me have asked questions:
     - [Get a picture from a message](https://stackoverflow.com/questions/55206958/get-a-picture-from-the-message) (Stack Overflow)
@@ -89,6 +96,12 @@ index.py`).
     - [Discord bot send attachments](https://www.reddit.com/r/learnpython/comments/9ishxs/discord_bot_send_attachments/e6m0trf/) (Reddit): pointed me to aiohttp
     - [Using nodemon with python3](https://stackoverflow.com/questions/65021005/how-to-run-python-3-with-nodemon) (Stack Overflow)
 - [Eric Yeung's Discord music bot](https://github.com/eric-yeung/Discord-Bot/blob/master/main.py)
+  (GitHub)
+- discord.py documentation, particularly:
+    - [Cog documentation](https://discordpy.readthedocs.io/en/stable/ext/commands/api.html#cog)
+        - [Coggification example](https://stackoverflow.com/questions/53528168/how-do-i-use-cogs-with-discord-py)
+          (Stack Overflow)
+    - [Voice client documentation](https://discordpy.readthedocs.io/en/latest/api.html#discord.Client.voice_clients)
 
 Bitz was named by my close friend Tumega500#1234.
 

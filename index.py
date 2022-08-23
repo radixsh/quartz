@@ -156,6 +156,12 @@ async def _help(ctx):
     embed.add_field(name=f'`{client.command_prefix}queue` (aka `q`)',
             value="Displays the song queue.",
             inline=False)
+    embed.add_field(name=f'`{client.command_prefix}remove` (aka `rm`)',
+            value="Remove a song from the queue.",
+            inline=False)
+    embed.add_field(name=f'`{client.command_prefix}skip`',
+            value="Skip the currently playing song.",
+            inline=False)
     embed.add_field(name=f'`{client.command_prefix}stop` (aka `disconnect`, `dc`)',
             value="Disconnects Qubitz from vc.",
             inline=False)
