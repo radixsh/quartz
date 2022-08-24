@@ -5,6 +5,7 @@ import aiohttp      # emoji creation
 from datetime import datetime, time, timedelta   # stan
 import asyncio      # stan
 
+from env import TOKEN, PREFIX
 import discord
 from discord.ext import commands
 intents = discord.Intents.all()
@@ -12,11 +13,10 @@ intents.members = True
 intents.presences = True
 intents.typing = True
 intents.reactions = True
-client = commands.Bot(command_prefix='.', intents=intents, help_command=None)
+client = commands.Bot(command_prefix=PREFIX, intents=intents, help_command=None)
 
-from env import TOKEN
-from other import (greeting_required, generate_keysmash, responses, 
-        rainbow_words, sad_words)
+from other import (greeting_required, greet, echo_uwu, is_rainbow, be_rainbow,
+        generate_keysmash, responses, rainbow_words, sad_words)
 status = str(client.load_extension('music'))
 # Report, but only if there are any errors
 if "ExtensionAlreadyLoaded" not in status and "True" not in status:
@@ -30,7 +30,7 @@ async def on_ready():
     print(f'Logged in as {client.user}!')
     await client.change_presence(activity=discord.Activity(
         type=discord.ActivityType.listening,
-        name=f'{client.command_prefix}help'))
+        name=f'{PREFIX}help'))
     print("\nServers: ")
     for guild in client.guilds:
         print(f"- {guild.name} ({guild.member_count} members)")
@@ -43,74 +43,25 @@ async def on_message(message):
 
     await client.process_commands(message)
 
-    # Responding to rainbows
     text = message.content.lower()
-    if not text or text[0] == client.command_prefix:
+    if text[0] == PREFIX or not text:
         return
-
-    if (text[0] != client.command_prefix
-            and not any(word in text for word in sad_words) 
-            and any(word in text for word in rainbow_words)):
-        rand = random.randint(0, 100)
-        if rand < 1:    # 1% chance lol
-            return await message.channel.send(generate_keysmash())
-        elif rand > 5:  # 5% chance
-            return await message.channel.send(random.choice(responses))
 
     if greeting_required(text):
-        async with message.channel.typing():
-            faces = [":3", ":3", ":D", ":)", ":))", ":)))", "^-^", "^_^", "<3", "!", "!!", '', '']
-            possible_names = [message.author.name, message.author.nick]
-            name_to_use = random.choice(possible_names).lower()
-        if len(name_to_use.split()) > 3:
-            return await message.channel.send(f'hi, {name_to_use} {random.choice(faces)}')
-        return await message.channel.send(f'hi {name_to_use} {random.choice(faces)}')
+        return await greet(message)
 
-    # Responding to "no homo", "aaaa", etc
-    if "no homo" in text:
-        if random.randint(0, 10) > 8:
-            return await message.channel.send(f'not even a little? :pleading:')
-    if (len(message.content) > 3 
-            and (text == len(text) * 'a' or text == len(text) * 'A')):
-        return await message.channel.send(text)
-    if "mwah" in text:
-        # https://stackoverflow.com/questions/53636253/discord-bot-adding-reactions-to-a-message-discord-py-no-custom-emojis
-        return await message.add_reaction("💋");
-    if "μωμ" in text:
-        return await message.channel.send("μωμ")
+    if is_rainbow(text):
+        return await be_rainbow(message)
+
     if text == "yay":
-        return await message.channel.send("yay");
-    if text == "joe" or text == "jo":
-        return await message.channel.send("joe mama");
+        return await message.channel.send("yay")
 
-    # Qubitz responds to uwu words only if the message sent was not a command
-    # directly to them
-    uwu_word = ""
-    if "uwu" in text:
-        uwu_word = "uwu"
-    elif "owo" in text:
-        uwu_word = "owo"
-    else:
-        return
-    punctuation_array = ["?", "!", "~"]
-    for word in text.split():
-        if uwu_word in word:
-            last_letters = word[word.index(uwu_word):]
-            for char in last_letters:
-                if char not in punctuation_array:
-                    last_letters.replace(char, '')
-            puncts = {
-                    "?": word.count("?"),
-                    "!": word.count("!"),
-                    "~": word.count("~"),
-                    }
-            if len(word) > 999:
-                return await message.channel.send("...okay you win ;-;")
-            most_common_punct = max(puncts, key=puncts.get)
-            uwu_response = (uwu_word 
-                            + puncts[most_common_punct] * 2 * most_common_punct)
-            return await message.channel.send(uwu_response)
-
+    if "uwu" in text or "owo" in text:
+        return await echo_uwu(message)
+    
+    if text == len(text) * 'a' or text == len(text) * 'A':
+        return await message.channel.send(message.content)
+    
 @client.command(aliases=['h'])
 async def help(ctx):
     embed = discord.Embed(title="Qubitz manpage",
@@ -118,57 +69,57 @@ async def help(ctx):
             "custom emoji uploading capability, role-finding, and connectivity "
             "to The Cat API just for fun. Their source code can be found at "
             "https://github.com/radixsh/qubitz." + "\n" + f"Qubitz's prefix is "
-            f"`{client.command_prefix}`.",
+            f"`{PREFIX}`.",
             color=0xb2558d)
-    embed.add_field(name=f"`{client.command_prefix}ping` (aka `p`)",
+    embed.add_field(name=f"`{PREFIX}ping` (aka `p`)",
             value="Pokes Qubitz to see if they're awake.",
             inline=False)
-    embed.add_field(name=f"`{client.command_prefix}uptime` (aka `u`, `up`)",
+    embed.add_field(name=f"`{PREFIX}uptime` (aka `u`, `up`)",
             value="Displays how long Qubitz has been awake.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}create_emoji [emoji name]` '
+    embed.add_field(name=f'`{PREFIX}create_emoji [emoji name]` '
                     '(aka `emoji`, `create`)',
             value="Sets attached image as a custom server emoji with the given "
                     "name.", 
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}info` (aka `i`)',
+    embed.add_field(name=f'`{PREFIX}info` (aka `i`)',
             value="Gets guild and user information.",
             inline=False)
-    embed.add_field(name=f"`{client.command_prefix}uwuify [something]` "
+    embed.add_field(name=f"`{PREFIX}uwuify [something]` "
                     "(aka `uwu`)",
             value="Uwuifies your message, deleting the command message.",
             inline=False)
-    embed.add_field(name=f"`{client.command_prefix}echo [something]`",
+    embed.add_field(name=f"`{PREFIX}echo [something]`",
             value="Echoes back your message, deleting the command message.",
             inline=False)
-    embed.add_field(name=f"`{client.command_prefix}cat`",
+    embed.add_field(name=f"`{PREFIX}cat`",
             value=f"Shows a cat from "
                     "https://api.thecatapi.com/v1/images/search.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}list`',
+    embed.add_field(name=f'`{PREFIX}list`',
             value="Lists each role and everyone in them.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}find [some role]`',
+    embed.add_field(name=f'`{PREFIX}find [some role]`',
             value="Prints a list of everyone with the given role.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}play [search term]` '
+    embed.add_field(name=f'`{PREFIX}play [search term]` '
                     '(aka `p`, `pl`)', 
             value="Searches YouTube and streams the first result in vc.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}now_playing` (aka `np`)',
+    embed.add_field(name=f'`{PREFIX}now_playing` (aka `np`)',
             value="Displays the currently playing song.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}queue` (aka `q`)',
+    embed.add_field(name=f'`{PREFIX}queue` (aka `q`)',
             value="Displays the song queue.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}remove [some song]` '
+    embed.add_field(name=f'`{PREFIX}remove [some song]` '
                     '(aka `rm`)',
             value="Removes a song from the queue.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}skip`',
+    embed.add_field(name=f'`{PREFIX}skip`',
             value="Skips the currently playing song.",
             inline=False)
-    embed.add_field(name=f'`{client.command_prefix}stop` '
+    embed.add_field(name=f'`{PREFIX}stop` '
                     '(aka `disconnect`, `dc`)',
             value="Disconnects Qubitz from vc.",
             inline=False)
