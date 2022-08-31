@@ -58,71 +58,55 @@ async def on_message(message):
 
     if "uwu" in text or "owo" in text:
         return await echo_uwu(message)
-    
+
     if text == len(text) * 'a' or text == len(text) * 'A':
         return await message.channel.send(message.content)
-    
+
 @client.command(aliases=['h'])
 async def help(ctx):
-    embed = discord.Embed(title="Qubitz manpage",
+    embed = discord.Embed(title=f"Qubitz's prefix: `{PREFIX}`",
             description=f"Qubitz is an uwubot and a music bot, with "
             "custom emoji uploading capability, role-finding, and connectivity "
             "to The Cat API just for fun. Their source code can be found at "
-            "https://github.com/radixsh/qubitz." + "\n" + f"Qubitz's prefix is "
-            f"`{PREFIX}`.",
+            "https://github.com/radixsh/qubitz.",
             color=0xb2558d)
-    embed.add_field(name=f"`{PREFIX}ping` (aka `p`)",
-            value="Pokes Qubitz to see if they're awake.",
+
+    music_cmds = (f'`{PREFIX}p[lay] <search term>`: Streams the first YouTube '
+                'result in vc.\n')
+    music_cmds += (f'`{PREFIX}np`: Displays the currently '
+                'playing song.\n')
+    music_cmds += (f'`{PREFIX}q[ueue]`: Displays the song queue.\n')
+    music_cmds += (f'`{PREFIX}rm <some song>`: Removes the specified song '
+                'from the queue.\n')
+    music_cmds += (f'`{PREFIX}skip`: Skips the currently playing song.\n')
+    music_cmds += (f'`{PREFIX}stop`: Disconnects Qubitz from vc.\n')
+    embed.add_field(name=f'**Music**',
+            value=music_cmds,
             inline=False)
-    embed.add_field(name=f"`{PREFIX}uptime` (aka `u`, `up`)",
-            value="Displays how long Qubitz has been awake.",
+
+    utilities_cmds = (f'`{PREFIX}l[ist]`: Lists each role and everyone in them.\n')
+    utilities_cmds += (f'`{PREFIX}f[ind] <some role>`: Prints a list of everyone '
+                    'with the specified role.\n')
+    utilities_cmds += (f"`{PREFIX}p[ing]`: Pokes Qubitz to see if they're "
+                    "awake.\n")
+    utilities_cmds += (f"`{PREFIX}up[time]`: Displays how long Qubitz has "
+                    "been awake.\n")
+    utilities_cmds += (f'`{PREFIX}i[nfo]`: Gets guild and user information.\n')
+    embed.add_field(name=f'**Utilities**',
+            value=utilities_cmds,
             inline=False)
-    embed.add_field(name=f'`{PREFIX}create_emoji [emoji name]` '
-                    '(aka `emoji`, `create`)',
-            value="Sets attached image as a custom server emoji with the given "
-                    "name.", 
+
+    miscellaneous_cmds = (f'`{PREFIX}create <emoji_name>`: Sets attached image as '
+                    'a custom server emoji with the given name.\n')
+    miscellaneous_cmds += (f"`{PREFIX}uwu[ify] <something>`: Uwuifies "
+                    "your message, deleting the command message.\n")
+    miscellaneous_cmds += (f"`{PREFIX}echo <something>`: Echoes back your "
+                    "message, deleting the command message.\n")
+    miscellaneous_cmds += (f"`{PREFIX}c[at]`: Shows a cat from The Cat API.\n")
+    embed.add_field(name=f'**Miscellaneous**',
+            value=miscellaneous_cmds,
             inline=False)
-    embed.add_field(name=f'`{PREFIX}info` (aka `i`)',
-            value="Gets guild and user information.",
-            inline=False)
-    embed.add_field(name=f"`{PREFIX}uwuify [something]` "
-                    "(aka `uwu`)",
-            value="Uwuifies your message, deleting the command message.",
-            inline=False)
-    embed.add_field(name=f"`{PREFIX}echo [something]`",
-            value="Echoes back your message, deleting the command message.",
-            inline=False)
-    embed.add_field(name=f"`{PREFIX}cat`",
-            value=f"Shows a cat from "
-                    "https://api.thecatapi.com/v1/images/search.",
-            inline=False)
-    embed.add_field(name=f'`{PREFIX}list`',
-            value="Lists each role and everyone in them.",
-            inline=False)
-    embed.add_field(name=f'`{PREFIX}find [some role]`',
-            value="Prints a list of everyone with the given role.",
-            inline=False)
-    embed.add_field(name=f'`{PREFIX}play [search term]` '
-                    '(aka `p`, `pl`)', 
-            value="Searches YouTube and streams the first result in vc.",
-            inline=False)
-    embed.add_field(name=f'`{PREFIX}now_playing` (aka `np`)',
-            value="Displays the currently playing song.",
-            inline=False)
-    embed.add_field(name=f'`{PREFIX}queue` (aka `q`)',
-            value="Displays the song queue.",
-            inline=False)
-    embed.add_field(name=f'`{PREFIX}remove [some song]` '
-                    '(aka `rm`)',
-            value="Removes a song from the queue.",
-            inline=False)
-    embed.add_field(name=f'`{PREFIX}skip`',
-            value="Skips the currently playing song.",
-            inline=False)
-    embed.add_field(name=f'`{PREFIX}stop` '
-                    '(aka `disconnect`, `dc`)',
-            value="Disconnects Qubitz from vc.",
-            inline=False)
+
     embed.set_footer(text="Contact radix#9084 with issues.")
     return await ctx.send(embed=embed)
 
@@ -175,7 +159,7 @@ async def create_emoji(ctx, *args):
             if response.status == 200:
                 image_bytes = await response.content.read()
                 try:
-                    emoji = await ctx.guild.create_custom_emoji(name=name, 
+                    emoji = await ctx.guild.create_custom_emoji(name=name,
                             image=image_bytes)
                 except aiohttp.ServerTimeoutError:
                     return await ctx.send(f'Sorry, server timed out! '
@@ -197,7 +181,7 @@ async def info(ctx, *args):
         guild_details = f'{ctx.guild}'
         guild_details += f'\nID: `{ctx.guild.id}`'
         guild_details += f'\n{ctx.guild.member_count} members'
-        embed = discord.Embed(title="Information", 
+        embed = discord.Embed(title="Information",
                 description=guild_details, color=0xb2558d)
 
         for m in ctx.guild.members:
