@@ -53,7 +53,7 @@ async def be_rainbow (message):
     rand = random.randint(0, 100)
     if rand < 1:    # 1% chance lol
         return await message.channel.send(generate_keysmash())
-    elif rand > 5:  # 5% chance
+    elif rand > 3:  # 5% chance
         return await message.channel.send(random.choice(responses))
 
 def generate_keysmash():
@@ -100,8 +100,8 @@ responses = [
 
 rainbow_words = [
     "gay",
-    "gae",
-    "bi",
+    " gae ",
+    " bi ",
     "sapphic",
     "lesbian",
     "lgbt",
@@ -129,6 +129,7 @@ sad_words = [
     "phobia",
     "tokenism",
     "stereotype",
+    "anti",
     "pox",
     "sexually transmitted",
     "std",
