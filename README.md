@@ -37,7 +37,7 @@ Qubitz's functionalities include:
 - `.up[time]`: Displays how long Qubitz has been awake.
 - `.i[nfo] ("all")`: Displays guild and channel information, and if "all" is
 given as an argument, then displays guild member information as well.
-##`# Miscellaneous
+### Miscellaneous
 - `.create <emoji_name>`: Sets attached image as a custom server emoji with the
 given name.
 - `.uwu[ify] <something>`: Uwuifies your message, deleting the command message.
