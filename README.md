@@ -1,6 +1,7 @@
 # Bitz? Quartz?
-Qubitz is an uwubot and a music bot that can upload custom emojis and help you
-find people by their roles.
+Qubitz is an uwubot and a music bot with custom emoji uploading capability, the
+ability to find people by their roles, and connectivity to The Cat API just for
+fun.
 
 I began developing an uwubot named Bitz for Discord in June 2020, in discord.js
 because the first guides I found were in JavaScript. This turned out to be very
@@ -9,42 +10,49 @@ teacher taught us Python and the basics of discord.py later that year)
 discord.py is far superior. Over the summer of 2020, I developed and hosted both
 bots on my Chromebook. Sometime or other I also spun up another discord.py bot,
 Amicitia, to help students in a university Discord server find people with the
-same major (majors being defined in roles).
+same major (majors being roles).
 
 I've wanted to translate Bitz's uwubot functionalities to Python for a while,
 and I finally did, almost two years later. Bitz, the original uwubot I created,
 has been translated to Python and conflated with Quartz's capabilities to form
 Qubitz.
 
+Development of Qubitz is stagnant. I only update when I don't have homework and
+want to fix a breaking change.
+
+
 ## Functionalities
 Qubitz's functionalities include:
-- `ping`: Pokes Qubitz to see if they're awake.
-- `uptime`: Displays how long Qubitz has been awake.
-- `create_emoji [name]`: Sets attached image as a custom server emoji with the
-  given name.
-- `info`: Gets guild and user information.
-- `uwuify [any message here]`: Uwuifies your message, deleting the comand
-  message.
-- `echo [any message here]`: Echoes back your message, deleting the command
-  message.
-- `cat`: Shows a cat from [The Cat API](https://api.thecatapi.com/v1/images/search).
-- `list`: Lists each role and everyone in them.
-- `find [any role here]`: Prints a list of everyone with the given role.
-- `play [any YouTube search term here]`: Searches YouTube and streams the audio
-  of the first result in vc.
-- `now_playing`: Displays the currently playing song.
-- `queue`: Displays the song queue.
-- `remove`: Removes a song from the queue.
-- `skip`: Skips the currently playing song.
-- `stop`: Disconnects Qubitz from vc and clears the song queue.
+### Music
+- `.p[lay] <search term>`: Streams the first YouTube result in vc.
+- `.np`: Displays the current song.
+- `.q[ueue]`: Displays the song queue.
+- `.rm <some song>`: Removes the specified song from the queue.
+- `.skip`: Skips the currently playing song.
+- `.stop`: Disconnects Qubitz from vc.
+### Utilities
+- `.l[ist]`: Lists each role and everyone in them.
+- `.f[ind] <some role>`: Prints a list of everyone with the specified role.
+- `.p[ing]`: Pokes Qubitz to see if they're awake.
+- `.up[time]`: Displays how long Qubitz has been awake.
+- `.i[nfo] ("all")`: Displays guild and channel information, and if "all" is
+given as an argument, then displays guild member information as well.
+##`# Miscellaneous
+- `.create <emoji_name>`: Sets attached image as a custom server emoji with the
+given name.
+- `.uwu[ify] <something>`: Uwuifies your message, deleting the command message.
+- `.echo <something>`: Echoes back your message, deleting the command message.
+- `.c[at]`: Shows a cat from The Cat API.
+
 
 ## Technologies
 - [discord.py](https://discordpy.readthedocs.io/en/latest/index.html)
-- [discord.ext.commands](https://discordpy.readthedocs.io/en/latest/ext/commands/index.html)
+	- [discord.ext.commands](https://discordpy.readthedocs.io/en/latest/ext/commands/index.html)
 - [Discord API](https://discord.com/developers/docs/intro)
 - [node.js](https://nodejs.org/en/)
-- [nodemon](https://nodemon.io/)
+	- [nodemon](https://nodemon.io/)
 - [The Cat API](https://thecatapi.com/)
+
 
 ## Usage
 To set Qubitz up locally, you'll need `python3` and the packages for `discord`,
@@ -74,6 +82,7 @@ by selecting the "bot" scope and adding the following permissions:
 
 Then you can run Qubitz with `python3 index.py` (or `nodemon --exec python3
 index.py`).
+
 
 ## Acknowledgements
 - [aiohttp documentation](https://docs.aiohttp.org/en/stable/client.html),
@@ -107,6 +116,7 @@ index.py`).
     - [Voice client documentation](https://discordpy.readthedocs.io/en/latest/api.html#discord.Client.voice_clients)
 
 Bitz was named by my close friend Tumega500#1234.
+
 
 ## License
 Released under [GNU GPL v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
