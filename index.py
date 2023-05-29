@@ -6,6 +6,9 @@ from datetime import datetime, time, timedelta   # stan
 import asyncio      # stan
 
 from env import TOKEN, PREFIX
+from other import (daily_stan, greeting_required, greet, echo_uwu, is_rainbow,
+        be_rainbow, generate_keysmash, responses, rainbow_words, sad_words)
+
 import discord
 from discord.ext import commands
 intents = discord.Intents.all()
@@ -15,9 +18,14 @@ intents.typing = True
 intents.reactions = True
 client = commands.Bot(command_prefix=PREFIX, intents=intents, help_command=None)
 
-from other import (daily_stan, greeting_required, greet, echo_uwu, is_rainbow,
-        be_rainbow, generate_keysmash, responses, rainbow_words, sad_words)
-status = str(client.load_extension('music'))
+# https://stackoverflow.com/questions/62351392/load-extension-in-python-discordpy#62351528
+async def main():
+    cogs = ["music"]
+    for cog in cogs:
+        await client.load_extension(cog) # loads in each file, Cog, that you defined in the list
+
+if __name__ == "__main__": 
+    asyncio.run(main())
 
 start_time = datetime.now()
 
@@ -295,7 +303,6 @@ async def stan():
     stan_guild = client.get_guild(731654031839330374)
     stan_channel = stan_guild.get_channel(768001893389303808)
     await stan_channel.send("stan!")
-
 
 
 client.run(TOKEN)
