@@ -15,12 +15,9 @@ intents.typing = True
 intents.reactions = True
 client = commands.Bot(command_prefix=PREFIX, intents=intents, help_command=None)
 
-from other import (greeting_required, greet, echo_uwu, is_rainbow, be_rainbow,
-        generate_keysmash, responses, rainbow_words, sad_words)
+from other import (daily_stan, greeting_required, greet, echo_uwu, is_rainbow,
+        be_rainbow, generate_keysmash, responses, rainbow_words, sad_words)
 status = str(client.load_extension('music'))
-# Report, but only if there are any errors
-if "ExtensionAlreadyLoaded" not in status and "True" not in status:
-    print(status + "\n")
 
 start_time = datetime.now()
 
@@ -35,6 +32,7 @@ async def on_ready():
     for guild in client.guilds:
         print(f"- {guild.name} ({guild.member_count} members)")
     print(f"\nStart time: {start_time}\n")
+    client.loop.create_task(daily_stan())
 
 @client.event
 async def on_message(message):
@@ -290,7 +288,6 @@ async def find(ctx, *, role):
             print(f'Failed to ctx.send: {long_list[i:temp]}')
     return
 
-
 # https://stackoverflow.com/questions/63769685/discord-py-how-to-send-a-message-everyday-at-a-specific-time
 async def stan():
     # Make sure your guild cache is ready so the channel can be found via get_channel
@@ -300,34 +297,5 @@ async def stan():
     await stan_channel.send("stan!")
 
 
-async def daily_stan():
-    now = datetime.utcnow()
-    # 1am UTC = 6pm PST
-    WHEN = time(1, 0, 0)
-    # Make sure loop doesn't start after {WHEN} as then it will send
-    # immediately the first time as negative seconds will make the sleep yield
-    # instantly
-    if now.time() > WHEN:
-        # Don't start the for loop until tomorrow
-        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
-        seconds = (tomorrow - now).total_seconds()
-        await asyncio.sleep(seconds)
-    while True:
-        now = datetime.utcnow()
-        target_time = datetime.combine(now.date(), WHEN)
-        seconds_until_target = (target_time - now).total_seconds()
-        # Sleep until we hit the target time
-        print(f"Waiting {seconds_until_target} seconds to stan...")
-        await asyncio.sleep(seconds_until_target)
 
-        # Call the helper function that sends the message
-        await stan()
-
-        # Sleep until tomorrow, at which point the loop will start a new
-        # iteration
-        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
-        seconds = (tomorrow - now).total_seconds()
-        await asyncio.sleep(seconds)
-
-client.loop.create_task(daily_stan())
 client.run(TOKEN)

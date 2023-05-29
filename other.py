@@ -1,11 +1,44 @@
 import random
+from datetime import datetime, time, timedelta   # stan
+import asyncio
 from env import PREFIX 
+
+async def daily_stan():
+    now = datetime.utcnow()
+    # 1am UTC = 6pm PST
+    WHEN = time(1, 0, 0)
+    # Make sure loop doesn't start after {WHEN} as then it will send
+    # immediately the first time as negative seconds will make the sleep yield
+    # instantly
+    if now.time() > WHEN:
+        # Don't start the for loop until tomorrow
+        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
+        seconds = (tomorrow - now).total_seconds()
+        await asyncio.sleep(seconds)
+    while True:
+        now = datetime.utcnow()
+        target_time = datetime.combine(now.date(), WHEN)
+        seconds_until_target = (target_time - now).total_seconds()
+        # Sleep until we hit the target time
+        print(f"Waiting {seconds_until_target} seconds to stan...")
+        await asyncio.sleep(seconds_until_target)
+
+        # Call the helper function that sends the message
+        await stan()
+
+        # Sleep until tomorrow, at which point the loop will start a new
+        # iteration
+        tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
+        seconds = (tomorrow - now).total_seconds()
+        await asyncio.sleep(seconds)
+
 
 def greeting_required(text):
     greetings = ["hi", "hello", "greetings", "welcome"]
     for greeting in greetings:
         if f'{greeting} qubitz' in text or f'{greeting}, qubitz' in text:
             return True
+
 
 async def greet(message):
     async with message.channel.typing():
@@ -15,6 +48,7 @@ async def greet(message):
     if len(name_to_use.split()) > 3:
         return await message.channel.send(f'hi, {name_to_use} {random.choice(faces)}')
     return await message.channel.send(f'hi {name_to_use} {random.choice(faces)}')
+
 
 async def echo_uwu(message):
     text = message.content.lower()
@@ -44,6 +78,7 @@ async def echo_uwu(message):
                             + puncts[most_common_punct] * 2 * most_common_punct)
             return await message.channel.send(uwu_response)
 
+
 def is_rainbow(text):
     return (text[0] != PREFIX 
             and any(word in text for word in rainbow_words)
@@ -55,6 +90,7 @@ async def be_rainbow (message):
         return await message.channel.send(generate_keysmash())
     elif rand > 3:  # 5% chance
         return await message.channel.send(random.choice(responses))
+
 
 def generate_keysmash():
     valid_characters = [
