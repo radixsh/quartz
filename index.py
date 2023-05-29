@@ -20,9 +20,7 @@ client = commands.Bot(command_prefix=PREFIX, intents=intents, help_command=None)
 
 # https://stackoverflow.com/questions/62351392/load-extension-in-python-discordpy#62351528
 async def main():
-    cogs = ["music"]
-    for cog in cogs:
-        await client.load_extension(cog) # loads in each file, Cog, that you defined in the list
+    await client.load_extension("music")
 
 if __name__ == "__main__": 
     asyncio.run(main())
@@ -79,8 +77,7 @@ async def help(ctx):
 
     music_cmds = (f'`{PREFIX}p[lay] <search term>`: Streams the first YouTube '
                 'result in vc.\n')
-    music_cmds += (f'`{PREFIX}np`: Displays the currently '
-                'playing song.\n')
+    music_cmds += (f'`{PREFIX}np`: Displays the current song.\n')
     music_cmds += (f'`{PREFIX}q[ueue]`: Displays the song queue.\n')
     music_cmds += (f'`{PREFIX}rm <some song>`: Removes the specified song '
                 'from the queue.\n')
@@ -97,7 +94,9 @@ async def help(ctx):
                     "awake.\n")
     utilities_cmds += (f"`{PREFIX}up[time]`: Displays how long Qubitz has "
                     "been awake.\n")
-    utilities_cmds += (f'`{PREFIX}i[nfo]`: Gets guild and user information.\n')
+    utilities_cmds += (f'`{PREFIX}i[nfo] ("all")`: Displays guild and channel '
+                    'information, and if "all" is given as an argument, then '
+                    'displays guild member information as well.\n')
     embed.add_field(name=f'**Utilities**',
             value=utilities_cmds,
             inline=False)
@@ -183,18 +182,23 @@ async def create_emoji(ctx, *args):
 
 @client.command(aliases=['i'])
 async def info(ctx, *args):
-    def _details():
-        guild_details = f'{ctx.guild}'
+    def _details(members_info_requested=False):
+        embed = discord.Embed(title="Information", color=0xb2558d)
+        
+        guild_details = f'**{ctx.guild}**'
         guild_details += f'\nID: `{ctx.guild.id}`'
         guild_details += f'\n{ctx.guild.member_count} members'
-        embed = discord.Embed(title="Information",
-                description=guild_details, color=0xb2558d)
+        embed.add_field(name=f'Guild', value=guild_details, inline=False)
+
+        channel_details = f'**{ctx.channel}**'
+        channel_details += f'\nID: `{ctx.channel.id}`'
+        embed.add_field(name=f'Channel', value=channel_details, inline=False)
+
+        if not members_info_requested:
+            return embed
 
         for m in ctx.guild.members:
-            if m.nick:
-                name = m.nick
-            else:
-                name = m.name
+            name = m.nick if m.nick else m.name
 
             member_details = f'Username: {m.name}#{m.discriminator}'
             member_details += f'\nID: `{m.id}`'
@@ -209,9 +213,15 @@ async def info(ctx, *args):
                 member_details += f'\nStatus: {gerund}{m.activities[0].name}'
             else:
                 member_details += f'\nNo current activities'
-            embed.add_field(name=f'{name}', value=member_details, inline=False)
+
+            embed.add_field(name=f'{name}', value=member_details, inline=True)
+
         return embed
-    await ctx.send(embed=_details())
+
+    if args and args[0] in ["users", "all", "*"]:
+        await ctx.send(embed=_details(members_info_requested=True))
+    else:
+        await ctx.send(embed=_details())
 
 @client.command(aliases=['uwu'])
 async def uwuify(ctx, *, arg):
