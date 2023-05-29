@@ -3,7 +3,7 @@ from datetime import datetime, time, timedelta   # stan
 import asyncio
 from env import PREFIX 
 
-async def daily_stan():
+async def daily_stan(client):
     now = datetime.utcnow()
     # 1am UTC = 6pm PST
     WHEN = time(1, 0, 0)
@@ -24,13 +24,21 @@ async def daily_stan():
         await asyncio.sleep(seconds_until_target)
 
         # Call the helper function that sends the message
-        await stan()
+        await stan(client)
 
         # Sleep until tomorrow, at which point the loop will start a new
         # iteration
         tomorrow = datetime.combine(now.date() + timedelta(days=1), time(0))
         seconds = (tomorrow - now).total_seconds()
         await asyncio.sleep(seconds)
+
+# https://stackoverflow.com/questions/63769685/discord-py-how-to-send-a-message-everyday-at-a-specific-time
+async def stan(client):
+    # Make sure your guild cache is ready so the channel can be found via get_channel
+    await client.wait_until_ready()
+    stan_guild = client.get_guild(731654031839330374)
+    stan_channel = stan_guild.get_channel(768001893389303808)
+    await stan_channel.send("stan!")
 
 
 def greeting_required(text):

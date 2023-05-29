@@ -6,8 +6,9 @@ from datetime import datetime, time, timedelta   # stan
 import asyncio      # stan
 
 from env import TOKEN, PREFIX
-from other import (daily_stan, greeting_required, greet, echo_uwu, is_rainbow,
-        be_rainbow, generate_keysmash, responses, rainbow_words, sad_words)
+from other import (daily_stan, stan, greeting_required, greet, echo_uwu,
+        is_rainbow, be_rainbow, generate_keysmash, responses, rainbow_words,
+        sad_words)
 
 import discord
 from discord.ext import commands
@@ -38,7 +39,7 @@ async def on_ready():
     for guild in client.guilds:
         print(f"- {guild.name} ({guild.member_count} members)")
     print(f"\nStart time: {start_time}\n")
-    client.loop.create_task(daily_stan())
+    client.loop.create_task(daily_stan(client))
 
 @client.event
 async def on_message(message):
@@ -305,14 +306,6 @@ async def find(ctx, *, role):
         except:
             print(f'Failed to ctx.send: {long_list[i:temp]}')
     return
-
-# https://stackoverflow.com/questions/63769685/discord-py-how-to-send-a-message-everyday-at-a-specific-time
-async def stan():
-    # Make sure your guild cache is ready so the channel can be found via get_channel
-    await client.wait_until_ready()
-    stan_guild = client.get_guild(731654031839330374)
-    stan_channel = stan_guild.get_channel(768001893389303808)
-    await stan_channel.send("stan!")
 
 
 client.run(TOKEN)
