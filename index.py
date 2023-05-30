@@ -1,14 +1,12 @@
-import random       # gay
-import requests     # cat
-import json         # cat
-import aiohttp      # emoji creation
-from datetime import datetime, time, timedelta   # stan
-import asyncio      # stan
+import requests     # For The Cat API
+import json         # For The Cat API
+import aiohttp      # For creating emojis
+from datetime import datetime # For uptime
+import asyncio      # For music cog and stan
 
 from env import TOKEN, PREFIX
-from other import (daily_stan, stan, greeting_required, greet, echo_uwu,
-        is_rainbow, be_rainbow, generate_keysmash, responses, rainbow_words,
-        sad_words)
+from other import (daily_stan, greeting_required, greet, echo_uwu,
+        is_rainbow, be_rainbow)
 
 import discord
 from discord.ext import commands
@@ -23,23 +21,27 @@ client = commands.Bot(command_prefix=PREFIX, intents=intents, help_command=None)
 async def main():
     await client.load_extension("music")
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
     asyncio.run(main())
-
-start_time = datetime.now()
 
 
 @client.event
 async def on_ready():
     print(f'Logged in as {client.user}!')
+
     await client.change_presence(activity=discord.Activity(
         type=discord.ActivityType.listening,
         name=f'{PREFIX}help'))
+
     print("\nServers: ")
     for guild in client.guilds:
         print(f"- {guild.name} ({guild.member_count} members)")
+
+    start_time = datetime.now()
     print(f"\nStart time: {start_time}\n")
+
     client.loop.create_task(daily_stan(client))
+
 
 @client.event
 async def on_message(message):
@@ -49,7 +51,8 @@ async def on_message(message):
     await client.process_commands(message)
 
     text = message.content.lower()
-    if text[0] == PREFIX or not text:
+    
+    if not text or text[0] == PREFIX:
         return
 
     if greeting_required(text):
@@ -66,6 +69,7 @@ async def on_message(message):
 
     if text == len(text) * 'a' or text == len(text) * 'A':
         return await message.channel.send(message.content)
+
 
 @client.command(aliases=['h'])
 async def help(ctx):
@@ -116,9 +120,11 @@ async def help(ctx):
     embed.set_footer(text="Contact radix#9084 with issues.")
     return await ctx.send(embed=embed)
 
+
 @client.command(aliases=[])
 async def ping(ctx):
     await ctx.send(f'Pong! {round(client.latency * 1000)} ms :)')
+
 
 @client.command(aliases=['up', 'u'])
 async def uptime(ctx):
@@ -132,6 +138,7 @@ async def uptime(ctx):
     uptime += f"{m} minute{'' if m == 1 else 's'}, "
     uptime += f"{s} second{'' if s == 1 else 's'}`"
     await ctx.send(uptime)
+
 
 @client.command(aliases=['emoji', 'create'])
 async def create_emoji(ctx, *args):
@@ -181,11 +188,12 @@ async def create_emoji(ctx, *args):
                 await ctx.send(f'Something went wrong; please contact '
                         'radix#9084 :(')
 
+
 @client.command(aliases=['i'])
 async def info(ctx, *args):
     def _details(members_info_requested=False):
         embed = discord.Embed(title="Information", color=0xb2558d)
-        
+
         guild_details = f'**{ctx.guild}**'
         guild_details += f'\nID: `{ctx.guild.id}`'
         guild_details += f'\n{ctx.guild.member_count} members'
@@ -206,7 +214,7 @@ async def info(ctx, *args):
             member_details += f'\nJoined on {m.joined_at.strftime("%-d %b %Y")}'
             if len(m.activities):
                 gerund = str(m.activities[0].type)
-                gerund = gerund[gerund.index('.')+1:]+" "
+                gerund = gerund[gerund.index('.')+1:] + " "
                 if gerund == "listening ":
                     gerund += "to "
                 if gerund == "custom ":
@@ -224,6 +232,7 @@ async def info(ctx, *args):
     else:
         await ctx.send(embed=_details())
 
+
 @client.command(aliases=['uwu'])
 async def uwuify(ctx, *, arg):
     await ctx.message.delete()
@@ -236,10 +245,12 @@ async def uwuify(ctx, *, arg):
     arg = arg.replace("smow", "smol")
     await ctx.send(arg)
 
+
 @client.command(aliases=[])
 async def echo(ctx, *, arg):
     await ctx.message.delete()
     await ctx.send(arg)
+
 
 @client.command(aliases=['c'])
 async def cat(ctx):
@@ -247,6 +258,7 @@ async def cat(ctx):
         response = requests.get("https://api.thecatapi.com/v1/images/search")
     json_data = json.loads(response.text)[0]
     await ctx.send(json_data["url"])
+
 
 @client.command(aliases=['l'])
 async def list(ctx, *args):
@@ -275,6 +287,7 @@ async def list(ctx, *args):
                 for part in parts:
                     await ctx.send(part)
     return
+
 
 @client.command(aliases=['f'])
 async def find(ctx, *, role):
