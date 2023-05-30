@@ -92,11 +92,11 @@ def is_rainbow(text):
             and any(word in text for word in rainbow_words)
             and not any(word in text for word in sad_words))
 
-async def be_rainbow (message):
+async def be_rainbow(message):
     rand = random.randint(0, 100)
-    if rand < 1:    # 1% chance lol
+    if rand < 1:
         return await message.channel.send(generate_keysmash())
-    elif rand > 3:  # 5% chance
+    elif rand < 3:
         return await message.channel.send(random.choice(responses))
 
 
